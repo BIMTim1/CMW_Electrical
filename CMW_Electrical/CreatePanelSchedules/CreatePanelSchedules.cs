@@ -27,7 +27,7 @@ namespace CreatePanelSchedules
             int count = 0;
 
             //BuiltInCategory value for Electrical Equipment
-            //BuiltInCategory bic = BuiltInCategory.OST_ElectricalEquipment;
+            BuiltInCategory bic = BuiltInCategory.OST_ElectricalEquipment;
 
             //get Revit version number (default string)
             int revNum = int.Parse(uiapp.Application.VersionNumber);
