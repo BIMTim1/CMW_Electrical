@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<RevitAddIns>
+	<AddIn Type="Application">
+		<Name>CMW_Electrical_Ribbon</Name>
+		<Assembly>CMW_Electrical.dll</Assembly>
+		<ClientId>B3A397EF-0591-471B-8D76-D99353E109F2</ClientId>
+		<FullClassName>CMW_Electrical.CMW_Electrical_Ribbon</FullClassName>
+		<VendorId>ADSK</VendorId>
+		<VendorDescription>Autodesk, www.autodesk.com</VendorDescription>
+	</AddIn>
+</RevitAddIns>

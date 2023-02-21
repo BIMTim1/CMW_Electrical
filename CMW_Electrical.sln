@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.4.33205.214
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CMW_Electrical", "CMW_Electrical\CMW_Electrical.csproj", "{599AE472-B465-47CD-89DC-DFA2E895B49F}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{599AE472-B465-47CD-89DC-DFA2E895B49F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{599AE472-B465-47CD-89DC-DFA2E895B49F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{599AE472-B465-47CD-89DC-DFA2E895B49F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{599AE472-B465-47CD-89DC-DFA2E895B49F}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {BC5A0411-3096-47ED-80D3-857A2D568314}
+	EndGlobalSection
+EndGlobal
