@@ -6,10 +6,8 @@ using System.Threading.Tasks;
 
 using Autodesk.Revit.DB;
 using Autodesk.Revit.Attributes;
-using Autodesk.Revit.ApplicationServices;
 using Autodesk.Revit.DB.Electrical;
 using Autodesk.Revit.UI;
-using Autodesk.Revit.UI.Selection;
 using System.Linq.Expressions;
 
 namespace CreatePanelSchedules
@@ -29,33 +27,44 @@ namespace CreatePanelSchedules
             //BuiltInCategory value for Electrical Equipment
             BuiltInCategory bic = BuiltInCategory.OST_ElectricalEquipment;
 
+            //collect all Electrical Equipment families
+            List<Element> elecEquip = new FilteredElementCollector(doc).OfCategory(bic).WhereElementIsNotElementType().ToList();
+
             //get Revit version number (default string)
             int revNum = int.Parse(uiapp.Application.VersionNumber);
 
-            //create named Transaction
+            //create Transaction
             Transaction trac = new Transaction(doc);
 
             try
             {
                 trac.Start("Create Panelboard Schedules");
 
-                foreach (Element eq in ElecEquip(doc))
+                foreach (Element eq in elecEquip)
                 {
-                    //get Max # Circuit Breakers of Element
-                    int cbNum = GetCircuitBreakersNum(eq, revNum);
-
-                    //collect parameters of Electrical Equipment family to compare
-                    string famName = eq.LookupParameter("Family").AsValueString();
-                    string panName = eq.LookupParameter("Panel Name").AsString();
-                    string panPhDemo = eq.LookupParameter("Phase Demolished").AsValueString();
-                    string elecData = eq.LookupParameter("Electrical Data").AsString();
-
-                    ElementId tempId = GetScheduleId(panName, panPhDemo, famName, elecData, doc, revNum, cbNum);
-
-                    if (tempId != ElementId.InvalidElementId)
+                    //test if schedule already created for Electrical Equipment
+                    bool exSched = CheckExistingSchedule(eq);
+                    if (!exSched)
                     {
-                        PanelScheduleView.CreateInstanceView(doc, tempId, eq.Id);
-                        count += 1;
+                        //get Max # Circuit Breakers of Element
+                        int cbNum = GetCircuitBreakersNum(eq, revNum);
+
+                        //collect parameters of Electrical Equipment family to compare
+                        string famName = eq.LookupParameter("Family").AsValueString();
+                        string panName = eq.LookupParameter("Panel Name").AsString();
+                        string panPhDemo = eq.LookupParameter("Phase Demolished").AsValueString();
+                        string elecData = eq.LookupParameter("Electrical Data").AsString();
+
+                        //test if schedule already created for Electrical Equipment
+
+                        ElementId tempId = GetScheduleId(panName, panPhDemo, famName, elecData, doc, revNum, cbNum);
+
+                        if (tempId != ElementId.InvalidElementId)
+                        {
+                            //add IFailuresPreprocessor Interface to address issues with 2022 and earlier Distribution Equipment schedule creation
+                            PanelScheduleView.CreateInstanceView(doc, tempId, eq.Id);
+                            count += 1;
+                        }
                     }
                 }
 
@@ -70,15 +79,6 @@ namespace CreatePanelSchedules
                 TaskDialog.Show("Panel Schedule Creation Failed", "Panel Schedules failed to create. Contact the BIM Team for assistance.");
                 return Result.Failed;
             }
-        }
-        public List<Element> ElecEquip(Document document)
-        {
-            //get Electrical Equipment BuiltInCategory
-            BuiltInCategory bic = BuiltInCategory.OST_ElectricalEquipment;
-
-            List<Element> elecEquip = new FilteredElementCollector(document).OfCategory(bic).WhereElementIsNotElementType().ToList();
-
-            return elecEquip;
         }
 
         public int GetCircuitBreakersNum(Element elem, int revVer)
@@ -131,6 +131,24 @@ namespace CreatePanelSchedules
                             "Panel Schedule Templates - Switchboard", true))).ToList();
 
             return swbdTemp;
+        }
+
+        public bool CheckExistingSchedule(Element equip)
+        {
+            bool schedExists = false;
+            //create ElementClassFilter for GetDependentElements
+            ElementClassFilter filterCat = new ElementClassFilter(typeof(PanelScheduleView));
+
+            //collect PanelScheduleView of Equipment
+            List<ElementId> depElem = equip.GetDependentElements(filterCat).ToList();
+
+            //check if PanelScheduleView exists
+            if (depElem.Count > 0)
+            {
+                schedExists = true;
+            }
+
+            return schedExists;
         }
 
         public ElementId GetScheduleId(string panelName, string phase, string elemName, string electricalData, Document document, int revVer, int cbNumber)

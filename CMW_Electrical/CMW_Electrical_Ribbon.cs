@@ -9,6 +9,9 @@ using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
 using System.Windows.Media.Imaging;
 
+//Revit 2021 API
+//Debug in Revit 2020
+
 namespace CMW_Electrical
 {
     public class CMW_Electrical_Ribbon : IExternalApplication
