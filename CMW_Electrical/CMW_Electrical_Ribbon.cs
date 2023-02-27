@@ -140,7 +140,7 @@ namespace CMW_Electrical
                 "Panel Name" + System.Environment.NewLine + " Updater ",
                 thisAssemblyPath, "EquipNameUpdate.EquipInfoUpdate");
 
-            PushButton equipUpdateBtn = devicePanel.AddItem(equipUpdateData) as PushButton;
+            PushButton equipUpdateBtn = equipPanel.AddItem(equipUpdateData) as PushButton;
             //equipUpdateBtn ToolTip Information
             equipUpdateBtn.ToolTip = "Update ALL Electrical Equipment Name Information";
             equipUpdateBtn.LongDescription = "";
