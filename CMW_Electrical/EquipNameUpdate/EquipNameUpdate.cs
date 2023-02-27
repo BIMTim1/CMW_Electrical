@@ -56,15 +56,19 @@ namespace EquipNameUpdate
                     string eq_lbl = eq.LookupParameter("Panel Name").AsString();
                     string eq_type = eq.LookupParameter("Family").AsValueString();
 
-                    try
+                    //get PanelScheduleView associated to equipment
+                    IList<ElementId> panSchedId = eq.GetDependentElements(equipFil);
+
+                    //test if PanelScheduleView exists
+                    if (panSchedId.Count > 0)
                     {
-                        //update Panelboard Schedule Name
-                        PanelScheduleView panSched = eq.GetDependentElements(equipFil).Cast<PanelScheduleView>().ToList().First();
+                        //update Panel Schedule Name to match updated Panel Name
+                        Element panSched = doc.GetElement(panSchedId.First());
                         Parameter schedName = panSched.LookupParameter("Panel Schedule Name");
                         schedName.Set(eq_lbl);
                         countPanName += 1;
                     }
-                    catch (Exception ex)
+                    else
                     {
                         countNonName += 1;
                     }
@@ -82,48 +86,56 @@ namespace EquipNameUpdate
 
                     try
                     {
-                        if (eq_type.Contains("Transformer") & !(eq_type.Contains("Utility")))
+                        if (eqSys != null)
                         {
-                            List<Parameter> loadNames = new List<Parameter>();
-                            string downPan = "";
-                            foreach (ElectricalSystem cct in eqSys)
+                            if (eq_type.Contains("Transformer") & !(eq_type.Contains("Utility")))
                             {
-                                string baseEq = cct.BaseEquipment.LookupParameter("Panel Name").AsString();
-                                if (baseEq == eq_lbl)
-                                {
-                                    ElementSet sysElems = cct.Elements;
+                                List<Parameter> loadNames = new List<Parameter>();
+                                string downPan = "";
 
-                                    foreach (Element elem in sysElems)
+                                foreach (ElectricalSystem cct in eqSys)
+                                {
+                                    string baseEq = cct.BaseEquipment.LookupParameter("Panel Name").AsString();
+                                    if (baseEq == eq_lbl)
                                     {
-                                        //assumes only one sub panel connected to Low Voltage XFMR
-                                        downPan = elem.LookupParameter("Panel Name").AsString();
+                                        ElementSet sysElems = cct.Elements;
+
+                                        foreach (Element elem in sysElems)
+                                        {
+                                            //assumes only one sub panel connected to Low Voltage XFMR
+                                            downPan = elem.LookupParameter("Panel Name").AsString();
+                                        }
+                                    }
+                                    else
+                                    {
+                                        //get Load Name parameter of Transformer
+                                        loadNames.Add(cct.LookupParameter("Load Name"));
                                     }
                                 }
-                                else
+
+                                //set Load Name of Transformer
+                                string setName = eq_lbl + " (" + downPan + ")";
+                                loadNames.First().Set(setName);
+                                countLoadname += 1;
+                            }
+                            else
+                            {
+                                foreach (ElectricalSystem cct in eqSys)
                                 {
-                                    //get Load Name parameter of Transformer
-                                    loadNames.Add(cct.LookupParameter("Load Name"));
+                                    string baseEq = cct.BaseEquipment.LookupParameter("Panel Name").AsString();
+                                    if (baseEq != eq_lbl)
+                                    {
+                                        //set Load Name of Electrical Equipment
+                                        Parameter loadName = cct.LookupParameter("Load Name");
+                                        loadName.Set(eq_lbl);
+                                        countLoadname += 1;
+                                    }
                                 }
                             }
-
-                            //set Load Name of Transformer
-                            string setName = eq_lbl + " (" + downPan + ")";
-                            loadNames.First().Set(setName);
-                            countLoadname += 1;
                         }
                         else
                         {
-                            foreach (ElectricalSystem cct in eqSys)
-                            {
-                                string baseEq = cct.BaseEquipment.LookupParameter("Panel Name").AsString();
-                                if (baseEq != eq_lbl)
-                                {
-                                    //set Load Name of Electrical Equipment
-                                    Parameter loadName = cct.LookupParameter("Load Name");
-                                    loadName.Set(eq_lbl);
-                                    countLoadname += 1;
-                                }
-                            }
+                            countNonLoad += 1;
                         }
                     }
                     catch (Exception ex)
@@ -156,15 +168,9 @@ namespace EquipNameUpdate
 
         public List<ElectricalSystem> EquipCircuits2020(FamilyInstance equip)
         {
-            ElectricalSystemSet cct_set = equip.MEPModel.ElectricalSystems;
+            List<ElectricalSystem> cct_set = equip.MEPModel.ElectricalSystems.Cast<ElectricalSystem>().ToList();
 
-            List<ElectricalSystem> equip_ccts = new List<ElectricalSystem>();
-            foreach (ElectricalSystem sys in cct_set)
-            {
-                equip_ccts.Add(sys);
-            }
-
-            return equip_ccts;
+            return cct_set;
         }
     }
 }
