@@ -55,6 +55,16 @@ namespace EquipNameUpdate
                 {
                     string eq_lbl = eq.LookupParameter("Panel Name").AsString();
                     string eq_type = eq.LookupParameter("Family").AsValueString();
+                    Parameter eq_loc_param = eq.LookupParameter("Location");
+                    string eq_loc;
+                    if (eq_loc_param.AsString() != "")
+                    {
+                        eq_loc = ", " + eq_loc_param.AsString();
+                    }
+                    else
+                    {
+                        eq_loc = "";
+                    }
 
                     //get PanelScheduleView associated to equipment
                     IList<ElementId> panSchedId = eq.GetDependentElements(equipFil);
@@ -73,19 +83,19 @@ namespace EquipNameUpdate
                         countNonName += 1;
                     }
 
-                    List<ElectricalSystem> eqSys = new List<ElectricalSystem>();
-                    //verify Revit version and how to collect ElectricalSystem info
-                    if (revVer < 2021)
-                    {
-                        eqSys = EquipCircuits2020(eq);
-                    }
-                    else
-                    {
-                        eqSys = EquipCircuits2021(eq);
-                    }
-
                     try
                     {
+                        List<ElectricalSystem> eqSys = new List<ElectricalSystem>();
+                        //verify Revit version and how to collect ElectricalSystem info
+                        if (revVer < 2021)
+                        {
+                            eqSys = EquipCircuits2020(eq);
+                        }
+                        else
+                        {
+                            eqSys = EquipCircuits2021(eq);
+                        }
+
                         if (eqSys != null)
                         {
                             if (eq_type.Contains("Transformer") & !(eq_type.Contains("Utility")))
@@ -114,7 +124,7 @@ namespace EquipNameUpdate
                                 }
 
                                 //set Load Name of Transformer
-                                string setName = eq_lbl + " (" + downPan + ")";
+                                string setName = eq_lbl + " (" + downPan + ")" + eq_loc;
                                 loadNames.First().Set(setName);
                                 countLoadname += 1;
                             }
@@ -127,7 +137,7 @@ namespace EquipNameUpdate
                                     {
                                         //set Load Name of Electrical Equipment
                                         Parameter loadName = cct.LookupParameter("Load Name");
-                                        loadName.Set(eq_lbl);
+                                        loadName.Set(eq_lbl + eq_loc);
                                         countLoadname += 1;
                                     }
                                 }
