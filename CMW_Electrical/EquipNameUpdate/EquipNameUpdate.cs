@@ -55,75 +55,97 @@ namespace EquipNameUpdate
                 {
                     string eq_lbl = eq.LookupParameter("Panel Name").AsString();
                     string eq_type = eq.LookupParameter("Family").AsValueString();
-
-                    try
+                    Parameter eq_loc_param = eq.LookupParameter("Location");
+                    string eq_loc;
+                    if (eq_loc_param.AsString() != "")
                     {
-                        //update Panelboard Schedule Name
-                        PanelScheduleView panSched = eq.GetDependentElements(equipFil).Cast<PanelScheduleView>().ToList().First();
+                        eq_loc = ", " + eq_loc_param.AsString();
+                    }
+                    else
+                    {
+                        eq_loc = "";
+                    }
+
+                    //get PanelScheduleView associated to equipment
+                    IList<ElementId> panSchedId = eq.GetDependentElements(equipFil);
+
+                    //test if PanelScheduleView exists
+                    if (panSchedId.Count > 0)
+                    {
+                        //update Panel Schedule Name to match updated Panel Name
+                        Element panSched = doc.GetElement(panSchedId.First());
                         Parameter schedName = panSched.LookupParameter("Panel Schedule Name");
                         schedName.Set(eq_lbl);
                         countPanName += 1;
                     }
-                    catch (Exception ex)
+                    else
                     {
                         countNonName += 1;
                     }
 
-                    List<ElectricalSystem> eqSys = new List<ElectricalSystem>();
-                    //verify Revit version and how to collect ElectricalSystem info
-                    if (revVer < 2021)
-                    {
-                        eqSys = EquipCircuits2020(eq);
-                    }
-                    else
-                    {
-                        eqSys = EquipCircuits2021(eq);
-                    }
-
                     try
                     {
-                        if (eq_type.Contains("Transformer") & !(eq_type.Contains("Utility")))
+                        List<ElectricalSystem> eqSys = new List<ElectricalSystem>();
+                        //verify Revit version and how to collect ElectricalSystem info
+                        if (revVer < 2021)
                         {
-                            List<Parameter> loadNames = new List<Parameter>();
-                            string downPan = "";
-                            foreach (ElectricalSystem cct in eqSys)
-                            {
-                                string baseEq = cct.BaseEquipment.LookupParameter("Panel Name").AsString();
-                                if (baseEq == eq_lbl)
-                                {
-                                    ElementSet sysElems = cct.Elements;
-
-                                    foreach (Element elem in sysElems)
-                                    {
-                                        //assumes only one sub panel connected to Low Voltage XFMR
-                                        downPan = elem.LookupParameter("Panel Name").AsString();
-                                    }
-                                }
-                                else
-                                {
-                                    //get Load Name parameter of Transformer
-                                    loadNames.Add(cct.LookupParameter("Load Name"));
-                                }
-                            }
-
-                            //set Load Name of Transformer
-                            string setName = eq_lbl + " (" + downPan + ")";
-                            loadNames.First().Set(setName);
-                            countLoadname += 1;
+                            eqSys = EquipCircuits2020(eq);
                         }
                         else
                         {
-                            foreach (ElectricalSystem cct in eqSys)
+                            eqSys = EquipCircuits2021(eq);
+                        }
+
+                        if (eqSys != null)
+                        {
+                            if (eq_type.Contains("Transformer") & !(eq_type.Contains("Utility")))
                             {
-                                string baseEq = cct.BaseEquipment.LookupParameter("Panel Name").AsString();
-                                if (baseEq != eq_lbl)
+                                List<Parameter> loadNames = new List<Parameter>();
+                                string downPan = "";
+
+                                foreach (ElectricalSystem cct in eqSys)
                                 {
-                                    //set Load Name of Electrical Equipment
-                                    Parameter loadName = cct.LookupParameter("Load Name");
-                                    loadName.Set(eq_lbl);
-                                    countLoadname += 1;
+                                    string baseEq = cct.BaseEquipment.LookupParameter("Panel Name").AsString();
+                                    if (baseEq == eq_lbl)
+                                    {
+                                        ElementSet sysElems = cct.Elements;
+
+                                        foreach (Element elem in sysElems)
+                                        {
+                                            //assumes only one sub panel connected to Low Voltage XFMR
+                                            downPan = elem.LookupParameter("Panel Name").AsString();
+                                        }
+                                    }
+                                    else
+                                    {
+                                        //get Load Name parameter of Transformer
+                                        loadNames.Add(cct.LookupParameter("Load Name"));
+                                    }
+                                }
+
+                                //set Load Name of Transformer
+                                string setName = eq_lbl + " (" + downPan + ")" + eq_loc;
+                                loadNames.First().Set(setName);
+                                countLoadname += 1;
+                            }
+                            else
+                            {
+                                foreach (ElectricalSystem cct in eqSys)
+                                {
+                                    string baseEq = cct.BaseEquipment.LookupParameter("Panel Name").AsString();
+                                    if (baseEq != eq_lbl)
+                                    {
+                                        //set Load Name of Electrical Equipment
+                                        Parameter loadName = cct.LookupParameter("Load Name");
+                                        loadName.Set(eq_lbl + eq_loc);
+                                        countLoadname += 1;
+                                    }
                                 }
                             }
+                        }
+                        else
+                        {
+                            countNonLoad += 1;
                         }
                     }
                     catch (Exception ex)
@@ -156,15 +178,9 @@ namespace EquipNameUpdate
 
         public List<ElectricalSystem> EquipCircuits2020(FamilyInstance equip)
         {
-            ElectricalSystemSet cct_set = equip.MEPModel.ElectricalSystems;
+            List<ElectricalSystem> cct_set = equip.MEPModel.ElectricalSystems.Cast<ElectricalSystem>().ToList();
 
-            List<ElectricalSystem> equip_ccts = new List<ElectricalSystem>();
-            foreach (ElectricalSystem sys in cct_set)
-            {
-                equip_ccts.Add(sys);
-            }
-
-            return equip_ccts;
+            return cct_set;
         }
     }
 }
