@@ -56,6 +56,9 @@
     <Compile Include="CreatePanelSchedules\CreatePanelSchedules.cs" />
     <Compile Include="DeviceSymbolsRotate\DeviceSymbolsRotate.cs" />
     <Compile Include="EquipNameUpdate\EquipNameUpdate.cs" />
+    <Compile Include="FailureHandlers\CircuitBreakerWarningSwallower.cs" />
+    <Compile Include="FailureHandlers\CreateFailureAdvancedHandler.cs" />
+    <Compile Include="FailureHandlers\DisconnectCircuitFailure.cs" />
     <Compile Include="MultiLegSwitchIdUpdate\MultiLegSwitchIdUpdate.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PanelScheduleReset\PanelScheduleReset.cs" />
