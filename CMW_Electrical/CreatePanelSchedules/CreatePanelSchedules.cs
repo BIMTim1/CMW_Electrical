@@ -39,6 +39,10 @@ namespace CreatePanelSchedules
             try
             {
                 trac.Start("Create Panelboard Schedules");
+                ///define failure handling options of Transaction
+                FailureHandlingOptions options = trac.GetFailureHandlingOptions();
+                options.SetFailuresPreprocessor(new CMWElec_FailureHandlers.CircuitBreakerWarningSwallower());
+                trac.SetFailureHandlingOptions(options);
 
                 foreach (Element eq in elecEquip)
                 {
