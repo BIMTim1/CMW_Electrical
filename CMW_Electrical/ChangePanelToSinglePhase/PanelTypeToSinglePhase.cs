@@ -32,9 +32,9 @@ namespace ChangePanelTypeToSinglePhase
             try
             {
                 //create selection elements
-                ISelectionFilter selFilter = new EquipmentSelectionFilter();
-                Reference selectPanel = uidoc.Selection.PickObject(ObjectType.Element, selFilter, "Select a Panelboard Family");
-                //Reference selectPanel = uidoc.Selection.PickObject(ObjectType.Element, "Select a Panelboard Family");
+                //ISelectionFilter selFilter = new EquipmentSelectionFilter();
+                //Reference selectPanel = uidoc.Selection.PickObject(ObjectType.Element, selFilter, "Select a Panelboard Family");
+                Reference selectPanel = uidoc.Selection.PickObject(ObjectType.Element, "Select a Panelboard Family");
                 FamilyInstance selectedPanel = doc.GetElement(selectPanel.ElementId) as FamilyInstance;
 
                 //get Panel Name to collect Electrical Equipment again
