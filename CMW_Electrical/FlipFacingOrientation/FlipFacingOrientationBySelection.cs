@@ -53,18 +53,10 @@ namespace FlipFacingOrientation
 
             foreach (FamilyInstance lighting_fixture in user_selection)
             {
-                if (lighting_fixture.CanFlipWorkPlane)
+                if (lighting_fixture.CanFlipWorkPlane & lighting_fixture.IsWorkPlaneFlipped)
                 {
-                    if (lighting_fixture.IsWorkPlaneFlipped)
-                    {
-                        lighting_fixture.IsWorkPlaneFlipped = false;
-                        count++;
-                    }
-                    else
-                    {
-                        lighting_fixture.IsWorkPlaneFlipped = true;
-                        count++;
-                    }
+                    lighting_fixture.IsWorkPlaneFlipped = false;
+                    count++;
                 }
             }
 
