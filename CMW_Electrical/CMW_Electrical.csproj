@@ -59,6 +59,7 @@
     <Compile Include="FailureHandlers\CircuitBreakerWarningSwallower.cs" />
     <Compile Include="FailureHandlers\CreateFailureAdvancedHandler.cs" />
     <Compile Include="FailureHandlers\DisconnectCircuitFailure.cs" />
+    <Compile Include="FlipFacingOrientation\FlipFacingOrientationBySelection.cs" />
     <Compile Include="MultiLegSwitchIdUpdate\MultiLegSwitchIdUpdate.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PanelScheduleReset\PanelScheduleReset.cs" />
@@ -84,6 +85,8 @@
     <Resource Include="Resources\EquipNameUpdate32x32.png" />
     <Resource Include="Resources\CreatePanelSchedules16x16.png" />
     <Resource Include="Resources\CreatePanelSchedules32x32.png" />
+    <Resource Include="Resources\FlipFacingOrientation16x16.png" />
+    <Resource Include="Resources\FlipFacingOrientation32x32.png" />
     <Content Include="_Addin\CMW_Electrical.addin">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
