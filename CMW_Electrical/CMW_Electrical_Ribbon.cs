@@ -161,20 +161,40 @@ namespace CMW_Electrical
                 thisAssemblyPath, "CreatePanelSchedules.CreatePanelSchedules");
 
             PushButton createPanSchedBtn = equipPanel.AddItem(createPanSchedData) as PushButton;
-            //createPanSchedBtn ToolTip Information
+            //createPanSched ToolTip Information
             createPanSchedBtn.ToolTip = "Create Panel Schedules for All Electrical Equipment";
             createPanSchedBtn.LongDescription = "";
-            //createPanSchedBtn.ToolTipImage = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/ToolTipImages/"));
-            //createPanSchedBtn ContextualHelp Information
+            //createPanSched.ToolTipImage = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/ToolTipImages/"));
+            //createPanSched ContextualHelp Information
             //ContextualHelp createPanSchedHelp = new ContextualHelp(ContextualHelpType.URL, ""pack://application:,,,/CMW_Electrical;component/Resources/ToolTipImages/");
-            //createPanSchedBtn.SetContextualHelp(createPanSchedHelp);
-            //createPanSchedBtn Image Information
+            //createPanSched.SetContextualHelp(createPanSchedHelp);
+            //createPanSched Image Information
             BitmapImage createPanSchedImage = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/CreatePanelSchedules32x32.png"));
             createPanSchedBtn.LargeImage = createPanSchedImage;
             //equipUpdateBtn QuickAccess Image
             createPanSchedBtn.Image = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/CreatePanelSchedules16x16.png"));
 
 
+            //------------create push button for FlipFacingOrientation------------
+            PushButtonData flipFacingOrientData = new PushButtonData("cmdFlipFacingOrientation",
+                "Flip Lighting" + System.Environment.NewLine + " Host Plane ",
+                thisAssemblyPath, "FlipFacingOrientation.FlipFacingOrientation");
+
+            PushButton flipFacingOrientBtn = equipPanel.AddItem(flipFacingOrientData) as PushButton;
+            //flipFacingOrient ToolTip Information
+            flipFacingOrientBtn.ToolTip = "Using a Selection Window, select multiple Lighting Fixtures to Flip the Facing Orientation.";
+            flipFacingOrientBtn.LongDescription = "";
+            //flipFacingOrient.ToolTipImage = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/ToolTipImages/"));
+            //flipFacingOrient ContextualHelp Information
+            //ContextualHelp flipFacingOrientHelp = new ContextualHelp(ContextualHelpType.URL, ""pack://application:,,,/CMW_Electrical;component/Resources/ToolTipImages/");
+            //flipFacingOrient.SetContextualHelp(flipFacingOrientHelp);
+            //flipFacingOrient Image Information
+            BitmapImage flipFacingOrientImage = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/FlipFacingOrientation32x32.png"));
+            flipFacingOrientBtn.LargeImage = flipFacingOrientImage;
+            //equipUpdateBtn QuickAccess Image
+            flipFacingOrientBtn.Image = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/FlipFacingOrientation16x16.png"));
+            
+            
             //------------create push button for <button name>------------
         }
 
