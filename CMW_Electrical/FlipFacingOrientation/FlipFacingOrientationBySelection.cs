@@ -27,7 +27,7 @@ namespace FlipFacingOrientation
             Application app = uiapp.Application;
             UIDocument uidoc = uiapp.ActiveUIDocument;
 
-            List<Element> user_selection = new List<Element>();
+            List<Element> user_selection;
 
             try
             {
@@ -50,16 +50,24 @@ namespace FlipFacingOrientation
             trac.Start("Flip Work Plane of Selected Lighting Fixtures");
 
             int count = 0;
-            int bad_count = 0;
 
             foreach (FamilyInstance lighting_fixture in user_selection)
             {
                 if (lighting_fixture.CanFlipWorkPlane)
                 {
-                    lighting_fixture.IsWorkPlaneFlipped = false;
-                    count++;
+                    if (lighting_fixture.IsWorkPlaneFlipped)
+                    {
+                        lighting_fixture.IsWorkPlaneFlipped = false;
+                        count++;
+                    }
+                    else
+                    {
+                        lighting_fixture.IsWorkPlaneFlipped = true;
+                        count++;
+                    }
                 }
             }
+
             trac.Commit();
 
             TaskDialog.Show("Lighting Fixtures Modification Complete", $"{count} Lighting Fixtures have had their Host Orientation Flipped.");
