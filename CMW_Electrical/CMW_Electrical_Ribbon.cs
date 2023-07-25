@@ -180,7 +180,7 @@ namespace CMW_Electrical
                 "Flip Lighting" + System.Environment.NewLine + " Host Plane ",
                 thisAssemblyPath, "FlipFacingOrientation.FlipFacingOrientationBySelection");
 
-            PushButton flipFacingOrientBtn = equipPanel.AddItem(flipFacingOrientData) as PushButton;
+            PushButton flipFacingOrientBtn = devicePanel.AddItem(flipFacingOrientData) as PushButton;
             //flipFacingOrient ToolTip Information
             flipFacingOrientBtn.ToolTip = "Using a Selection Window, select multiple Lighting Fixtures to Flip the Facing Orientation.";
             flipFacingOrientBtn.LongDescription = "";
