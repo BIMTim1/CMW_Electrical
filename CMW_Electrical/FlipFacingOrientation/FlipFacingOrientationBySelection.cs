@@ -71,7 +71,7 @@ namespace FlipFacingOrientation
         {
             public bool AllowElement(Element element)
             {
-                if (element.Category.Name == "Lighting Fixture")
+                if (element.Category.Name == "Lighting Fixtures")
                 {
                     return true;
                 }
