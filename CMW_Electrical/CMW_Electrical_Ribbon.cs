@@ -178,7 +178,7 @@ namespace CMW_Electrical
             //------------create push button for FlipFacingOrientation------------
             PushButtonData flipFacingOrientData = new PushButtonData("cmdFlipFacingOrientation",
                 "Flip Lighting" + System.Environment.NewLine + " Host Plane ",
-                thisAssemblyPath, "FlipFacingOrientation.FlipFacingOrientation");
+                thisAssemblyPath, "FlipFacingOrientation.FlipFacingOrientationBySelection");
 
             PushButton flipFacingOrientBtn = equipPanel.AddItem(flipFacingOrientData) as PushButton;
             //flipFacingOrient ToolTip Information
