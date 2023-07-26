@@ -164,10 +164,10 @@ namespace CMW_Electrical
             //createPanSched ToolTip Information
             createPanSchedBtn.ToolTip = "Create Panel Schedules for All Electrical Equipment";
             createPanSchedBtn.LongDescription = "";
-            //createPanSched.ToolTipImage = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/ToolTipImages/"));
+            //createPanSchedBtn.ToolTipImage = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/ToolTipImages/"));
             //createPanSched ContextualHelp Information
             //ContextualHelp createPanSchedHelp = new ContextualHelp(ContextualHelpType.URL, ""pack://application:,,,/CMW_Electrical;component/Resources/ToolTipImages/");
-            //createPanSched.SetContextualHelp(createPanSchedHelp);
+            //createPanSchedBtn.SetContextualHelp(createPanSchedHelp);
             //createPanSched Image Information
             BitmapImage createPanSchedImage = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/CreatePanelSchedules32x32.png"));
             createPanSchedBtn.LargeImage = createPanSchedImage;
@@ -184,17 +184,37 @@ namespace CMW_Electrical
             //flipFacingOrient ToolTip Information
             flipFacingOrientBtn.ToolTip = "Using a Selection Window, select multiple Lighting Fixtures to Flip the Facing Orientation.";
             flipFacingOrientBtn.LongDescription = "";
-            //flipFacingOrient.ToolTipImage = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/ToolTipImages/"));
+            //flipFacingOrientBtn.ToolTipImage = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/ToolTipImages/"));
             //flipFacingOrient ContextualHelp Information
             //ContextualHelp flipFacingOrientHelp = new ContextualHelp(ContextualHelpType.URL, ""pack://application:,,,/CMW_Electrical;component/Resources/ToolTipImages/");
-            //flipFacingOrient.SetContextualHelp(flipFacingOrientHelp);
+            //flipFacingOrientBtn.SetContextualHelp(flipFacingOrientHelp);
             //flipFacingOrient Image Information
             BitmapImage flipFacingOrientImage = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/FlipFacingOrientation32x32.png"));
             flipFacingOrientBtn.LargeImage = flipFacingOrientImage;
             //equipUpdateBtn QuickAccess Image
             flipFacingOrientBtn.Image = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/FlipFacingOrientation16x16.png"));
-            
-            
+
+
+            //------------create push button for UpdateMotorMOCP------------
+            PushButtonData motorMOCPUpdateData = new PushButtonData("cmdmotorMOCPUpdate",
+                "Update Motor" + System.Environment.NewLine + " MOCP ",
+                thisAssemblyPath, "MotorMOCPUpdate.UpdateMotorMOCP");
+
+            PushButton motorMOCPUpdateBtn = devicePanel.AddItem(motorMOCPUpdateData) as PushButton;
+            //motorMOCPUpdate ToolTip Information
+            motorMOCPUpdateBtn.ToolTip = "Using a Selection Window, select multiple Lighting Fixtures to Flip the Facing Orientation.";
+            motorMOCPUpdateBtn.LongDescription = "";
+            //motorMOCPUpdateBtn.ToolTipImage = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/ToolTipImages/"));
+            //motorMOCPUpdate ContextualHelp Information
+            //ContextualHelp motorMOCPUpdateHelp = new ContextualHelp(ContextualHelpType.URL, ""pack://application:,,,/CMW_Electrical;component/Resources/ToolTipImages/");
+            //motorMOCPUpdateBtn.SetContextualHelp(motorMOCPUpdateHelp);
+            //motorMOCPUpdate Image Information
+            BitmapImage motorMOCPUpdateImage = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/UpdateMotorMOCP32x32.png"));
+            motorMOCPUpdateBtn.LargeImage = motorMOCPUpdateImage;
+            //equipUpdateBtn QuickAccess Image
+            motorMOCPUpdateBtn.Image = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/UpdateMotorMOCP16x16.png"));
+
+
             //------------create push button for <button name>------------
         }
 
