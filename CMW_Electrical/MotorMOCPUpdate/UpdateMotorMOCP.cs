@@ -27,6 +27,9 @@ namespace MotorMOCPUpdate
             Application app = uiapp.Application;
             UIDocument uidoc = uiapp.ActiveUIDocument;
 
+            //get ActiveDocument RevitVersion
+            int rev_version = Int32.Parse(app.VersionNumber);
+
             //define BuiltInCategory to collect
             BuiltInCategory bic = BuiltInCategory.OST_ElectricalFixtures;
 
@@ -49,7 +52,7 @@ namespace MotorMOCPUpdate
             return Result.Succeeded;
         }
 
-        public bool CorrectMOCP(Element mtr, Document document)
+        public bool CorrectMOCP(Element mtrCct, Document document)
         {
             return false;
         }
