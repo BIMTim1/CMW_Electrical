@@ -49,12 +49,62 @@ namespace MotorMOCPUpdate
                 return Result.Failed;
             }
 
-            return Result.Succeeded;
+            Transaction trac = new Transaction(doc);
+
+            try
+            {
+                trac.Start("Update Motor Circuit Load Name from MOCP");
+
+                foreach (FamilyInstance motor in all_motors)
+                {
+                    //collect motor MOCP
+                    //verify if can be converted to number
+                    string motor_mocp_str = motor.LookupParameter("MES_(MFS) MOCP").AsString();
+                    bool isNumber = Int32.TryParse("1234", out int motor_mocp);
+
+                    if (isNumber)
+                    {
+                        
+                    }
+
+                }
+
+                trac.Commit();
+
+                return Result.Succeeded;
+            }
+            catch (Exception ex)
+            {
+                TaskDialog.Show("An Error Occurred", "Contact the BIM Team for Assistance.");
+                return Result.Failed;
+            }
         }
 
-        public bool CorrectMOCP(Element mtrCct, Document document)
+        //verify this method works
+        public ElectricalSystem GetElectricalCircuit(int revitVersion, Document document, FamilyInstance mtr)
         {
-            return false;
+            ElectricalSystem mtrCct;
+
+            if (revitVersion < 2021)
+            {
+                ElectricalSystemSet mtrCctSet = mtr.MEPModel.ElectricalSystems;
+
+                foreach (ElectricalSystem elecSys in mtrCctSet)
+                {
+                    mtrCct = elecSys;
+
+                    return mtrCct;
+                }
+            }
+
+            mtrCct = mtr.MEPModel.GetElectricalSystems().First();
+
+            return mtrCct;
+        }
+
+        public void CorrectMOCP(Element mtrCct, int mocp)
+        {
+            mtrCct.LookupParameter("Rating").Set(mocp);
         }
     }
 }
