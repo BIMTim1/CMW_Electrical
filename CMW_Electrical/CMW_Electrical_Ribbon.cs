@@ -160,7 +160,7 @@ namespace CMW_Electrical
                 "Create Panel" + System.Environment.NewLine + " Schedules ",
                 thisAssemblyPath, "CreatePanelSchedules.CreatePanelSchedules");
 
-            PushButton createPanSchedBtn = equipPanel.AddItem(createPanSchedData) as PushButton;
+            PushButton createPanSchedBtn = schedulePanel.AddItem(createPanSchedData) as PushButton;
             //createPanSched ToolTip Information
             createPanSchedBtn.ToolTip = "Create Panel Schedules for All Electrical Equipment";
             createPanSchedBtn.LongDescription = "";
