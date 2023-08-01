@@ -27,6 +27,8 @@ namespace MotorMOCPUpdate
             Application app = uiapp.Application;
             UIDocument uidoc = uiapp.ActiveUIDocument;
 
+            int count = 0;
+
             //get ActiveDocument RevitVersion
             int rev_version = Int32.Parse(app.VersionNumber);
 
@@ -34,11 +36,12 @@ namespace MotorMOCPUpdate
             BuiltInCategory bic = BuiltInCategory.OST_ElectricalFixtures;
 
             //collect all Motors in model
-            List<Element> all_motors = new FilteredElementCollector(doc)
+            List<FamilyInstance> all_motors = new FilteredElementCollector(doc)
                 .OfCategory(bic)
                 .WhereElementIsNotElementType()
                 .ToElements()
                 .Where(x=>x.LookupParameter("Family").AsValueString().Contains("Motor"))
+                .Cast<FamilyInstance>()
                 .ToList();
 
             //check if the tool collected any Motor Elements
@@ -60,14 +63,17 @@ namespace MotorMOCPUpdate
                     //collect motor MOCP
                     //verify if can be converted to number
                     string motor_mocp_str = motor.LookupParameter("MES_(MFS) MOCP").AsString();
-                    bool isNumber = Int32.TryParse("1234", out int motor_mocp);
+                    bool isNumber = Int32.TryParse(motor_mocp_str, out int motor_mocp);
 
-                    if (isNumber)
+                    if (!isNumber)
                     {
-                        
+                        return Result.Failed;
                     }
 
+                    bool updatedMOCP = CorrectMOCP(motor, rev_version, count);
                 }
+
+                TaskDialog.Show("Motor Circuit Ratings Updated", $"{count} Motor Circuits have been updated to display the most up to date MOCP information.");
 
                 trac.Commit();
 
@@ -81,7 +87,7 @@ namespace MotorMOCPUpdate
         }
 
         //verify this method works
-        public ElectricalSystem GetElectricalCircuit(int revitVersion, Document document, FamilyInstance mtr)
+        public ElectricalSystem GetElectricalCircuit(int revitVersion, FamilyInstance mtr)
         {
             ElectricalSystem mtrCct;
 
@@ -102,9 +108,30 @@ namespace MotorMOCPUpdate
             return mtrCct;
         }
 
-        public void CorrectMOCP(Element mtrCct, int mocp)
+        public bool CorrectMOCP(FamilyInstance mtr, int revitVersion, int counter)
         {
-            mtrCct.LookupParameter("Rating").Set(mocp);
+            //collect motor MOCP
+            //verify if can be converted to number
+            string motor_mocp_str = mtr.LookupParameter("MES_(MFS) MOCP").AsString();
+            bool isNumber = Int32.TryParse("1234", out int motor_mocp);
+
+            if (!isNumber)
+            {
+                return false;
+            }
+
+            //use function to collect ElectricalSystem (circuit) from Motor FamilyInstance
+            ElectricalSystem mtrCct = GetElectricalCircuit(revitVersion, mtr);
+
+            //update ElectricalSystem "Rating" parameter
+            mtrCct.LookupParameter("Rating").Set(motor_mocp);
+
+            //collect information to export to export to log file
+
+            //add 1 to counter
+            counter++;
+
+            return true;
         }
     }
 }
