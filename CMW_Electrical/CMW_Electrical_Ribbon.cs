@@ -23,6 +23,7 @@ namespace CMW_Electrical
             application.CreateRibbonTab(tabName);
 
             //add ribbon panels
+            RibbonPanel aboutPanel = application.CreateRibbonPanel(tabName, "About");
             RibbonPanel circuitPanel = application.CreateRibbonPanel(tabName, "Circuits");
             RibbonPanel devicePanel = application.CreateRibbonPanel(tabName, "Devices");
             RibbonPanel equipPanel = application.CreateRibbonPanel(tabName, "Equipment");
@@ -31,6 +32,27 @@ namespace CMW_Electrical
 
             //get dll assembly path
             string thisAssemblyPath = Assembly.GetExecutingAssembly().Location;
+
+
+            //------------create push button for GeneralInfoButton------------
+            PushButtonData generalInfoData = new PushButtonData(
+                "cmdAddElecCircuitNote",
+                "Add-in" + System.Environment.NewLine + " Information ",
+                thisAssemblyPath, "AddinInformation.AddinInfo");//<namespace name>.<cs name>
+
+            PushButton generalInfoBtn = circuitPanel.AddItem(generalInfoData) as PushButton;
+            //generalInfoBtn ToolTip Information
+            //generalInfoBtn.ToolTip = "";
+            //generalInfoBtn.LongDescription = "";
+            //generalInfoBtn.ToolTipImage = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/ToolTipImages/CircuitNoteTTImage.png"));
+            //generalInfoBtn ContextualHelp Information
+            //ContextualHelp generalInfoHelp = new ContextualHelp(ContextualHelpType.Url, "");
+            //generalInfoBtn.SetContextualHelp(generalInfoHelp);
+            //generalInfoBtn Image Information
+            BitmapImage generalInfoImage = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/Info32x32.png"));
+            generalInfoBtn.LargeImage = generalInfoImage;
+            //create secondary image for Quick Access Toolbar
+            //generalInfoBtn.Image = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/AddElecCctNote16x16.png"));
 
 
             //------------create push button for AddElecCircuitNote------------
