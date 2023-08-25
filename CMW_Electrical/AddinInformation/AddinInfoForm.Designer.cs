@@ -91,6 +91,7 @@
             // 
             // btnReportBug
             // 
+            this.btnReportBug.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnReportBug.Location = new System.Drawing.Point(15, 176);
             this.btnReportBug.Name = "btnReportBug";
             this.btnReportBug.Size = new System.Drawing.Size(254, 23);
@@ -101,6 +102,7 @@
             // 
             // btnBIMSite
             // 
+            this.btnBIMSite.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnBIMSite.Location = new System.Drawing.Point(15, 205);
             this.btnBIMSite.Name = "btnBIMSite";
             this.btnBIMSite.Size = new System.Drawing.Size(254, 23);
@@ -123,6 +125,7 @@
             this.Controls.Add(this.picBoxLogo);
             this.Name = "cmwElecAddinInfo";
             this.ShowIcon = false;
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "CMW - Electrical Add-in";
             ((System.ComponentModel.ISupportInitialize)(this.picBoxLogo)).EndInit();
             this.ResumeLayout(false);

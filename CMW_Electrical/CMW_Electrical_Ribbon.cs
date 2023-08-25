@@ -39,11 +39,11 @@ namespace CMW_Electrical
 
             //------------create push button for GeneralInfoButton------------
             PushButtonData generalInfoData = new PushButtonData(
-                "cmdAddElecCircuitNote",
+                "cmdAddinInformation",
                 "Add-in" + System.Environment.NewLine + " Information ",
                 thisAssemblyPath, "AddinInformation.AddinInfo");//<namespace name>.<cs name>
 
-            PushButton generalInfoBtn = circuitPanel.AddItem(generalInfoData) as PushButton;
+            PushButton generalInfoBtn = aboutPanel.AddItem(generalInfoData) as PushButton;
             //generalInfoBtn ToolTip Information
             //generalInfoBtn.ToolTip = "";
             //generalInfoBtn.LongDescription = "";
