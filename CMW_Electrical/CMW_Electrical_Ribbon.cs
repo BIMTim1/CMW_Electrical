@@ -16,6 +16,9 @@ namespace CMW_Electrical
 {
     public class CMW_Electrical_Ribbon : IExternalApplication
     {
+        public const string versionNumber = "1.0.0";
+        public const string releaseDate = "August 2023";
+
         static void AddRibbonPanel(UIControlledApplication application)
         {
             //Create a custom ribbon tab
