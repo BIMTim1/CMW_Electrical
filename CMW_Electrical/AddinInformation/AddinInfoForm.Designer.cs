@@ -40,6 +40,7 @@
             // 
             // picBoxLogo
             // 
+            this.picBoxLogo.Image = global::CMW_Electrical.Properties.Resources.CMTALogo;
             this.picBoxLogo.Location = new System.Drawing.Point(12, 12);
             this.picBoxLogo.Name = "picBoxLogo";
             this.picBoxLogo.Size = new System.Drawing.Size(260, 88);

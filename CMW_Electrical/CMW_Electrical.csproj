@@ -105,7 +105,7 @@
     <Resource Include="Resources\UpdateMotorMOCP16x16.png" />
     <Resource Include="Resources\UpdateMotorMOCP32x32.png" />
     <Resource Include="Resources\Info32x32.png" />
-    <Resource Include="Resources\CMTA LEGENCE Logo_plan version.jpg" />
+    <Resource Include="Resources\CMTALogo.jpg" />
     <Content Include="_Addin\CMW_Electrical.addin">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
