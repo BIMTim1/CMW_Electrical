@@ -43,6 +43,8 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -51,6 +53,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AddinInformation\AddinInfo.cs" />
+    <Compile Include="AddinInformation\AddinInfoForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="AddinInformation\AddinInfoForm.Designer.cs">
+      <DependentUpon>AddinInfoForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="ChangePanelToSinglePhase\PanelTypeToSinglePhase.cs" />
     <Compile Include="CMW_Electrical_Ribbon.cs" />
     <Compile Include="CreatePanelSchedules\CreatePanelSchedules.cs" />
@@ -65,6 +74,11 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PanelScheduleReset\PanelScheduleReset.cs" />
     <Compile Include="AddElecCircuitNote\AddElecCircuitNote.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\AddElecCctNote32x32.png" />
@@ -90,12 +104,24 @@
     <Resource Include="Resources\FlipFacingOrientation32x32.png" />
     <Resource Include="Resources\UpdateMotorMOCP16x16.png" />
     <Resource Include="Resources\UpdateMotorMOCP32x32.png" />
+    <Resource Include="Resources\Info32x32.png" />
+    <Resource Include="Resources\CMTALogo.jpg" />
+    <None Include="Resources\CMTALogo1.jpg" />
     <Content Include="_Addin\CMW_Electrical.addin">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Resource Include="Resources\AddElecCctNote16x16.png" />
     <Resource Include="Resources\ResetPanelTemplate_16x16.png" />
     <Resource Include="Resources\ResetPanelTemplate_32x32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="AddinInformation\AddinInfoForm.resx">
+      <DependentUpon>AddinInfoForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
