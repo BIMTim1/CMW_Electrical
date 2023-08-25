@@ -106,6 +106,7 @@
     <Resource Include="Resources\UpdateMotorMOCP32x32.png" />
     <Resource Include="Resources\Info32x32.png" />
     <Resource Include="Resources\CMTALogo.jpg" />
+    <None Include="Resources\CMTALogo1.jpg" />
     <Content Include="_Addin\CMW_Electrical.addin">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
