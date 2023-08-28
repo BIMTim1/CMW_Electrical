@@ -62,6 +62,7 @@
     </Compile>
     <Compile Include="ChangePanelToSinglePhase\PanelTypeToSinglePhase.cs" />
     <Compile Include="CMW_Electrical_Ribbon.cs" />
+    <Compile Include="CorrectLightFixtures\CorrectLightFixtures.cs" />
     <Compile Include="CreatePanelSchedules\CreatePanelSchedules.cs" />
     <Compile Include="DeviceSymbolsRotate\DeviceSymbolsRotate.cs" />
     <Compile Include="EquipNameUpdate\EquipNameUpdate.cs" />
@@ -107,6 +108,8 @@
     <Resource Include="Resources\Info32x32.png" />
     <Resource Include="Resources\CMTALogo.jpg" />
     <None Include="Resources\CMTALogo1.jpg" />
+    <Resource Include="Resources\CorrectLightFixtures16x16.png" />
+    <Resource Include="Resources\CorrectLightFixtures32x32.png" />
     <Content Include="_Addin\CMW_Electrical.addin">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
