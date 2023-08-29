@@ -31,6 +31,8 @@ namespace CorrectLightFixtures
 
             const string PARAM_TEST = "Light Fixture Schedule_ML-Manufacturer";
 
+            List<ElementId> familiesToDelete = new List<ElementId>();
+
             //default parameters
             List<string> new_string_parameters = new List<string>()
             {
@@ -178,6 +180,113 @@ namespace CorrectLightFixtures
             foreach (string paramName in dimensionParams)
             {
                 newFixtureType.LookupParameter(paramName).Set(oldFixtureType.LookupParameter(paramName).AsDouble());
+            }
+        }
+
+        /// <summary>
+        /// A function to end all functions.
+        /// </summary>
+        /// <param name="updateTypeString"></param>
+        /// <param name="constLtgCat"></param>
+        /// <param name="schedParamTest"></param>
+        /// <param name="allLightingFamilyNames"></param>
+        /// <param name="familiesToBeDeleted"></param>
+        /// <param name="newStringParameters"></param>
+        /// <param name="oldStringParameters"></param>
+        /// <param name="sameParameters"></param>
+        public void UpdateFixtureInfo(
+            string updateTypeString, BuiltInCategory constLtgCat, string schedParamTest, 
+            List<string> allLightingFamilyNames, List<ElementId> familiesToBeDeleted, 
+            List<string> newStringParameters, List<string> oldStringParameters, 
+            List<string> sameParameters, Document document, string oldPath, string newPath)
+        {
+            List<FamilyInstance> allLightingFamilies = 
+                new FilteredElementCollector(document)
+                .OfCategory(constLtgCat)
+                .WhereElementIsNotElementType()
+                .Cast<FamilyInstance>()
+                .ToList();
+
+            List<FamilyInstance> filteredLightingFamilies = 
+                (updateTypeString == "old" ? 
+                from lf in allLightingFamilies 
+                where lf.Symbol.LookupParameter(schedParamTest) != null 
+                select lf : 
+                from lf in allLightingFamilies 
+                where lf.Symbol.LookupParameter(schedParamTest) == null 
+                select lf)
+                .ToList();
+
+            foreach (FamilyInstance fixture in filteredLightingFamilies)
+            {
+                //collect FamilyInstance information of current Lighting Fixture
+                FamilySymbol fixtureType = fixture.Symbol;
+                string fixtureInfo = fixture.LookupParameter("Family and Type").AsValueString();
+
+                //create variables to be used throughout function
+                string familyNameTest;
+                string familyPath;
+                bool deleteDefaultSymbols = false;
+
+                //create references to Lighting Fixture FamilySymbol to be loaded into project and updated
+                if (updateTypeString == "old")
+                {
+                    familyNameTest = $"x{fixtureType.Family.Name}";
+                    familyPath = $"{oldPath}/{familyNameTest}.rfa";
+                }
+                else
+                {
+                    familyNameTest = fixtureType.Family.Name.Substring(1);
+                    familyPath = $"{newPath}/{familyNameTest}.rfa";
+                }
+
+                if (!familyNameTest.Contains(familyNameTest))
+                {
+                    document.LoadFamily(familyPath);
+
+                    allLightingFamilyNames.Add(familyNameTest);
+                    deleteDefaultSymbols = true;
+                }
+
+                if (deleteDefaultSymbols)
+                {
+                    List<ElementId> symbolsToDelete = 
+                        new FilteredElementCollector(document)
+                        .OfClass(typeof(FamilySymbol))
+                        .ToElements()
+                        .Where(x => x.LookupParameter("Family Name").AsString() == 
+                        familyNameTest && !x.LookupParameter("Type Name").AsString().Contains("Standard"))
+                        .Cast<ElementId>()
+                        .ToList();
+
+                    foreach (ElementId elemId in symbolsToDelete)
+                    {
+                        document.Delete(elemId);
+                    }
+                }
+
+                FamilySymbol modifyFamilySymbol =
+                    new FilteredElementCollector(document)
+                    .OfClass(typeof(FamilySymbol))
+                    .Where(x => x.LookupParameter("Family Name").AsString() == 
+                    familyNameTest && x.LookupParameter("Type Name").AsString().Contains("Standard"))
+                    .Cast<FamilySymbol>()
+                    .First();
+
+                ElementId incorrectFamily = fixtureType.Family.Id;
+
+                if (!familiesToBeDeleted.Contains(incorrectFamily))
+                {
+                    familiesToBeDeleted.Add(incorrectFamily);
+                }
+
+                FamilySymbol newFixtureSymbol = modifyFamilySymbol.Duplicate(fixtureType.LookupParameter("Type Name").AsString()) as FamilySymbol;
+
+                UpdateParameterInfo(updateTypeString, fixtureType, newFixtureSymbol, newStringParameters, oldStringParameters, sameParameters);
+
+                UpdateDimensionParameters(fixtureType, newFixtureSymbol);
+
+                //replace all fixtures of same Family and Type to same FamilySymbol
             }
         }
     }
