@@ -150,5 +150,35 @@ namespace CorrectLightFixtures
                 }
             }
         }
+
+        /// <summary>
+        /// Collects all parameters of BuiltInParameterGroup.PG_GEOMETRY (Dimensions)
+        /// to be updated in new Lighting Fixture FamilySymbol
+        /// </summary>
+        /// 
+        public void UpdateDimensionParameters(FamilySymbol oldFixtureType, FamilySymbol newFixtureType)
+        {
+            //collect Dimension category parameters from incorrect fixture
+            ParameterSet typeParams = oldFixtureType.Parameters;
+
+            List<string> dimensionParams = new List<string>();
+
+            foreach (Parameter param in typeParams)
+            {
+                if (param.Definition.ParameterGroup == 
+                    BuiltInParameterGroup.PG_GEOMETRY && 
+                    param.Definition.Name.ToString().Contains("Light Fixture Schedule") && 
+                    !param.Definition.Name.ToString().Contains("Dimension"))
+                {
+                    dimensionParams.Add(param.Definition.Name.ToString());
+                }
+            }
+
+            //update dimension parameters of updated Lighting Fixture FamilySymbol
+            foreach (string paramName in dimensionParams)
+            {
+                newFixtureType.LookupParameter(paramName).Set(oldFixtureType.LookupParameter(paramName).AsDouble());
+            }
+        }
     }
 }
