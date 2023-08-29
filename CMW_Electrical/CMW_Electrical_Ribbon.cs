@@ -45,7 +45,7 @@ namespace CMW_Electrical
 
             PushButton generalInfoBtn = aboutPanel.AddItem(generalInfoData) as PushButton;
             //generalInfoBtn ToolTip Information
-            //generalInfoBtn.ToolTip = "";
+            generalInfoBtn.ToolTip = "CMTA Midwest - Electrical Add-in Information";
             //generalInfoBtn.LongDescription = "";
             //generalInfoBtn.ToolTipImage = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/ToolTipImages/CircuitNoteTTImage.png"));
             //generalInfoBtn ContextualHelp Information
