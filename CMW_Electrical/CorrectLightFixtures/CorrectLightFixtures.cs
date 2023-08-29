@@ -99,17 +99,34 @@ namespace CorrectLightFixtures
 
         public void UpdateParameterInfo(string updateInfo, FamilySymbol oldFixtureType, 
             FamilySymbol newFixtureType, List<string> newParams, 
-            List<string> oldParams, List<string> integerParams)
+            List<string> oldParams, List<string> stringParams, List<string> integerParams)
         {
             List<string[]> zippedList = new List<string[]>();
+            Dictionary<string, string> paramDict = new Dictionary<string, string>();
 
             if (updateInfo == "old")
             {
-                zippedList = oldParams.Zip(newParams, (oldP, newP) => new[] { oldP, newP }).ToList();
+                //zippedList = oldParams.Zip(newParams, (oldP, newP) => new[] { oldP, newP }).ToList();
+                paramDict = oldParams.Zip(newParams, (k, v) => new { Key = k, Value = v }).ToDictionary(x => x.Key, x => x.Value);
             }
             else
             {
-                zippedList = newParams.Zip(oldParams, (newP, oldP) => new[] { newP, oldP }).ToList();
+                paramDict = newParams.Zip(oldParams, (k, v) => new { Key = k, Value = v }).ToDictionary(x => x.Key, x => x.Value);
+            }
+
+            foreach (KeyValuePair<string, string> param in paramDict)
+            {
+                newFixtureType.LookupParameter(param.Key).Set(oldFixtureType.LookupParameter(param.Value).AsString());
+            }
+
+            foreach (string param in stringParams)
+            {
+                newFixtureType.LookupParameter(param).Set(oldFixtureType.LookupParameter(param).ToString());
+            }
+            
+            foreach (string param in integerParams)
+            {
+                newFixtureType.LookupParameter(param).Set(oldFixtureType.LookupParameter(param).AsDouble());
             }
         }
     }
