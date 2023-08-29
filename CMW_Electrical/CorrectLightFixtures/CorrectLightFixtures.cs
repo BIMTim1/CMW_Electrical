@@ -48,9 +48,11 @@ namespace CorrectLightFixtures
                 "Light Fixture Schedule_Finish", "Light Fixture Schedule_Dimensions"
             };
 
-            List<string> same_double_parameters = new List<string>()
+            List<string> sameParameters = new List<string>()
             {
-                "Light Fixture Schedule_Voltage", "Light Fixture Schedule_Apparent Load"
+                "Light Fixture Schedule_Type", "Light Fixture Schedule_Lamp CCT Kelvin",
+                "Description", "Type Comments", "Light Fixture Schedule_Voltage",
+                "Light Fixture Schedule_Apparent Load", "Light Fixture Schedule_Number of Poles"
             };
 
             List<string> allFixtureFamilyNames = (from fixture in 
@@ -73,6 +75,10 @@ namespace CorrectLightFixtures
             return Result.Succeeded;
         }
 
+        /// <summary>
+        /// Collects parameter by name from selected Revit schedule.
+        /// </summary>
+        ///
         public bool FindFieldByName(ScheduleDefinition schedDef, string fieldName, Document document)
         {
             bool returnBool = false;
@@ -97,9 +103,14 @@ namespace CorrectLightFixtures
             return returnBool;
         }
 
+        /// <summary>
+        /// Creates a dictionary of parameter lists based on which parameters are to be used in the project.
+        /// Dictionary is used to update parameters of all Lighting Fixture FamilySymbols.
+        /// </summary>
+        /// 
         public void UpdateParameterInfo(string updateInfo, FamilySymbol oldFixtureType, 
             FamilySymbol newFixtureType, List<string> newParams, 
-            List<string> oldParams, List<string> stringParams, List<string> integerParams)
+            List<string> oldParams, List<string> sameParams)
         {
             List<string[]> zippedList = new List<string[]>();
             Dictionary<string, string> paramDict = new Dictionary<string, string>();
@@ -119,14 +130,24 @@ namespace CorrectLightFixtures
                 newFixtureType.LookupParameter(param.Key).Set(oldFixtureType.LookupParameter(param.Value).AsString());
             }
 
-            foreach (string param in stringParams)
+            foreach (string param in sameParams)
             {
-                newFixtureType.LookupParameter(param).Set(oldFixtureType.LookupParameter(param).ToString());
-            }
-            
-            foreach (string param in integerParams)
-            {
-                newFixtureType.LookupParameter(param).Set(oldFixtureType.LookupParameter(param).AsDouble());
+                Parameter setParam = newFixtureType.LookupParameter(param);
+
+                switch (setParam.StorageType)
+                {
+                    case StorageType.String:
+                        setParam.Set(oldFixtureType.LookupParameter(param).AsString());
+                        break;
+
+                    case StorageType.Double:
+                        setParam.Set(oldFixtureType.LookupParameter(param).AsDouble());
+                        break;
+
+                    case StorageType.Integer:
+                        setParam.Set(oldFixtureType.LookupParameter(param).AsInteger());
+                        break;
+                }
             }
         }
     }
