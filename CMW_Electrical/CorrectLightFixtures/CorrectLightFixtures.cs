@@ -57,16 +57,24 @@ namespace CorrectLightFixtures
                 "Light Fixture Schedule_Apparent Load", "Light Fixture Schedule_Number of Poles"
             };
 
-            List<string> allFixtureFamilyNames = (from fixture in 
-                                                      new FilteredElementCollector(doc)
-                                                      .OfClass(typeof(Family))
-                                                      .Cast<Family>()
-                                                      .Where(x => x.FamilyCategory.Name.ToString() == "Lighting Fixture")
-                                                      .ToList() 
-                                                  select fixture.Name.ToString())
-                                                  .ToList();
+            //List<string> allFixtureFamilyNames = (from fixture in 
+            //                                          new FilteredElementCollector(doc)
+            //                                          .OfClass(typeof(Family))
+            //                                          .Cast<Family>()
+            //                                          .Where(x => x.FamilyCategory.Name.ToString() == "Lighting Fixtures") 
+            //                                      select fixture.Name.ToString())
+            //                                      .ToList();
 
-            List<Element> lightingSchedules = new FilteredElementCollector(doc)
+            List<Family> allFixtureFamilies = 
+                new FilteredElementCollector(doc)
+                .OfClass(typeof(Family))
+                .Cast<Family>()
+                .Where(x => x.FamilyCategory.Name == "Lighting Fixtures")
+                .ToList();
+
+            List<string> allFixtureFamilyNames = (from fixture in allFixtureFamilies select fixture.Name.ToString()).ToList();
+
+            List < Element > lightingSchedules = new FilteredElementCollector(doc)
                 .OfClass(typeof(ViewSchedule))
                 .ToElements()
                 .Where(x => x.Name != null && x.Name.ToString().Contains("LIGHT FIXTURE SCHEDULE"))
@@ -123,25 +131,23 @@ namespace CorrectLightFixtures
         /// Collects parameter by name from selected Revit schedule.
         /// </summary>
         ///
-        public bool FindFieldByName(ScheduleDefinition schedDef, string fieldName, Document document)
+        public bool FindFieldByName(ScheduleDefinition schedDef, string paramTest, Document document)
         {
             bool returnBool = false;
 
-            try
-            {
-                IList<ScheduleFieldId> fieldIds = schedDef.GetFieldOrder();
+            IList<ScheduleFieldId> fieldIds = schedDef.GetFieldOrder();
 
-                foreach (ScheduleFieldId fieldId in fieldIds)
+            foreach (ScheduleFieldId fieldId in fieldIds)
+            {
+                ScheduleField field = schedDef.GetField(fieldId);
+
+                if (!field.IsCalculatedField && !field.IsCombinedParameterField)
                 {
-                    if (schedDef.GetField(fieldId).GetSchedulableField().GetName(document) == fieldName)
+                    if (field.GetSchedulableField().GetName(document) == paramTest)
                     {
                         returnBool = true;
                     }
                 }
-            }
-            catch
-            {
-                returnBool = false;
             }
 
             return returnBool;
@@ -287,7 +293,7 @@ namespace CorrectLightFixtures
                 }
 
                 //from selected folder locations, load families into active project
-                if (!familyNameTest.Contains(familyNameTest))
+                if (!allLightingFamilyNames.Contains(familyNameTest))
                 {
                     document.LoadFamily(familyPath);
 
@@ -295,17 +301,15 @@ namespace CorrectLightFixtures
                     deleteDefaultSymbols = true;
                 }
 
-                //delete incorrect FamilySymbol (Type) from project
+                //delete FamilySymbols of recently loaded family from project
                 if (deleteDefaultSymbols)
                 {
-                    List<ElementId> symbolsToDelete = 
+                    List<ElementId> symbolsToDelete = (from elem in
                         new FilteredElementCollector(document)
                         .OfClass(typeof(FamilySymbol))
-                        .ToElements()
-                        .Where(x => x.LookupParameter("Family Name").AsString() == 
+                        .Where(x => x.LookupParameter("Family Name").AsString() ==
                         familyNameTest && !x.LookupParameter("Type Name").AsString().Contains("Standard"))
-                        .Cast<ElementId>()
-                        .ToList();
+                        .ToList() select elem.Id).ToList();
 
                     foreach (ElementId elemId in symbolsToDelete)
                     {
@@ -314,12 +318,15 @@ namespace CorrectLightFixtures
                 }
 
                 //collect FamilySymbol element to modify
+                //FamilySymbol Family Name should match familyNameTest variable,
+                //and Type Name should contain "Standard"
+                //to duplicate from 'clean slate'.
                 FamilySymbol modifyFamilySymbol =
                     new FilteredElementCollector(document)
-                    .OfClass(typeof(FamilySymbol))
-                    .Where(x => x.LookupParameter("Family Name").AsString() == 
-                    familyNameTest && x.LookupParameter("Type Name").AsString().Contains("Standard"))
+                    .OfClass(typeof(FamilySymbol)).ToElements()
                     .Cast<FamilySymbol>()
+                    .Where(x=>x.LookupParameter("Family Name").AsString() == familyNameTest 
+                    && x.LookupParameter("Type Name").AsString().Contains("Standard"))
                     .First();
 
                 //collect id of collected FamilySymbol
