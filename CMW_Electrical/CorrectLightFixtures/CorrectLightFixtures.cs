@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.IO;
 
 namespace CorrectLightFixtures
 {
@@ -285,58 +286,61 @@ namespace CorrectLightFixtures
                 string fixtureInfo = fixture.LookupParameter("Family and Type").AsValueString();
 
                 //create variables to be used throughout function
-                string familyNameTest = "";
+                string familyNameTest = fixtureType.Family.Name;
                 string filePath = "";
                 bool deleteDefaultSymbols = false;
 
                 //iterate through Dictionary <key, value> pairs to see if
                 //current Family Name is part of Dictionary
                 //update familyNameTest appropriately
-                foreach (KeyValuePair<string, string> famName in updatedNameDict)
+                if (updateTypeString == "old")
                 {
-                    string fixtureNameRef = fixtureType.Family.Name;
-                    if (updateTypeString == "old")
+                    if (updatedNameDict.ContainsKey(familyNameTest))
                     {
-                        if (fixtureNameRef == famName.Key)
-                        {
-                            familyNameTest = famName.Value;
-                            break;
-                        }
-                        else
-                        {
-                            familyNameTest = $"x{fixtureNameRef}";
-                        }
-                        filePath = oldPath;
+                        updatedNameDict.TryGetValue(familyNameTest, out familyNameTest);
                     }
                     else
                     {
-                        //check if Lighting Fixture name of old fixture starts with 'x'
-                        //if not, add 'x' to test string
-                        string adjustedNameRef = "";
-                        if (!fixtureNameRef.StartsWith("x"))
-                        {
-                            adjustedNameRef = $"x{fixtureNameRef}";
-                        }
-                        else
-                        {
-                            adjustedNameRef = fixtureNameRef;
-                        }
-                        //
-
-                        if (adjustedNameRef == famName.Value)
-                        {
-                            familyNameTest = famName.Key;
-                            break;
-                        }
-                        else
-                        {
-                            familyNameTest = adjustedNameRef.Substring(1);
-                        }
-                        filePath = newPath;
+                        familyNameTest = $"x{familyNameTest}";
                     }
+
+                    filePath = oldPath;
+                }
+                else
+                {
+                    if (!familyNameTest.StartsWith("x"))
+                    {
+                        fixtureType.Family.Name = $"x{familyNameTest}";
+                        document.Regenerate();
+                        //no need to update familyNameTest here as it will already be correct
+                    }
+                    else
+                    {
+                        familyNameTest = familyNameTest.Substring(1);
+                    }
+
+                    //test to see if familyNameTest is a value from updateNameDict
+                    if (updatedNameDict.ContainsValue($"x{familyNameTest}"))
+                    {
+                        foreach (KeyValuePair<string, string> fName in updatedNameDict)
+                        {
+                            if (fName.Value == $"x{familyNameTest}")
+                            {
+                                familyNameTest = fName.Key;
+                            }
+                        }
+                    }
+
+                    filePath = newPath;
                 }
 
                 string familyPath = $"{filePath}/{familyNameTest}.rfa";
+                bool IsValidPath = File.Exists(familyPath);
+
+                if (!IsValidPath)
+                {
+                    break; //sad face
+                }
 
                 //from selected folder locations, load families into active project
                 if (!allLightingFamilyNames.Contains(familyNameTest))
