@@ -57,14 +57,18 @@ namespace CorrectLightFixtures
                 "Light Fixture Schedule_Apparent Load", "Light Fixture Schedule_Number of Poles"
             };
 
-            //List<string> allFixtureFamilyNames = (from fixture in 
-            //                                          new FilteredElementCollector(doc)
-            //                                          .OfClass(typeof(Family))
-            //                                          .Cast<Family>()
-            //                                          .Where(x => x.FamilyCategory.Name.ToString() == "Lighting Fixtures") 
-            //                                      select fixture.Name.ToString())
-            //                                      .ToList();
+            Dictionary<string, string> updatedNames = new Dictionary<string, string>()
+            {
+                {"E_LF_Surface-Track", "E_LF_Track"},
+                {"E_LF_Recessed Downlight-Round", "xE_LF_Recessed Can"},
+                {"E_LF_Surface Downlight-Round", "xE_LF_Surface Can"},
+                {"E_LF_Recessed-Perimeter", "xE_LF_Perimeter"},
+                {"E_LF_Emergency Battery_Wall", "xE_LF_Emergency Battery_Wall Half Scale"},
+                {"E_LF_Exit Sign_Emergency_Wall", "xE_LF_Exit Sign_Emergency_Wall_Half Scale"},
+                {"E_LF_Exit Sign_Wall", "xE_LF_Exit Sign_Wall_Half Scale"}
+            };
 
+            //collect all Lighting Fixure names
             List<Family> allFixtureFamilies = 
                 new FilteredElementCollector(doc)
                 .OfClass(typeof(Family))
@@ -74,7 +78,8 @@ namespace CorrectLightFixtures
 
             List<string> allFixtureFamilyNames = (from fixture in allFixtureFamilies select fixture.Name.ToString()).ToList();
 
-            List < Element > lightingSchedules = new FilteredElementCollector(doc)
+            //collect schedule if name contains LIGHT FIXTURE SCHEDULE
+            List<Element> lightingSchedules = new FilteredElementCollector(doc)
                 .OfClass(typeof(ViewSchedule))
                 .ToElements()
                 .Where(x => x.Name != null && x.Name.ToString().Contains("LIGHT FIXTURE SCHEDULE"))
@@ -106,7 +111,7 @@ namespace CorrectLightFixtures
                 UpdateFixtureInfo(
                     updateType, LTGBIC, PARAM_TEST, allFixtureFamilyNames,
                     familiesToDelete, new_string_parameters, old_string_parameters,
-                    sameParameters, doc, OLD_PATH, NEW_PATH);
+                    sameParameters, doc, OLD_PATH, NEW_PATH, updatedNames);
 
                 //delete incorrect families from project
                 foreach (ElementId elemId in familiesToDelete)
@@ -244,11 +249,15 @@ namespace CorrectLightFixtures
         /// <param name="newStringParameters">List of strings of StorageType.String parameters to update.</param>
         /// <param name="oldStringParameters">List of strings of StorageType.String parameters from incorrect fixtures.</param>
         /// <param name="sameParameters">List of strings of parameters with various StorageTypes.</param>
+        /// <param name="document">Active Document of project</param>
+        /// <param name="newPath">File path of current Lighting Fixture families.</param>
+        /// <param name="oldPath">File path of prior Lighting Fixture families.</param>
+        /// <param name="updatedNameDict">Dictionary of names that would not match due to CMS updates.</param>
         public void UpdateFixtureInfo(
             string updateTypeString, BuiltInCategory constLtgCat, string schedParamTest, 
             List<string> allLightingFamilyNames, List<ElementId> familiesToBeDeleted, 
             List<string> newStringParameters, List<string> oldStringParameters, 
-            List<string> sameParameters, Document document, string oldPath, string newPath)
+            List<string> sameParameters, Document document, string oldPath, string newPath, Dictionary<string, string> updatedNameDict)
         {
             //collect all instances of Lighting Fixtures in project
             List<FamilyInstance> allLightingFamilies = 
@@ -276,21 +285,58 @@ namespace CorrectLightFixtures
                 string fixtureInfo = fixture.LookupParameter("Family and Type").AsValueString();
 
                 //create variables to be used throughout function
-                string familyNameTest;
-                string familyPath;
+                string familyNameTest = "";
+                string filePath = "";
                 bool deleteDefaultSymbols = false;
 
-                //create references to Lighting Fixture FamilySymbol to be loaded into project and updated
-                if (updateTypeString == "old")
+                //iterate through Dictionary <key, value> pairs to see if
+                //current Family Name is part of Dictionary
+                //update familyNameTest appropriately
+                foreach (KeyValuePair<string, string> famName in updatedNameDict)
                 {
-                    familyNameTest = $"x{fixtureType.Family.Name}";
-                    familyPath = $"{oldPath}/{familyNameTest}.rfa";
+                    string fixtureNameRef = fixtureType.Family.Name;
+                    if (updateTypeString == "old")
+                    {
+                        if (fixtureNameRef == famName.Key)
+                        {
+                            familyNameTest = famName.Value;
+                            break;
+                        }
+                        else
+                        {
+                            familyNameTest = $"x{fixtureNameRef}";
+                        }
+                        filePath = oldPath;
+                    }
+                    else
+                    {
+                        //check if Lighting Fixture name of old fixture starts with 'x'
+                        //if not, add 'x' to test string
+                        string adjustedNameRef = "";
+                        if (!fixtureNameRef.StartsWith("x"))
+                        {
+                            adjustedNameRef = $"x{fixtureNameRef}";
+                        }
+                        else
+                        {
+                            adjustedNameRef = fixtureNameRef;
+                        }
+                        //
+
+                        if (adjustedNameRef == famName.Value)
+                        {
+                            familyNameTest = famName.Key;
+                            break;
+                        }
+                        else
+                        {
+                            familyNameTest = adjustedNameRef.Substring(1);
+                        }
+                        filePath = newPath;
+                    }
                 }
-                else
-                {
-                    familyNameTest = fixtureType.Family.Name.Substring(1);
-                    familyPath = $"{newPath}/{familyNameTest}.rfa";
-                }
+
+                string familyPath = $"{filePath}/{familyNameTest}.rfa";
 
                 //from selected folder locations, load families into active project
                 if (!allLightingFamilyNames.Contains(familyNameTest))
