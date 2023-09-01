@@ -237,14 +237,6 @@ namespace CMW_Electrical
                 "pack://application:,,,/CMW_Electrical;component/Resources/FlipFacingOrientation16x16.png"));
 
 
-            //create motorPulldownButton
-            PulldownButtonData motorPulldownButtonData = new PulldownButtonData("motorSplitButton", "Motor")
-            {
-                LargeImage = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/UpdateMotorMOCP32x32.png"))
-            };
-            PulldownButton motorPulldownButton = devicePanel.AddItem(motorPulldownButtonData) as PulldownButton;
-
-
             //------------create push button for UpdateMotorMOCP------------
             PushButtonData motorMOCPUpdateData = 
                 new PushButtonData(
@@ -257,6 +249,12 @@ namespace CMW_Electrical
                 ToolTip = "Updates all Motor Electrical Circuit Ratings that have their MES_(MCA) MOCP parameter set to a non-blank value."
             };
 
+            //create motorPulldownButton
+            PulldownButtonData motorPulldownButtonData = new PulldownButtonData("motorSplitButton", "Motor")
+            {
+                LargeImage = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/UpdateMotorMOCP32x32.png"))
+            };
+            PulldownButton motorPulldownButton = devicePanel.AddItem(motorPulldownButtonData) as PulldownButton;
             //add motorMOCPUpdate PushButton to motorPulldownButton SplitButton
             motorPulldownButton.AddPushButton(motorMOCPUpdateData);
 
