@@ -71,6 +71,7 @@
     <Compile Include="FailureHandlers\DisconnectCircuitFailure.cs" />
     <Compile Include="FlipFacingOrientation\FlipFacingOrientationBySelection.cs" />
     <Compile Include="MotorMOCPUpdate\UpdateMotorMOCP.cs" />
+    <Compile Include="MotorUIDUpdate\UpdateMotorUID.cs" />
     <Compile Include="MultiLegSwitchIdUpdate\MultiLegSwitchIdUpdate.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PanelScheduleReset\PanelScheduleReset.cs" />
@@ -110,6 +111,8 @@
     <None Include="Resources\CMTALogo1.jpg" />
     <Resource Include="Resources\CorrectLightFixtures16x16.png" />
     <Resource Include="Resources\CorrectLightFixtures32x32.png" />
+    <Resource Include="Resources\UpdateMotorUID16x16.png" />
+    <Resource Include="Resources\UpdateMotorUID32x32.png" />
     <Content Include="_Addin\CMW_Electrical.addin">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

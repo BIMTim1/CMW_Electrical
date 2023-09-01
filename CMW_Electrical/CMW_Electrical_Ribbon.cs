@@ -249,6 +249,19 @@ namespace CMW_Electrical
                 ToolTip = "Updates all Motor Electrical Circuit Ratings that have their MES_(MCA) MOCP parameter set to a non-blank value."
             };
 
+            //------------create push button for motorUIDUpdate------------
+            PushButtonData motorUIDUpdateData = 
+                new PushButtonData(
+                    "cmdMotorUIDUpdate", 
+                    "Update Motor UID", 
+                    thisAssemblyPath,
+                    "MotorUIDUpdate.UpdateMotorUID")
+            {
+                LargeImage = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/UpdateMotorUID32x32.png")),
+                Image = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/UpdateMotorUID16x16.png")),
+                ToolTip = "Update Motor UID values based on hosted Mechanical Equipment."
+            };
+
             //create motorPulldownButton
             PulldownButtonData motorPulldownButtonData = new PulldownButtonData("motorSplitButton", "Motor")
             {
@@ -257,6 +270,7 @@ namespace CMW_Electrical
             PulldownButton motorPulldownButton = devicePanel.AddItem(motorPulldownButtonData) as PulldownButton;
             //add motorMOCPUpdate PushButton to motorPulldownButton SplitButton
             motorPulldownButton.AddPushButton(motorMOCPUpdateData);
+            motorPulldownButton.AddPushButton(motorUIDUpdateData);
 
 
             //------------create push button for CorrectLightFixtures------------
