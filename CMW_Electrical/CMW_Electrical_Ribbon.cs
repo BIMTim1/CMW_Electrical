@@ -237,26 +237,28 @@ namespace CMW_Electrical
                 "pack://application:,,,/CMW_Electrical;component/Resources/FlipFacingOrientation16x16.png"));
 
 
-            //------------create push button for UpdateMotorMOCP------------
-            PushButtonData motorMOCPUpdateData = new PushButtonData("cmdmotorMOCPUpdate",
-                "Update Motor" + System.Environment.NewLine + " MOCP ",
-                thisAssemblyPath, "MotorMOCPUpdate.UpdateMotorMOCP");
+            //create motorPulldownButton
+            PulldownButtonData motorPulldownButtonData = new PulldownButtonData("motorSplitButton", "Motor")
+            {
+                LargeImage = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/UpdateMotorMOCP32x32.png"))
+            };
+            PulldownButton motorPulldownButton = devicePanel.AddItem(motorPulldownButtonData) as PulldownButton;
 
-            PushButton motorMOCPUpdateBtn = devicePanel.AddItem(motorMOCPUpdateData) as PushButton;
-            //motorMOCPUpdate ToolTip Information
-            motorMOCPUpdateBtn.ToolTip = "Updates all Motor Electrical Circuit Ratings that have their MES_(MCA) MOCP parameter set to a non-blank value.";
-            motorMOCPUpdateBtn.LongDescription = "";
-            //motorMOCPUpdateBtn.ToolTipImage = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/ToolTipImages/"));
-            //motorMOCPUpdate ContextualHelp Information
-            //ContextualHelp motorMOCPUpdateHelp = new ContextualHelp(ContextualHelpType.URL, ""pack://application:,,,/CMW_Electrical;component/Resources/ToolTipImages/");
-            //motorMOCPUpdateBtn.SetContextualHelp(motorMOCPUpdateHelp);
-            //motorMOCPUpdate Image Information
-            BitmapImage motorMOCPUpdateImage = new BitmapImage(new Uri(
-                "pack://application:,,,/CMW_Electrical;component/Resources/UpdateMotorMOCP32x32.png"));
-            motorMOCPUpdateBtn.LargeImage = motorMOCPUpdateImage;
-            //equipUpdateBtn QuickAccess Image
-            motorMOCPUpdateBtn.Image = new BitmapImage(new Uri(
-                "pack://application:,,,/CMW_Electrical;component/Resources/UpdateMotorMOCP16x16.png"));
+
+            //------------create push button for UpdateMotorMOCP------------
+            PushButtonData motorMOCPUpdateData = 
+                new PushButtonData(
+                    "cmdmotorMOCPUpdate",
+                    "Update Motor MOCP",
+                    thisAssemblyPath, "MotorMOCPUpdate.UpdateMotorMOCP")
+            {
+                Image = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/UpdateMotorMOCP16x16.png")),
+                LargeImage = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/UpdateMotorMOCP32x32.png")),
+                ToolTip = "Updates all Motor Electrical Circuit Ratings that have their MES_(MCA) MOCP parameter set to a non-blank value."
+            };
+
+            //add motorMOCPUpdate PushButton to motorPulldownButton SplitButton
+            motorPulldownButton.AddPushButton(motorMOCPUpdateData);
 
 
             //------------create push button for CorrectLightFixtures------------
