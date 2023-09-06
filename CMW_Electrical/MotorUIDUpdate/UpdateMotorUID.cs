@@ -22,7 +22,33 @@ namespace MotorUIDUpdate
             Application app = uiapp.Application;
             UIDocument uidoc = uiapp.ActiveUIDocument;
 
+            BuiltInCategory bic = BuiltInCategory.OST_ElectricalFixtures;
+
+            //collect E_EF_Motor FamilyInstances that are hosted to a same model MechanicalEquipment family
+            List<FamilyInstance> allMotors = 
+                new FilteredElementCollector(doc)
+                .OfCategory(bic)
+                .WhereElementIsNotElementType()
+                .Cast<FamilyInstance>()
+                .Where(x => x.Host.Category.Name == "Mechanical Equipment")
+                .ToList();
+
+            //cancel tool if no motors to update
+            if (allMotors.Count() == 0)
+            {
+                TaskDialog.Show("No Motor Elements to Update", "The tool could not find any Motor elements to update.");
+                return Result.Failed;
+            }
+
             return Result.Succeeded;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public void UpdateMotorInfo(Document document, FamilyInstance motor)
+        {
+            Parameter mUID = motor.LookupParameter("UID");
         }
     }
 }
