@@ -7,6 +7,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Autodesk.Revit.DB.Electrical;
+using System.Security.Cryptography;
 
 namespace MotorUIDUpdate
 {
@@ -40,15 +42,64 @@ namespace MotorUIDUpdate
                 return Result.Failed;
             }
 
-            return Result.Succeeded;
+            Transaction trac = new Transaction(doc);
+
+            try
+            {
+                trac.Start("Update Motor UIDs and Circuit Load Names");
+
+                foreach (FamilyInstance motor in allMotors)
+                {
+                    UpdateMotorInfo(motor);
+                }
+
+                trac.Commit();
+
+                TaskDialog.Show("Motors Updated", $"{allMotors} Motors have been updated based on their hosted equipment Identity Mark value.");
+
+                return Result.Succeeded;
+            }
+            catch (Exception ex)
+            {
+                TaskDialog.Show("Operation Cancelled", "An error occurred. Contact the BIM Team for assistance.");
+                return Result.Failed;
+            }
         }
 
         /// <summary>
         /// 
         /// </summary>
-        public void UpdateMotorInfo(Document document, FamilyInstance motor)
+        public void UpdateMotorInfo(FamilyInstance motor)
         {
+            //collect Motor information
             Parameter mUID = motor.LookupParameter("UID");
+            ISet<ElectricalSystem> mCct = motor.MEPModel.GetElectricalSystems();
+
+            //collect host Mechanical Equipment Identity Mark value
+            string equipMark = motor.Host.LookupParameter("Identity Mark").AsString(); //determine when Identity Mark or Identity Type Mark should be used.
+
+            if (mCct.Any())
+            {
+                Parameter circuit = mCct.First().LookupParameter("Load Name");
+                //update Motor Circuit Load Name value
+                string cctLoadName = circuit.AsString();
+
+                //update circuit Load Name if never updated
+                if (cctLoadName.Contains("MOTOR/HVAC/MECH"))
+                {
+                    cctLoadName.Replace("MOTOR/HVAC/MECH", equipMark);
+                }
+                //update circuit Load Name if current UID value was used
+                else
+                {
+                    cctLoadName.Replace(mUID.AsString(), equipMark);
+                }
+
+                circuit.Set(cctLoadName);
+            }
+
+            //update Motor UID parameter value
+            mUID.Set(equipMark);
         }
     }
 }
