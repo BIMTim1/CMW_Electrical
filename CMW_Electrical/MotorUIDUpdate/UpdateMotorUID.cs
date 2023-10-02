@@ -55,7 +55,7 @@ namespace MotorUIDUpdate
 
                 trac.Commit();
 
-                TaskDialog.Show("Motors Updated", $"{allMotors} Motors have been updated based on their hosted equipment Identity Mark value.");
+                TaskDialog.Show("Motors Updated", $"{allMotors.Count} Motors have been updated based on their hosted equipment Identity Mark value.");
 
                 return Result.Succeeded;
             }
@@ -80,22 +80,24 @@ namespace MotorUIDUpdate
 
             if (mCct.Any())
             {
-                Parameter circuit = mCct.First().LookupParameter("Load Name");
+                ElectricalSystem circuit = mCct.First();
+
+                Parameter circuitLoadName = circuit.LookupParameter("Load Name");
                 //update Motor Circuit Load Name value
-                string cctLoadName = circuit.AsString();
+                string loadNameVal = circuitLoadName.AsString().ToUpper();
 
                 //update circuit Load Name if never updated
-                if (cctLoadName.Contains("MOTOR/HVAC/MECH"))
+                if (loadNameVal.Contains("MOTOR/HVAC/MECH"))
                 {
-                    cctLoadName.Replace("MOTOR/HVAC/MECH", equipMark);
+                    loadNameVal = loadNameVal.Replace("MOTOR/HVAC/MECH", equipMark);
                 }
                 //update circuit Load Name if current UID value was used
                 else
                 {
-                    cctLoadName.Replace(mUID.AsString(), equipMark);
+                    loadNameVal = loadNameVal.Replace(mUID.AsString(), equipMark);
                 }
 
-                circuit.Set(cctLoadName);
+                circuitLoadName.Set(loadNameVal);
             }
 
             //update Motor UID parameter value
