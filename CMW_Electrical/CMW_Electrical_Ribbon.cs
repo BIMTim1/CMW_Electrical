@@ -31,7 +31,7 @@ namespace CMW_Electrical
             RibbonPanel devicePanel = application.CreateRibbonPanel(tabName, "Devices");
             RibbonPanel equipPanel = application.CreateRibbonPanel(tabName, "Equipment");
             RibbonPanel schedulePanel = application.CreateRibbonPanel(tabName, "Panel Schedules");
-            //RibbonPanel oneLinePanel = application.CreateRibbonPanel(tabName, "One-Line / Equipment");
+            RibbonPanel oneLinePanel = application.CreateRibbonPanel(tabName, "One-Line");
 
             //get dll assembly path
             string thisAssemblyPath = Assembly.GetExecutingAssembly().Location;
@@ -299,6 +299,62 @@ namespace CMW_Electrical
             correctLightFixturesBtn.Image = new BitmapImage(new Uri(
                 "pack://application:,,,/CMW_Electrical;component/Resources/CorrectLightFixtures16x16.png"));
 
+
+            //------------create push button for oneLineConnectAndPlace------------
+            PushButtonData oneLineConnectAndPlaceData = 
+                new PushButtonData(
+                    "cmdOneLineConnectAndPlace", 
+                    "Connect and Place Component", 
+                    thisAssemblyPath, 
+                    "OneLineConnectAndPlaceData.OneLineConnectAndPlaceData")
+            {
+                    LargeImage = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/OLConnectAndPlace32x32.png")),
+                    Image = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/OLConnectAndPlace16x16.png")),
+                    ToolTip = "Select an existing One-Line item to connect to, and place the down-stream equipment."
+            };
+
+
+            //------------create push button for oneLineConnect------------
+            PushButtonData oneLineConnectData = 
+                new PushButtonData(
+                    "cmdOneLineConnect", 
+                    "Connect Component", 
+                    thisAssemblyPath, 
+                    "OneLineConnect.OneLineConnect")
+            {
+                LargeImage = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/OLConnect32x32.png")),
+                Image = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/OLConnect16x16.png")),
+                ToolTip = "Select existing One-Line items to be connected together."
+            };
+
+
+            //------------create push button for oneLineUpdatePanelInfo------------
+            PushButtonData oneLineUpdatePanelInfoData = 
+                new PushButtonData(
+                    "cmdOneLineUpdatePanelInfo", 
+                    "Update Panel Info", 
+                    thisAssemblyPath, 
+                    "OneLineUpdatePanelInfo.OneLineUpdatePanelInfo")
+            {
+                    LargeImage = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/OLUpdatePanelName32x32.png")),
+                    Image = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/OLUpdatePanelName16x16.png")),
+                    ToolTip = "Update Modeled Electrical Equipment from One-Line Information."
+            };
+
+            
+            PushButtonData oneLinePlaceEquipData = 
+                new PushButtonData(
+                    "cmdOneLinePlaceEquip", 
+                    "Place Equipment from One-Line", 
+                    thisAssemblyPath, 
+                    "OneLinePlaceEquip.OneLinePlaceEquip")
+            {
+                    LargeImage = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/OLPlaceEquip32x32.png")),
+                    Image = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/OLPlaceEquip16x16.png")),
+                    ToolTip = "Select a Detail Item from your One-Line and Place the Corresponding Equipment in the model from a selected Level view."
+            };
+            oneLinePanel.AddStackedItems(oneLineConnectAndPlaceData, oneLineConnectData);
+            oneLinePanel.AddStackedItems(oneLineUpdatePanelInfoData, oneLinePlaceEquipData);
 
             //------------create push button for <button name>------------
         }
