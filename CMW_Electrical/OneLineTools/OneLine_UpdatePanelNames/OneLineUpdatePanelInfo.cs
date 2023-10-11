@@ -12,7 +12,7 @@ namespace OneLineUpdatePanelInfo
     [Transaction(TransactionMode.Manual)]
     [Regeneration(RegenerationOption.Manual)]
 
-    public class OneLineUpdatePanelInfo
+    public class OneLineUpdatePanelInfo : IExternalCommand
     {
         public Result Execute(ExternalCommandData commandData, ref string errorReport, ElementSet elementSet)
         {

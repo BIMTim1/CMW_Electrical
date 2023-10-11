@@ -306,7 +306,7 @@ namespace CMW_Electrical
                     "cmdOneLineConnectAndPlace", 
                     "Connect and Place Component", 
                     thisAssemblyPath, 
-                    "OneLineConnectAndPlaceData.OneLineConnectAndPlaceData")
+                    "OneLineConnectAndPlace.OneLineConnectAndPlace")
             {
                     LargeImage = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/OLConnectAndPlace32x32.png")),
                     Image = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/OLConnectAndPlace16x16.png")),
