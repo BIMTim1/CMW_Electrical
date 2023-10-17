@@ -147,6 +147,7 @@
             // 
             // cboxDetailItemType
             // 
+            this.cboxDetailItemType.Enabled = false;
             this.cboxDetailItemType.FormattingEnabled = true;
             this.cboxDetailItemType.Location = new System.Drawing.Point(199, 126);
             this.cboxDetailItemType.Name = "cboxDetailItemType";
