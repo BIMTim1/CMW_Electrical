@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using Autodesk.Revit.DB.Events;
 using System.Windows.Input;
 using Autodesk.Revit.UI.Selection;
+using System.Xml;
 //using ComponentManager = Autodesk.Windows.ComponentManager;
 //using IWin32Window = System.Windows.Forms.IWin32Window;
 //using Keys = System.Windows.Forms.Keys;
@@ -154,6 +155,85 @@ namespace OneLineConnectAndPlace
             trac.Start("Place Fed From Instance.");
 
             FamilyInstance newFamInstance = doc.Create.NewFamilyInstance(pickedPoint, selectedDetailItem, activeView);
+
+            trac.Commit();
+
+            //collect location information to place Detail Lines
+            XYZ startPoint = (connectEquip.Location as LocationPoint).Point;
+            XYZ endPoint = pickedPoint;
+
+            XYZ firstPoint = null;
+            XYZ midTopPoint = null;
+            XYZ midBottomPoint = null;
+            XYZ secondPoint = null;
+
+            double topY;
+            double bottomY;
+
+            bool polyLine = true;
+
+            //find Y offsets of selected and placed Detail Items
+            double selYOffset = connectEquip.Symbol.get_BoundingBox(activeView).Max[1];
+
+            double placedYOffset = newFamInstance.Symbol.get_BoundingBox(activeView).Max[1];
+
+            //determine if more than (1) line should be created
+            if (startPoint.X == endPoint.X)
+            {
+                polyLine = false;
+            }
+
+            //determine offsets from uppermost point and bottom-most point
+            if (startPoint.Y > endPoint.Y)
+            {
+                topY = startPoint.Y - selYOffset;
+                bottomY = endPoint.Y + placedYOffset;
+
+                firstPoint = new XYZ(startPoint.X, topY, startPoint.Z);
+                secondPoint = new XYZ(endPoint.X, bottomY, startPoint.Z);
+            }
+            else
+            {
+                topY = endPoint.Y - placedYOffset;
+                bottomY = startPoint.Y + selYOffset;
+
+                firstPoint = new XYZ(endPoint.X, topY, endPoint.Z);
+                secondPoint = new XYZ(startPoint.X, bottomY, endPoint.Z);
+            }
+
+            trac.Start("Create Detail Lines for Connected Equipment.");
+
+            //create line work based on position of selected and placd elements
+            if (!polyLine)
+            {
+                Line curve = Line.CreateBound(firstPoint, secondPoint);
+                doc.Create.NewDetailCurve(activeView, curve);
+            }
+            else
+            {
+                double midY = topY - (Line.CreateBound(firstPoint, new XYZ(firstPoint.X, bottomY, secondPoint.Z)).Length / 2);
+                midTopPoint = new XYZ(firstPoint.X, midY, firstPoint.Z);
+                midBottomPoint = new XYZ(secondPoint.X, midY, secondPoint.Z);
+
+                Line curve1 = Line.CreateBound(firstPoint, midTopPoint);
+                Line curve2 = Line.CreateBound(midTopPoint, midBottomPoint);
+                Line curve3 = Line.CreateBound(midBottomPoint, secondPoint);
+                List<Line> curveList = new List<Line>()
+                {
+                    curve1,
+                    curve2,
+                    curve3
+                };
+
+                CurveArray curveArray = new CurveArray();
+
+                foreach (Line curve in curveList)
+                {
+                    curveArray.Append(curve);
+                }
+
+                doc.Create.NewDetailCurveArray(activeView, curveArray);
+            }
 
             trac.Commit();
 
