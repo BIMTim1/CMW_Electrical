@@ -77,6 +77,7 @@
     <Compile Include="MotorMOCPUpdate\UpdateMotorMOCP.cs" />
     <Compile Include="MotorUIDUpdate\UpdateMotorUID.cs" />
     <Compile Include="MultiLegSwitchIdUpdate\MultiLegSwitchIdUpdate.cs" />
+    <Compile Include="OneLineTools\OLUpdateInfo.cs" />
     <Compile Include="OneLineTools\JtWindowHandler.cs" />
     <Compile Include="OneLineTools\Press.cs" />
     <Compile Include="OneLineTools\OneLine_ConnectAndPlace\SelectEquipmentToReferenceForm.cs">

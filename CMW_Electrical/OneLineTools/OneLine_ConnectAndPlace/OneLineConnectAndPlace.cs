@@ -237,6 +237,13 @@ namespace OneLineConnectAndPlace
 
             trac.Commit();
 
+            //update parameter information
+            trac.Start("Update Detail Item Parameters from Electrical Equipment.");
+
+            //update Electrical Parameter Information
+
+            trac.Commit();
+
             tracGroup.Assimilate();
 
             //collect information from newFamInstance
