@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace OLEqConIdUpdate
 {
-    public class OLEqConIdUpdate
+    public class OLEqConIdUpdateClass
     {
-        public void OLEqConIdValueUpdate(FamilyInstance detailItem, FamilyInstance panel, Document document)
+        public void OneLineEqConIdValueUpdate(FamilyInstance detailItem, FamilyInstance panel, Document document)
         {
             //collect Project Information parameter to evaluate number of already connected OneLine stuff
             Parameter EqConIdParam = document.ProjectInformation.LookupParameter("EqConId Current Value");

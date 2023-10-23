@@ -35,10 +35,10 @@
             this.cboxEquipNameSelect = new System.Windows.Forms.ComboBox();
             this.tboxNewEquipmentName = new System.Windows.Forms.TextBox();
             this.lblNewEquipName = new System.Windows.Forms.Label();
-            this.lblNewEquipmentAmperage = new System.Windows.Forms.Label();
-            this.tboxNewEquipmentAmperage = new System.Windows.Forms.TextBox();
+            this.lblNewEquipmentVoltage = new System.Windows.Forms.Label();
             this.lblEquipTypeSelect = new System.Windows.Forms.Label();
             this.cboxDetailItemType = new System.Windows.Forms.ComboBox();
+            this.cboxNewEquipmentVoltage = new System.Windows.Forms.ComboBox();
             this.SuspendLayout();
             // 
             // btnCancel
@@ -117,23 +117,15 @@
             this.lblNewEquipName.TabIndex = 6;
             this.lblNewEquipName.Text = "New Equipment Name";
             // 
-            // lblNewEquipmentAmperage
+            // lblNewEquipmentVoltage
             // 
-            this.lblNewEquipmentAmperage.AutoSize = true;
-            this.lblNewEquipmentAmperage.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblNewEquipmentAmperage.Location = new System.Drawing.Point(38, 202);
-            this.lblNewEquipmentAmperage.Name = "lblNewEquipmentAmperage";
-            this.lblNewEquipmentAmperage.Size = new System.Drawing.Size(155, 13);
-            this.lblNewEquipmentAmperage.TabIndex = 7;
-            this.lblNewEquipmentAmperage.Text = "New Equipment Amperage";
-            // 
-            // tboxNewEquipmentAmperage
-            // 
-            this.tboxNewEquipmentAmperage.Enabled = false;
-            this.tboxNewEquipmentAmperage.Location = new System.Drawing.Point(199, 199);
-            this.tboxNewEquipmentAmperage.Name = "tboxNewEquipmentAmperage";
-            this.tboxNewEquipmentAmperage.Size = new System.Drawing.Size(81, 20);
-            this.tboxNewEquipmentAmperage.TabIndex = 8;
+            this.lblNewEquipmentVoltage.AutoSize = true;
+            this.lblNewEquipmentVoltage.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblNewEquipmentVoltage.Location = new System.Drawing.Point(38, 202);
+            this.lblNewEquipmentVoltage.Name = "lblNewEquipmentVoltage";
+            this.lblNewEquipmentVoltage.Size = new System.Drawing.Size(142, 13);
+            this.lblNewEquipmentVoltage.TabIndex = 7;
+            this.lblNewEquipmentVoltage.Text = "New Equipment Voltage";
             // 
             // lblEquipTypeSelect
             // 
@@ -155,15 +147,24 @@
             this.cboxDetailItemType.TabIndex = 10;
             this.cboxDetailItemType.SelectedIndexChanged += new System.EventHandler(this.SelectedIndexChanged);
             // 
+            // cboxNewEquipmentVoltage
+            // 
+            this.cboxNewEquipmentVoltage.Enabled = false;
+            this.cboxNewEquipmentVoltage.FormattingEnabled = true;
+            this.cboxNewEquipmentVoltage.Location = new System.Drawing.Point(199, 199);
+            this.cboxNewEquipmentVoltage.Name = "cboxNewEquipmentVoltage";
+            this.cboxNewEquipmentVoltage.Size = new System.Drawing.Size(81, 21);
+            this.cboxNewEquipmentVoltage.TabIndex = 11;
+            // 
             // SelectEquipmentToReferenceForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(429, 285);
+            this.Controls.Add(this.cboxNewEquipmentVoltage);
             this.Controls.Add(this.cboxDetailItemType);
             this.Controls.Add(this.lblEquipTypeSelect);
-            this.Controls.Add(this.tboxNewEquipmentAmperage);
-            this.Controls.Add(this.lblNewEquipmentAmperage);
+            this.Controls.Add(this.lblNewEquipmentVoltage);
             this.Controls.Add(this.lblNewEquipName);
             this.Controls.Add(this.tboxNewEquipmentName);
             this.Controls.Add(this.cboxEquipNameSelect);
@@ -185,13 +186,13 @@
         private System.Windows.Forms.Button btnCancel;
         private System.Windows.Forms.Button btnOK;
         private System.Windows.Forms.Label lblNewEquipName;
-        private System.Windows.Forms.Label lblNewEquipmentAmperage;
+        private System.Windows.Forms.Label lblNewEquipmentVoltage;
         public System.Windows.Forms.RadioButton rbtnUseEquipment;
         public System.Windows.Forms.RadioButton rbtnDontUseEquipment;
         public System.Windows.Forms.ComboBox cboxEquipNameSelect;
         public System.Windows.Forms.TextBox tboxNewEquipmentName;
-        public System.Windows.Forms.TextBox tboxNewEquipmentAmperage;
         private System.Windows.Forms.Label lblEquipTypeSelect;
         public System.Windows.Forms.ComboBox cboxDetailItemType;
+        public System.Windows.Forms.ComboBox cboxNewEquipmentVoltage;
     }
 }

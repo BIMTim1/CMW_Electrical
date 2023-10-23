@@ -12,6 +12,8 @@ using Autodesk.Revit.DB.Events;
 using System.Windows.Input;
 using Autodesk.Revit.UI.Selection;
 using System.Xml;
+using OLUpdateInfo;
+using OLEqConIdUpdate;
 //using ComponentManager = Autodesk.Windows.ComponentManager;
 //using IWin32Window = System.Windows.Forms.IWin32Window;
 //using Keys = System.Windows.Forms.Keys;
@@ -233,16 +235,48 @@ namespace OneLineConnectAndPlace
                 }
 
                 doc.Create.NewDetailCurveArray(activeView, curveArray);
+                //update CurveArray with correct LineStyle
             }
 
             trac.Commit();
 
-            //update parameter information
-            trac.Start("Update Detail Item Parameters from Electrical Equipment.");
+            if (equipSelectForm.rbtnUseEquipment.Checked)
+            {
+                //update parameter information
+                trac.Start("Update Detail Item Parameters from Electrical Equipment.");
 
-            //update Electrical Parameter Information
+                //update Electrical Parameter Information
+                OLUpdateDetailItemInfo newThing = new OLUpdateDetailItemInfo();
+                newThing.OneLineUpdateParameters(newFamInstance, selectedEquip as FamilyInstance, doc);
 
-            trac.Commit();
+                //update EqConId of Detail Item and Electrical Equipment
+                OLEqConIdUpdateClass updateEqConId = new OLEqConIdUpdateClass();
+                updateEqConId.OneLineEqConIdValueUpdate(newFamInstance, selectedEquip as FamilyInstance, doc);
+
+                trac.Commit();
+            }
+
+            else if (equipSelectForm.rbtnDontUseEquipment.Checked)
+            {
+                trac.Start("Update Detail Item Parameters from Form");
+
+                //detail item parameters
+                Parameter panelNameDetail = newFamInstance.LookupParameter("Panel Name - Detail");
+                Parameter voltageDetail = newFamInstance.LookupParameter("E_Voltage");
+
+                //update Panel Name - Detail
+                panelNameDetail.Set(equipSelectForm.tboxNewEquipmentName.Text);
+
+                //update voltage
+                int voltage = int.Parse(equipSelectForm.cboxNewEquipmentVoltage.SelectedItem.ToString());
+                double voltMultiplier = 10.763910416709711538461538461538;
+
+                int inputVoltage = Convert.ToInt32(voltage * voltMultiplier);
+
+                voltageDetail.Set(inputVoltage);
+
+                trac.Commit();
+            }
 
             tracGroup.Assimilate();
 

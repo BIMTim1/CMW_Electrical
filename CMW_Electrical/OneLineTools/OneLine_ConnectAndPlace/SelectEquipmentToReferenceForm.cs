@@ -32,6 +32,16 @@ namespace OneLineConnectAndPlace
 
             cboxDetailItemType.Items.AddRange(detailItemTypes.ToArray());
             cboxDetailItemType.SelectedIndex = 3;
+
+            List<string> voltages = new List<string>()
+            {
+                "208",
+                "240",
+                "480"
+            };
+
+            cboxNewEquipmentVoltage.Items.AddRange(voltages.ToArray());
+            cboxNewEquipmentVoltage.SelectedIndex = 0;
         }
 
         public void RadBtnCheckChanged(object sender, EventArgs e)
@@ -40,7 +50,7 @@ namespace OneLineConnectAndPlace
             {
                 cboxEquipNameSelect.Enabled = true;
 
-                tboxNewEquipmentAmperage.Enabled = false;
+                cboxNewEquipmentVoltage.Enabled = false;
                 tboxNewEquipmentName.Enabled = false;
 
                 if (cboxEquipNameSelect.SelectedItem != null)
@@ -57,7 +67,7 @@ namespace OneLineConnectAndPlace
                 cboxEquipNameSelect.SelectedItem = null;
                 cboxEquipNameSelect.Enabled = false;
 
-                tboxNewEquipmentAmperage.Enabled = true;
+                cboxNewEquipmentVoltage.Enabled = true;
                 tboxNewEquipmentName.Enabled = true;
 
                 btnOK.Enabled = false;

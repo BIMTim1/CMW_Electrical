@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace OLUpdateInfo
 {
-    internal class OLUpdateDetailItemInfo
+    public class OLUpdateDetailItemInfo
     {
         public void OneLineUpdateParameters(FamilyInstance detailItem, FamilyInstance panel, Document document)
         {
@@ -21,10 +21,12 @@ namespace OLUpdateInfo
             //    "E_Number of Poles",
             //    "EqConId"
             //};
-            detailItem.LookupParameter("Panel Name - Detail").Set(panel.LookupParameter("Panel Name").AsString());
-            
+            string panelName = panel.LookupParameter("Panel Name").AsString();
+            detailItem.LookupParameter("Panel Name - Detail").Set(panelName);
+
             //update MLO parameter based on panel information
-            if (panel.Symbol.LookupParameter("Mains Type").AsString() == "MLO")
+            string panelMainsType = panel.Symbol.LookupParameter("Mains Type").AsString();
+            if (panelMainsType.Contains("MLO"))
             {
                 detailItem.LookupParameter("MLO").Set(1);
             }
@@ -34,15 +36,19 @@ namespace OLUpdateInfo
             }
 
             //update E_Voltage parameter
-            int voltage = Int32.Parse((
-                document.GetElement(
-                    panel.LookupParameter("Distribution System")
-                    .AsElementId()))
-                    .LookupParameter("Line to Line Voltage")
-                    .AsValueString());
+            string voltString = (document.GetElement(panel.LookupParameter("Distribution System").AsElementId())).LookupParameter("Line to Line Voltage").AsValueString();
+            //int voltage = int.Parse((
+            //    document.GetElement(
+            //        panel.LookupParameter("Distribution System")
+            //        .AsElementId()))
+            //        .LookupParameter("Line to Line Voltage")
+            //        .AsValueString());
 
+            string volt = voltString.Substring(0, 3);
+            int voltage = int.Parse(volt);
             double voltMultiplier = 10.763910416709711538461538461538;
 
+            //int voltage = 208;
             double inputVoltage = voltage * voltMultiplier;
 
             detailItem.LookupParameter("E_Voltage").Set(inputVoltage);
@@ -69,8 +75,6 @@ namespace OLUpdateInfo
             }
 
             detailItem.LookupParameter("E_Number of Poles").Set(inputPoles);
-
-            //adjust EqConId sequentially
         }
     }
 }
