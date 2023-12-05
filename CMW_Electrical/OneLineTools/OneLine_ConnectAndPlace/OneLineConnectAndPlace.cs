@@ -14,6 +14,7 @@ using Autodesk.Revit.UI.Selection;
 using System.Xml;
 using OLUpdateInfo;
 using OLEqConIdUpdate;
+using Autodesk.Revit.DB.Electrical;
 //using ComponentManager = Autodesk.Windows.ComponentManager;
 //using IWin32Window = System.Windows.Forms.IWin32Window;
 //using Keys = System.Windows.Forms.Keys;
@@ -136,10 +137,13 @@ namespace OneLineConnectAndPlace
             try
             {
                 //prompt user to select source equipment Detail Item
-                Reference connectEquipRef = uidoc.Selection.PickObject(
-                    Autodesk.Revit.UI.Selection.ObjectType.Element, 
-                    selFilter, 
-                    "Select a Detail Item to be the Source Equipment.");
+                //Reference connectEquipRef = uidoc.Selection.PickObject(
+                //    Autodesk.Revit.UI.Selection.ObjectType.Element, 
+                //    selFilter, 
+                //    "Select a Detail Item to be the Source Equipment.");
+
+                //debug only
+                Reference connectEquipRef = uidoc.Selection.PickObject(ObjectType.Element, "Select a Detail Item to be the Source Equipment");
 
                 connectEquip = doc.GetElement(connectEquipRef) as FamilyInstance;
 
@@ -153,12 +157,22 @@ namespace OneLineConnectAndPlace
                 return Result.Failed;
             }
 
-            tracGroup.Start("Select Source One-Line Equipment and Place Fed From Instance.");
+            tracGroup.Start("Connect and Place Component");
             trac.Start("Place Fed From Instance.");
 
             FamilyInstance newFamInstance = doc.Create.NewFamilyInstance(pickedPoint, selectedDetailItem, activeView);
 
             trac.Commit();
+
+            //collect E_DI_Feeder-Line Based Detail Item
+            FamilySymbol feederLine = (new FilteredElementCollector(doc)
+                .OfCategory(BuiltInCategory.OST_DetailComponents)
+                .WhereElementIsElementType()
+                .ToElements()
+                .Where(x => x.LookupParameter("Family Name").AsString() == "E_DI_Feeder-Line Based")
+                .ToList())
+                .First()
+                as FamilySymbol;
 
             //collect location information to place Detail Lines
             XYZ startPoint = (connectEquip.Location as LocationPoint).Point;
@@ -205,11 +219,16 @@ namespace OneLineConnectAndPlace
 
             trac.Start("Create Detail Lines for Connected Equipment.");
 
+            List<FamilyInstance> feederLines = new List<FamilyInstance>();
+
             //create line work based on position of selected and placd elements
             if (!polyLine)
             {
                 Line curve = Line.CreateBound(firstPoint, secondPoint);
-                doc.Create.NewDetailCurve(activeView, curve);
+                //doc.Create.NewDetailCurve(activeView, curve);
+                FamilyInstance newFeeder = doc.Create.NewFamilyInstance(curve, feederLine, activeView);
+
+                feederLines.Add(newFeeder);
             }
             else
             {
@@ -227,14 +246,21 @@ namespace OneLineConnectAndPlace
                     curve3
                 };
 
-                CurveArray curveArray = new CurveArray();
-
-                foreach (Line curve in curveList)
+                foreach (Line line in curveList)
                 {
-                    curveArray.Append(curve);
+                    FamilyInstance newFeeder = doc.Create.NewFamilyInstance(line, feederLine, activeView);
+
+                    feederLines.Add(newFeeder);
                 }
 
-                doc.Create.NewDetailCurveArray(activeView, curveArray);
+                //CurveArray curveArray = new CurveArray();
+
+                //foreach (Line curve in curveList)
+                //{
+                //    curveArray.Append(curve);
+                //}
+
+                //doc.Create.NewDetailCurveArray(activeView, curveArray);
                 //update CurveArray with correct LineStyle
             }
 
@@ -252,6 +278,16 @@ namespace OneLineConnectAndPlace
                 //update EqConId of Detail Item and Electrical Equipment
                 OLEqConIdUpdateClass updateEqConId = new OLEqConIdUpdateClass();
                 updateEqConId.OneLineEqConIdValueUpdate(newFamInstance, selectedEquip as FamilyInstance, doc);
+
+                doc.Regenerate();
+
+                //connect fed from equipment to selected source
+
+                //update Detail Item - Line Based feeders with EqConId value
+                foreach (FamilyInstance feeder in feederLines)
+                {
+                    feeder.LookupParameter("EqConId").Set(newFamInstance.LookupParameter("EqConId").AsString());
+                }
 
                 trac.Commit();
             }
@@ -274,6 +310,11 @@ namespace OneLineConnectAndPlace
                 int inputVoltage = Convert.ToInt32(voltage * voltMultiplier);
 
                 voltageDetail.Set(inputVoltage);
+
+                //set EqConId to be modified from another tool
+                string notAssignedVal = UpdateEqConIdNotAssigned(doc);
+
+                newFamInstance.LookupParameter("EqConId").Set(notAssignedVal);
 
                 trac.Commit();
             }
@@ -315,6 +356,60 @@ namespace OneLineConnectAndPlace
             public bool AllowReference(Reference refer, XYZ point)
             {
                 return false;
+            }
+        }
+
+        public string UpdateEqConIdNotAssigned(Document document)
+        {
+            string updateId;
+
+            List<FamilyInstance> notAssignedDetailItems = 
+                new FilteredElementCollector(document)
+                .OfCategory(BuiltInCategory.OST_DetailComponents)
+                .OfClass(typeof(FamilyInstance))
+                .ToElements()
+                .Where(x => x.LookupParameter("EqConId").AsString().Contains("NotAssigned"))
+                .Cast<FamilyInstance>()
+                .ToList();
+
+            string num = (notAssignedDetailItems.Count() + 1).ToString();
+            updateId = "NotAssigned" + num;
+
+            return updateId;
+        }
+
+        public void ConnectEquipment(Document document, FamilyInstance sourceDetailItem, FamilyInstance fedToEquip)
+        {
+            BuiltInCategory bic = BuiltInCategory.OST_ElectricalEquipment;
+
+            //collect Electrical Equipment FamilyInstance with selected sourceDetailItem EqConId
+            FamilyInstance sourceEquip = 
+                new FilteredElementCollector(document)
+                .OfCategory(bic)
+                .OfClass(typeof(FamilyInstance))
+                .ToElements()
+                .Cast<FamilyInstance>()
+                .Where(x => x.LookupParameter("EqConId").AsString() == sourceDetailItem.LookupParameter("EqConId")
+                .AsString())
+                .First();
+
+            if (sourceEquip != null)
+            {
+                //circuit fedToEquip to sourceEquip
+                ConnectorSet connectorSet = fedToEquip.MEPModel.ConnectorManager.UnusedConnectors;
+                ElectricalSystem fedToCircuit;
+                foreach (Connector connector in connectorSet)
+                {
+                    ElectricalSystemType elecSysType = connector.ElectricalSystemType;
+                    fedToCircuit = ElectricalSystem.Create(connector, elecSysType);
+                    fedToCircuit.SelectPanel(sourceEquip);
+                }
+            }
+            else
+            {
+                TaskDialog.Show(
+                    "Selected Detail Item has no Connected Equipment", 
+                    "Selected Detail Item does not have a referenced Electrical Equipment family to reference. No circuit will be created.");
             }
         }
 
