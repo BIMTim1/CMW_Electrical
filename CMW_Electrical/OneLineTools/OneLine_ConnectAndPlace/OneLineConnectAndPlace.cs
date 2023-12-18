@@ -282,6 +282,49 @@ namespace OneLineConnectAndPlace
                 doc.Regenerate();
 
                 //connect fed from equipment to selected source
+                if (connectEquip.LookupParameter("EqConId").AsString() != "")
+                {
+                    //collect Electrical Equipment family in model with same EqConId value as selectedEquip
+                    FamilyInstance sourceEquipInst = new FilteredElementCollector(doc)
+                        .OfCategory(BuiltInCategory.OST_ElectricalEquipment)
+                        .OfClass(typeof(FamilyInstance))
+                        .Where(x => x.LookupParameter("EqConId").AsString() == connectEquip.LookupParameter("EqConId").AsString())
+                        .Cast<FamilyInstance>()
+                        .First();
+
+                    ElectricalSystem elecSys = null;
+                    //collect Electrical Connector information to create circuit
+                    if (sourceEquipInst.MEPModel.GetElectricalSystems().Count() > 0)
+                    {
+                        ISet<ElectricalSystem> sourceEquipSet = sourceEquipInst.MEPModel.GetElectricalSystems();
+
+                        ElectricalSystem selectedElecSys = (from es in sourceEquipSet 
+                                   where es.BaseEquipment.LookupParameter("Panel Name").AsString() != 
+                                   selectedEquip.LookupParameter("Panel Name").AsString() 
+                                   select es)
+                                   .First();
+
+                        if (selectedElecSys != null)
+                        {
+                            elecSys = selectedElecSys;
+                        }
+                    }
+                    else
+                    {
+                        ConnectorSet connectors = (selectedEquip as FamilyInstance).MEPModel.ConnectorManager.UnusedConnectors;
+
+                        Connector connector = null;
+                        foreach (Connector conn in connectors)
+                        {
+                            connector = conn;
+                        }
+
+                        elecSys = ElectricalSystem.Create(connector, ElectricalSystemType.PowerUnBalanced);
+                    }
+
+                    //assign ElectricalSystem to sourceEquip
+                    elecSys.SelectPanel(sourceEquipInst);
+                }
 
                 //update Detail Item - Line Based feeders with EqConId value
                 foreach (FamilyInstance feeder in feederLines)
