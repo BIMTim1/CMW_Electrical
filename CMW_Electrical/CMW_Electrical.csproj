@@ -80,6 +80,12 @@
     <Compile Include="OneLineTools\OLEqConIdUpdate.cs" />
     <Compile Include="OneLineTools\OLUpdateInfo.cs" />
     <Compile Include="OneLineTools\JtWindowHandler.cs" />
+    <Compile Include="OneLineTools\OneLine_UpdateDesignations\dialogSelectUpdateMethod.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="OneLineTools\OneLine_UpdateDesignations\dialogSelectUpdateMethod.Designer.cs">
+      <DependentUpon>dialogSelectUpdateMethod.cs</DependentUpon>
+    </Compile>
     <Compile Include="OneLineTools\Press.cs" />
     <Compile Include="OneLineTools\OneLine_ConnectAndPlace\SelectEquipmentToReferenceForm.cs">
       <SubType>Form</SubType>
@@ -90,7 +96,7 @@
     <Compile Include="OneLineTools\OneLine_ConnectAndPlace\OneLineConnectAndPlace.cs" />
     <Compile Include="OneLineTools\OneLine_Connect\OneLineConnect.cs" />
     <Compile Include="OneLineTools\OneLine_PlaceEquip\OneLinePlaceEquip.cs" />
-    <Compile Include="OneLineTools\OneLine_UpdatePanelNames\OneLineUpdatePanelInfo.cs" />
+    <Compile Include="OneLineTools\OneLine_UpdateDesignations\OneLineUpdateDesignations.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PanelScheduleReset\PanelScheduleReset.cs" />
     <Compile Include="AddElecCircuitNote\AddElecCircuitNote.cs" />
@@ -152,6 +158,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="OneLineTools\OneLine_ConnectAndPlace\SelectEquipmentToReferenceForm.resx">
       <DependentUpon>SelectEquipmentToReferenceForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="OneLineTools\OneLine_UpdateDesignations\dialogSelectUpdateMethod.resx">
+      <DependentUpon>dialogSelectUpdateMethod.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

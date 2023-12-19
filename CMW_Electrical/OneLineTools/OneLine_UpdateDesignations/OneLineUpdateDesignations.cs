@@ -16,6 +16,16 @@ namespace OneLineUpdateDesignations
     {
         public Result Execute(ExternalCommandData commandData, ref string errorReport, ElementSet elementSet)
         {
+            //create an instance of the WindowsForm for the user to select which update method to use
+            dialogSelectUpdateMethod dialogSelectUpdateMethod = new dialogSelectUpdateMethod();
+            dialogSelectUpdateMethod.ShowDialog();
+
+            //if user canceled out of WindowsForm, close tool
+            if (dialogSelectUpdateMethod.DialogResult == System.Windows.Forms.DialogResult.Cancel)
+            {
+                TaskDialog.Show("User Canceled", "The tool was canceled.");
+                return Result.Failed;
+            }
             return Result.Succeeded;
         }
     }
