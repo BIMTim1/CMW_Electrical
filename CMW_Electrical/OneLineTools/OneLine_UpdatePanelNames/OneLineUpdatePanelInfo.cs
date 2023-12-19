@@ -7,12 +7,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace OneLineUpdatePanelInfo
+namespace OneLineUpdateDesignations
 {
     [Transaction(TransactionMode.Manual)]
     [Regeneration(RegenerationOption.Manual)]
 
-    public class OneLineUpdatePanelInfo : IExternalCommand
+    public class OneLineUpdateDesignations : IExternalCommand
     {
         public Result Execute(ExternalCommandData commandData, ref string errorReport, ElementSet elementSet)
         {

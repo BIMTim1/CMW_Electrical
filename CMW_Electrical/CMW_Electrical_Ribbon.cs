@@ -329,17 +329,18 @@ namespace CMW_Electrical
 
 
             //------------create push button for oneLineUpdatePanelInfo------------
-            PushButtonData oneLineUpdatePanelInfoData = 
+            PushButtonData oneLineUpdateDesignations = 
                 new PushButtonData(
-                    "cmdOneLineUpdatePanelInfo", 
-                    "Update Panel Info", 
-                    thisAssemblyPath, 
-                    "OneLineUpdatePanelInfo.OneLineUpdatePanelInfo")
+                    "cmdOneLineUpdateDesignations", 
+                    "Update Component or Panel Designation", 
+                    thisAssemblyPath,
+                    "OneLineUpdateDesignations.OneLineUpdateDesignations")
             {
                     LargeImage = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/OLUpdatePanelName32x32.png")),
                     Image = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/OLUpdatePanelName16x16.png")),
-                    ToolTip = "Update Modeled Electrical Equipment from One-Line Information."
-            };
+                    ToolTip = "From a selection dialog, determine whether to update Electrical Equipment Panel Names from schematic Detail Items or the inverse.",
+                    LongDescription = "Any Electrical Equipment or Detail Item family with the same EqConId value will be updated as selected by the user."
+                };
 
             
             PushButtonData oneLinePlaceEquipData = 
@@ -354,7 +355,7 @@ namespace CMW_Electrical
                     ToolTip = "Select a Detail Item from your One-Line and Place the Corresponding Equipment in the model from a selected Level view."
             };
             oneLinePanel.AddStackedItems(oneLineConnectAndPlaceData, oneLineConnectData);
-            oneLinePanel.AddStackedItems(oneLineUpdatePanelInfoData, oneLinePlaceEquipData);
+            oneLinePanel.AddStackedItems(oneLineUpdateDesignations, oneLinePlaceEquipData);
 
             //------------create push button for <button name>------------
         }
