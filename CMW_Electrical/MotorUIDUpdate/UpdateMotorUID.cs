@@ -83,15 +83,15 @@ namespace MotorUIDUpdate
                 ElectricalSystem circuit = mCct.First();
 
                 Parameter circuitLoadName = circuit.LookupParameter("Load Name");
-                //update Motor Circuit Load Name value
+                //update Motor Circuit Load DIName value
                 string loadNameVal = circuitLoadName.AsString().ToUpper();
 
-                //update circuit Load Name if never updated
+                //update circuit Load DIName if never updated
                 if (loadNameVal.Contains("MOTOR/HVAC/MECH"))
                 {
                     loadNameVal = loadNameVal.Replace("MOTOR/HVAC/MECH", equipMark);
                 }
-                //update circuit Load Name if current UID value was used
+                //update circuit Load DIName if current UID value was used
                 else
                 {
                     loadNameVal = loadNameVal.Replace(mUID.AsString(), equipMark);

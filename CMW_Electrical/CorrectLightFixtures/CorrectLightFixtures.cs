@@ -291,7 +291,7 @@ namespace CorrectLightFixtures
                 bool deleteDefaultSymbols = false;
 
                 //iterate through Dictionary <key, value> pairs to see if
-                //current Family Name is part of Dictionary
+                //current Family DIName is part of Dictionary
                 //update familyNameTest appropriately
                 if (updateTypeString == "old")
                 {
@@ -368,8 +368,8 @@ namespace CorrectLightFixtures
                 }
 
                 //collect FamilySymbol element to modify
-                //FamilySymbol Family Name should match familyNameTest variable,
-                //and Type Name should contain "Standard"
+                //FamilySymbol Family DIName should match familyNameTest variable,
+                //and Type DIName should contain "Standard"
                 //to duplicate from 'clean slate'.
                 FamilySymbol modifyFamilySymbol =
                     new FilteredElementCollector(document)

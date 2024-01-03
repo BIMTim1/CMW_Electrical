@@ -105,6 +105,8 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="xSharedClasses\ElecEquipInfo.cs" />
+    <Compile Include="xSharedClasses\DetailItemInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\AddElecCctNote32x32.png" />

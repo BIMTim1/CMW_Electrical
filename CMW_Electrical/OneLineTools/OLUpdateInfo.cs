@@ -15,11 +15,11 @@ namespace OLUpdateInfo
             //update One-Line Detail Item FamilyInstance from Electrical Equipment family
             //List<string> diParamStrings = new List<string>()
             //{
-            //    "Panel Name - Detail",
+            //    "Panel DIName - Detail",
             //    "MLO",
             //    "E_Voltage",
             //    "E_Number of Poles",
-            //    "EqConId"
+            //    "DIEqConId"
             //};
             string panelName = panel.LookupParameter("Panel Name").AsString();
             detailItem.LookupParameter("Panel Name - Detail").Set(panelName);

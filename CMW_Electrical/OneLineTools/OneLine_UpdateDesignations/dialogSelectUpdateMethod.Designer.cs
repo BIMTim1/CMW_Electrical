@@ -39,7 +39,7 @@
             // 
             this.btnCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.btnCancel.Location = new System.Drawing.Point(325, 138);
+            this.btnCancel.Location = new System.Drawing.Point(280, 114);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(75, 23);
             this.btnCancel.TabIndex = 0;
@@ -51,7 +51,7 @@
             // 
             this.btnOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnOK.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this.btnOK.Location = new System.Drawing.Point(244, 138);
+            this.btnOK.Location = new System.Drawing.Point(199, 114);
             this.btnOK.Name = "btnOK";
             this.btnOK.Size = new System.Drawing.Size(75, 23);
             this.btnOK.TabIndex = 1;
@@ -65,10 +65,10 @@
             this.rbtnUseEquipment.Checked = true;
             this.rbtnUseEquipment.Location = new System.Drawing.Point(38, 52);
             this.rbtnUseEquipment.Name = "rbtnUseEquipment";
-            this.rbtnUseEquipment.Size = new System.Drawing.Size(303, 17);
+            this.rbtnUseEquipment.Size = new System.Drawing.Size(143, 17);
             this.rbtnUseEquipment.TabIndex = 2;
             this.rbtnUseEquipment.TabStop = true;
-            this.rbtnUseEquipment.Text = "Use Modeled Electrical Equipment to Update Name Values";
+            this.rbtnUseEquipment.Text = "Use Electrical Equipment";
             this.rbtnUseEquipment.UseVisualStyleBackColor = true;
             // 
             // lblUserSelectReference
@@ -85,16 +85,16 @@
             this.rbtnUseDetailItems.AutoSize = true;
             this.rbtnUseDetailItems.Location = new System.Drawing.Point(38, 75);
             this.rbtnUseDetailItems.Name = "rbtnUseDetailItems";
-            this.rbtnUseDetailItems.Size = new System.Drawing.Size(271, 17);
+            this.rbtnUseDetailItems.Size = new System.Drawing.Size(155, 17);
             this.rbtnUseDetailItems.TabIndex = 4;
-            this.rbtnUseDetailItems.Text = "Use Schematic Detail Items to Update Name Values";
+            this.rbtnUseDetailItems.Text = "Use Schematic Detail Items";
             this.rbtnUseDetailItems.UseVisualStyleBackColor = true;
             // 
             // dialogSelectUpdateMethod
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(412, 173);
+            this.ClientSize = new System.Drawing.Size(367, 149);
             this.Controls.Add(this.rbtnUseDetailItems);
             this.Controls.Add(this.lblUserSelectReference);
             this.Controls.Add(this.rbtnUseEquipment);
@@ -112,8 +112,8 @@
 
         private System.Windows.Forms.Button btnCancel;
         private System.Windows.Forms.Button btnOK;
-        private System.Windows.Forms.RadioButton rbtnUseEquipment;
         private System.Windows.Forms.Label lblUserSelectReference;
-        private System.Windows.Forms.RadioButton rbtnUseDetailItems;
+        public System.Windows.Forms.RadioButton rbtnUseEquipment;
+        public System.Windows.Forms.RadioButton rbtnUseDetailItems;
     }
 }

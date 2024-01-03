@@ -2,6 +2,7 @@
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
 using Autodesk.Revit.ApplicationServices;
+using CMW_Electrical;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,7 +24,7 @@ namespace OneLineUpdateDesignations
             Application app = uiapp.Application;
             UIDocument uidoc = uiapp.ActiveUIDocument;
 
-            //collect Detail Items and Electrical Equipment with an EqConId
+            //collect Detail Items and Electrical Equipment with an DIEqConId
             List<FamilyInstance> allDetailItems = new FilteredElementCollector(doc)
                 .OfCategory(BuiltInCategory.OST_DetailComponents)
                 .OfClass(typeof(FamilyInstance))

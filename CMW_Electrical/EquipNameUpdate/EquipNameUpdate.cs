@@ -72,7 +72,7 @@ namespace EquipNameUpdate
                     //test if PanelScheduleView exists
                     if (panSchedId.Count > 0)
                     {
-                        //update Panel Schedule Name to match updated Panel Name
+                        //update Panel Schedule DIName to match updated Panel DIName
                         Element panSched = doc.GetElement(panSchedId.First());
                         Parameter schedName = panSched.LookupParameter("Panel Schedule Name");
                         schedName.Set(eq_lbl);
@@ -118,12 +118,12 @@ namespace EquipNameUpdate
                                     }
                                     else
                                     {
-                                        //get Load Name parameter of Transformer
+                                        //get Load DIName parameter of Transformer
                                         loadNames.Add(cct.LookupParameter("Load Name"));
                                     }
                                 }
 
-                                //set Load Name of Transformer
+                                //set Load DIName of Transformer
                                 string setName = eq_lbl + " (" + downPan + ")" + eq_loc;
                                 loadNames.First().Set(setName);
                                 countLoadname += 1;
@@ -135,7 +135,7 @@ namespace EquipNameUpdate
                                     string baseEq = cct.BaseEquipment.LookupParameter("Panel Name").AsString();
                                     if (baseEq != eq_lbl)
                                     {
-                                        //set Load Name of Electrical Equipment
+                                        //set Load DIName of Electrical Equipment
                                         Parameter loadName = cct.LookupParameter("Load Name");
                                         loadName.Set(eq_lbl + eq_loc);
                                         countLoadname += 1;

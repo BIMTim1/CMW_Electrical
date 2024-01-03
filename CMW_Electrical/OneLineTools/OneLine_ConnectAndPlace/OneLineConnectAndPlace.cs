@@ -275,7 +275,7 @@ namespace OneLineConnectAndPlace
                 OLUpdateDetailItemInfo newThing = new OLUpdateDetailItemInfo();
                 newThing.OneLineUpdateParameters(newFamInstance, selectedEquip as FamilyInstance, doc);
 
-                //update EqConId of Detail Item and Electrical Equipment
+                //update DIEqConId of Detail Item and Electrical Equipment
                 OLEqConIdUpdateClass updateEqConId = new OLEqConIdUpdateClass();
                 updateEqConId.OneLineEqConIdValueUpdate(newFamInstance, selectedEquip as FamilyInstance, doc);
 
@@ -284,7 +284,7 @@ namespace OneLineConnectAndPlace
                 //connect fed from equipment to selected source
                 if (connectEquip.LookupParameter("EqConId").AsString() != "")
                 {
-                    //collect Electrical Equipment family in model with same EqConId value as selectedEquip
+                    //collect Electrical Equipment family in model with same DIEqConId value as selectedEquip
                     FamilyInstance sourceEquipInst = new FilteredElementCollector(doc)
                         .OfCategory(BuiltInCategory.OST_ElectricalEquipment)
                         .OfClass(typeof(FamilyInstance))
@@ -326,7 +326,7 @@ namespace OneLineConnectAndPlace
                     elecSys.SelectPanel(sourceEquipInst);
                 }
 
-                //update Detail Item - Line Based feeders with EqConId value
+                //update Detail Item - Line Based feeders with DIEqConId value
                 foreach (FamilyInstance feeder in feederLines)
                 {
                     feeder.LookupParameter("EqConId").Set(newFamInstance.LookupParameter("EqConId").AsString());
@@ -343,7 +343,7 @@ namespace OneLineConnectAndPlace
                 Parameter panelNameDetail = newFamInstance.LookupParameter("Panel Name - Detail");
                 Parameter voltageDetail = newFamInstance.LookupParameter("E_Voltage");
 
-                //update Panel Name - Detail
+                //update Panel DIName - Detail
                 panelNameDetail.Set(equipSelectForm.tboxNewEquipmentName.Text);
 
                 //update voltage
@@ -354,7 +354,7 @@ namespace OneLineConnectAndPlace
 
                 voltageDetail.Set(inputVoltage);
 
-                //set EqConId to be modified from another tool
+                //set DIEqConId to be modified from another tool
                 string notAssignedVal = UpdateEqConIdNotAssigned(doc);
 
                 newFamInstance.LookupParameter("EqConId").Set(notAssignedVal);
@@ -425,7 +425,7 @@ namespace OneLineConnectAndPlace
         {
             BuiltInCategory bic = BuiltInCategory.OST_ElectricalEquipment;
 
-            //collect Electrical Equipment FamilyInstance with selected sourceDetailItem EqConId
+            //collect Electrical Equipment FamilyInstance with selected sourceDetailItem DIEqConId
             FamilyInstance sourceEquip = 
                 new FilteredElementCollector(document)
                 .OfCategory(bic)

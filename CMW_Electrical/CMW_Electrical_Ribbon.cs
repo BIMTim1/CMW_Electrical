@@ -342,14 +342,14 @@ namespace CMW_Electrical
                     LongDescription = "Any Electrical Equipment or Detail Item family with the same EqConId value will be updated as selected by the user."
                 };
 
-            
-            PushButtonData oneLinePlaceEquipData = 
+
+            PushButtonData oneLinePlaceEquipData =
                 new PushButtonData(
-                    "cmdOneLinePlaceEquip", 
-                    "Place Equipment from One-Line", 
-                    thisAssemblyPath, 
+                    "cmdOneLinePlaceEquip",
+                    "Place Equipment from One-Line",
+                    thisAssemblyPath,
                     "OneLinePlaceEquip.OneLinePlaceEquip")
-            {
+                {
                     LargeImage = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/OLPlaceEquip32x32.png")),
                     Image = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/OLPlaceEquip16x16.png")),
                     ToolTip = "Select a Detail Item from your One-Line and Place the Corresponding Equipment in the model from a selected Level view."
