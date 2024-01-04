@@ -34,18 +34,30 @@ namespace CMW_Electrical
             get { return DIFamInst; }
         }
 
+        /// <summary>
+        /// Get or set the Panel Name - Detail parameter of this DetailItem.
+        /// </summary>
+        /// <value>Return the string value of the Panel Name - Detail parameter of this DetailItem.</value>
         public string Name
         {
             get { return DIName.AsString(); }
             set { DIName.Set(value); }
         }
 
+        /// <summary>
+        /// Get or set the EqConId parameter of this DetailItem.
+        /// </summary>
+        /// <value>Return the EqConId value of this DetailItem.</value>
         public string EqConId
         {
             get { return DIEqConId.AsString(); }
             set { DIEqConId.Set(value); }
         }
 
+        /// <summary>
+        /// Get or set the E_Voltage parameter of this DetailItem.
+        /// </summary>
+        /// <value>Return the double value of the E_Voltage parameter of this DetailItem.</value>
         public double Voltage
         {
             //is a voltage conversion necessary?
@@ -54,6 +66,10 @@ namespace CMW_Electrical
             set { DIVoltage.Set(value); }
         }
 
+        /// <summary>
+        /// Get or set the E_Number of Poles parameter of this DetailItem.
+        /// </summary>
+        /// <value>Return the integer value of the E_Number of Poles parameter of this DetailItem.</value>
         public int Poles
         {
             get { return DINumberOfPoles.AsInteger(); }
@@ -61,7 +77,7 @@ namespace CMW_Electrical
         }
 
         /// <summary>
-        /// Get or set the New, Existing, Demo (1,2,3) parameter of this DetailItem
+        /// Get or set the New, Existing, Demo (1,2,3) parameter of this DetailItem.
         /// </summary>
         /// <value>Return the integer assigned to the New, Existing, Demo (1,2,3) parameter.</value>
         public int Phase
