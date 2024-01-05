@@ -12,28 +12,55 @@ namespace CMW_Electrical
 {
     internal class ElecEquipInfo
     {
-        private string Name;
-        private string EqConId;
+        private readonly Parameter EEName;
+        private readonly Parameter EEEqConId;
+        private readonly Parameter EEDistributionSystem;
+        private FamilySymbol EEFamilyType;
 
         public ElecEquipInfo(Element elecEquip)
         {
             FamilyInstance elecEquipInstance = elecEquip as FamilyInstance;
-            string elecEquipName = elecEquipInstance.LookupParameter("Panel Name").AsString();
-            string elecEquipEqConId = elecEquipInstance.LookupParameter("EqConId").AsString();
-            Name = elecEquipName;
-            EqConId = elecEquipEqConId;
+            EEName = elecEquipInstance.LookupParameter("Panel Name");
+            EEEqConId = elecEquipInstance.LookupParameter("EqConId");
+            EEDistributionSystem = elecEquipInstance.LookupParameter("Distribution System");
+
+            EEFamilyType = elecEquipInstance.Symbol;
         }
 
-        public string EEName
+        /// <summary>
+        /// Get or set the Panel Name parameter of the ElectricalEquipment FamilyInstance.
+        /// </summary>
+        public string Name
         {
-            get { return Name; }
-            set { Name = value; }
+            get { return EEName.AsString(); }
+            set { EEName.Set(value); }
         }
 
-        public string EEEqConId
+        /// <summary>
+        /// Get or set the EqConId parameter of the ElectricalEquipment FamilyInstance.
+        /// </summary>
+        public string EqConId
         {
-            get { return EqConId; }
-            set { EqConId = value; }
+            get { return EEEqConId.AsString(); }
+            set { EEEqConId.Set(value); }
+        }
+
+        /// <summary>
+        /// Get or set the DistributionSysType assigned to the ElectricalEquipment FamilyInstance.
+        /// </summary>
+        public ElementId DistributionSystem
+        {
+            get { return EEDistributionSystem.AsElementId(); }
+            set { EEDistributionSystem.Set(value); }
+        }
+
+        /// <summary>
+        /// Get or set the FamilySymbol of the ElectricalEquipment FamilyInstance.
+        /// </summary>
+        public FamilySymbol EquipFamSymbol
+        {
+            get { return EEFamilyType; }
+            set { EEFamilyType = value; }
         }
     }
 }

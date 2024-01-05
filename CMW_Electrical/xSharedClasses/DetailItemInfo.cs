@@ -29,6 +29,10 @@ namespace CMW_Electrical
             DIPhasing = DIFamInst.LookupParameter("New, Existing, Demo (1,2,3)");
         }
 
+        /// <summary>
+        /// Get the FamilyInstance of the DetailItem Element.
+        /// </summary>
+        /// <value>Get the FamilyInstance of the DetailItem Element.</value>
         public FamilyInstance GetFamilyInstance
         {
             get { return DIFamInst; }
