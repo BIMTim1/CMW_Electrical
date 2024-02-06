@@ -148,6 +148,20 @@
     <Resource Include="Resources\OLUpdatePanelName32x32.png" />
     <Resource Include="Resources\OLPlaceEquip16x16.png" />
     <Resource Include="Resources\OLPlaceEquip32x32.png" />
+    <Resource Include="Resources\tagAlignBottom16x16.png" />
+    <Resource Include="Resources\tagAlignBottom32x32.png" />
+    <Resource Include="Resources\tagAlignBottomCenter16x16.png" />
+    <Resource Include="Resources\tagAlignBottomCenter32x32.png" />
+    <Resource Include="Resources\tagAlignCenter16x16.png" />
+    <Resource Include="Resources\tagAlignCenter32x32.png" />
+    <Resource Include="Resources\tagAlignLeft16x16.png" />
+    <Resource Include="Resources\tagAlignLeft32x32.png" />
+    <Resource Include="Resources\tagAlignRight16x16.png" />
+    <Resource Include="Resources\tagAlignRight32x32.png" />
+    <Resource Include="Resources\tagAlignTop16x16.png" />
+    <Resource Include="Resources\tagAlignTop32x32.png" />
+    <Resource Include="Resources\tagAlignTopCenter16x16.png" />
+    <Resource Include="Resources\tagAlignTopCenter32x32.png" />
     <Content Include="_Addin\CMW_Electrical.addin">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
