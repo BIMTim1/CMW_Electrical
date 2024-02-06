@@ -32,6 +32,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="AdWindows">
+      <HintPath>..\..\..\..\Program Files\Autodesk\Revit 2022\AdWindows.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="RevitAPI">
       <HintPath>..\..\..\..\Program Files\Autodesk\Revit 2021\RevitAPI.dll</HintPath>
@@ -73,6 +77,26 @@
     <Compile Include="MotorMOCPUpdate\UpdateMotorMOCP.cs" />
     <Compile Include="MotorUIDUpdate\UpdateMotorUID.cs" />
     <Compile Include="MultiLegSwitchIdUpdate\MultiLegSwitchIdUpdate.cs" />
+    <Compile Include="OneLineTools\OLEqConIdUpdate.cs" />
+    <Compile Include="OneLineTools\OLUpdateInfo.cs" />
+    <Compile Include="OneLineTools\JtWindowHandler.cs" />
+    <Compile Include="OneLineTools\OneLine_UpdateDesignations\dialogSelectUpdateMethod.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="OneLineTools\OneLine_UpdateDesignations\dialogSelectUpdateMethod.Designer.cs">
+      <DependentUpon>dialogSelectUpdateMethod.cs</DependentUpon>
+    </Compile>
+    <Compile Include="OneLineTools\Press.cs" />
+    <Compile Include="OneLineTools\OneLine_ConnectAndPlace\SelectEquipmentToReferenceForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="OneLineTools\OneLine_ConnectAndPlace\SelectEquipmentToReferenceForm.Designer.cs">
+      <DependentUpon>SelectEquipmentToReferenceForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="OneLineTools\OneLine_ConnectAndPlace\OneLineConnectAndPlace.cs" />
+    <Compile Include="OneLineTools\OneLine_Connect\OneLineConnect.cs" />
+    <Compile Include="OneLineTools\OneLine_PlaceEquip\OneLinePlaceEquip.cs" />
+    <Compile Include="OneLineTools\OneLine_UpdateDesignations\OneLineUpdateDesignations.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PanelScheduleReset\PanelScheduleReset.cs" />
     <Compile Include="AddElecCircuitNote\AddElecCircuitNote.cs" />
@@ -81,6 +105,9 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="xSharedClasses\ElecDistributionSystem.cs" />
+    <Compile Include="xSharedClasses\ElecEquipInfo.cs" />
+    <Compile Include="xSharedClasses\DetailItemInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\AddElecCctNote32x32.png" />
@@ -113,6 +140,14 @@
     <Resource Include="Resources\CorrectLightFixtures32x32.png" />
     <Resource Include="Resources\UpdateMotorUID16x16.png" />
     <Resource Include="Resources\UpdateMotorUID32x32.png" />
+    <Resource Include="Resources\OLConnect16x16.png" />
+    <Resource Include="Resources\OLConnect32x32.png" />
+    <Resource Include="Resources\OLConnectAndPlace16x16.png" />
+    <Resource Include="Resources\OLConnectAndPlace32x32.png" />
+    <Resource Include="Resources\OLUpdatePanelName16x16.png" />
+    <Resource Include="Resources\OLUpdatePanelName32x32.png" />
+    <Resource Include="Resources\OLPlaceEquip16x16.png" />
+    <Resource Include="Resources\OLPlaceEquip32x32.png" />
     <Content Include="_Addin\CMW_Electrical.addin">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -123,6 +158,12 @@
   <ItemGroup>
     <EmbeddedResource Include="AddinInformation\AddinInfoForm.resx">
       <DependentUpon>AddinInfoForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="OneLineTools\OneLine_ConnectAndPlace\SelectEquipmentToReferenceForm.resx">
+      <DependentUpon>SelectEquipmentToReferenceForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="OneLineTools\OneLine_UpdateDesignations\dialogSelectUpdateMethod.resx">
+      <DependentUpon>dialogSelectUpdateMethod.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
