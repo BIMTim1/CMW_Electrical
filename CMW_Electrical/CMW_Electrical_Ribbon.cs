@@ -357,6 +357,23 @@ namespace CMW_Electrical
             oneLinePanel.AddStackedItems(oneLineConnectAndPlaceData, oneLineConnectData);
             oneLinePanel.AddStackedItems(oneLineUpdateDesignations, oneLinePlaceEquipData);
 
+
+            PushButtonData tagAlignTopData = 
+                new PushButtonData(
+                    "cmdTagAlignTop",
+                    "Align Top of Tag",
+                    thisAssemblyPath,
+                    "TagAlignTop.TagAlignTop")
+            {
+                    LargeImage = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/tagAlignTop32x32.png")),
+                    Image = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/tagAlignTop16x16.png")),
+                    ToolTip = ""
+            };
+
+
+            SplitButtonData splitButtonTagAlignData = new SplitButtonData("Tag Align", "Tag Align");
+            SplitButton splitButtonTagAlign = devicePanel.AddItem(splitButtonTagAlignData) as SplitButton;
+            splitButtonTagAlign.AddPushButton(tagAlignTopData);
             //------------create push button for <button name>------------
         }
 
