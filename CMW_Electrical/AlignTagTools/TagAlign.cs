@@ -35,10 +35,14 @@ namespace AlignTagTools
 
             using (Transaction trac = new Transaction(doc))
             {
+                trac.Start("Tag Align");
+
                 foreach (IndependentTag t in adjustTags)
                 {
                     UpdateTagLocation(t, refTagBB, activeView, alignTagId);
                 }
+
+                trac.Commit();
             }
         }
 
@@ -115,11 +119,8 @@ namespace AlignTagTools
 
             }
 
-            if (newXYZ != null)
-            {
-                newXYZ -= tag.TagHeadPosition;
-                tag.Location.Move(newXYZ);
-            }
+            newXYZ -= tag.TagHeadPosition;
+            tag.Location.Move(newXYZ);
         }
 
         public class MySelectionFilter : ISelectionFilter

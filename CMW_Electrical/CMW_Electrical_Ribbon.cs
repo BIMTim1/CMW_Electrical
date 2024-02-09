@@ -362,7 +362,7 @@ namespace CMW_Electrical
             PushButtonData tagAlignTopData = 
                 new PushButtonData(
                     "cmdTagAlignTop",
-                    "Align Tag to Top",
+                    "Align Top",
                     thisAssemblyPath,
                     "AlignTagTools.TagAlignTop")
             {
@@ -374,9 +374,9 @@ namespace CMW_Electrical
             PushButtonData tagAlignBottomData = 
                 new PushButtonData(
                     "cmdTagAlignBottom", 
-                    "Align Tag to Bottom", 
+                    "Align Bottom", 
                     thisAssemblyPath, 
-                    "AlignTagTools:TagAlignBottom")
+                    "AlignTagTools.TagAlignBottom")
             {
                     LargeImage = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/tagAlignBottom32x32.png")),
                     Image = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/tagAlignBottom16x16.png")),
@@ -386,9 +386,9 @@ namespace CMW_Electrical
             PushButtonData tagAlignLeftData = 
                 new PushButtonData(
                     "cmdTagAlignLeft", 
-                    "Align Tag to Left", 
+                    "Align Left", 
                     thisAssemblyPath, 
-                    "AlignTagTools:TagAlignLeft")
+                    "AlignTagTools.TagAlignLeft")
             {
                 LargeImage = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/tagAlignLeft32x32.png")),
                 Image = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/tagAlignLeft16x16.png")),
@@ -398,9 +398,9 @@ namespace CMW_Electrical
             PushButtonData tagAlignRightData = 
                 new PushButtonData(
                 "cmdTagAlignRight", 
-                "Align Tag to Right", 
+                "Align Right", 
                 thisAssemblyPath, 
-                "AlignTagTools:TagAlignRight")
+                "AlignTagTools.TagAlignRight")
             {
                 LargeImage = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/tagAlignRight32x32.png")),
                 Image = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/tagAlignRight16x16.png")),
@@ -410,9 +410,9 @@ namespace CMW_Electrical
             PushButtonData tagAlignTopAndCenterData = 
                 new PushButtonData(
                     "cmdTagAlignTopAndCenter", 
-                    "Align Tag to Top and Center",
+                    "Align Top and Center",
                     thisAssemblyPath, 
-                    "AlignTagTools:TagAlignTopAndCenter")
+                    "AlignTagTools.TagAlignTopAndCenter")
             {
                 LargeImage = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/tagAlignTopCenter32x32.png")),
                 Image = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/tagAlignTopCenter16x16.png")),
@@ -422,9 +422,9 @@ namespace CMW_Electrical
             PushButtonData tagAlignBottomAndCenterData = 
                 new PushButtonData(
                     "cmdTagAlignBottomAndCenter", 
-                    "Align Tag to Bottom and Center",
+                    "Align Bottom and Center",
                     thisAssemblyPath, 
-                    "AlignTagTools:TagAlignBottomAndCenter")
+                    "AlignTagTools.TagAlignBottomAndCenter")
             {
                 LargeImage = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/tagAlignBottomCenter32x32.png")),
                 Image = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/tagAlignBottomCenter16x16.png")),
@@ -434,9 +434,9 @@ namespace CMW_Electrical
             PushButtonData tagAlignCenterData = 
                 new PushButtonData(
                     "cmdTagAlignCenter", 
-                    "Align Tag to Center", 
+                    "Align Center", 
                     thisAssemblyPath, 
-                    "AlignTagTools:TagAlignCenter")
+                    "AlignTagTools.TagAlignCenter")
             {
                 LargeImage = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/tagAlignCenter32x32.png")),
                 Image = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/tagAlignBottomCenter16x16.png")),
@@ -446,6 +446,8 @@ namespace CMW_Electrical
 
             SplitButtonData splitButtonTagAlignData = new SplitButtonData("Tag Align", "Tag Align");
             SplitButton splitButtonTagAlign = devicePanel.AddItem(splitButtonTagAlignData) as SplitButton;
+            splitButtonTagAlign.IsSynchronizedWithCurrentItem = true;
+            //add PushButtonDatas of AlignTagTools to SplitButton
             splitButtonTagAlign.AddPushButton(tagAlignTopData);
             splitButtonTagAlign.AddPushButton(tagAlignBottomData);
             splitButtonTagAlign.AddPushButton(tagAlignLeftData);
