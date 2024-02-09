@@ -64,6 +64,13 @@
     <Compile Include="AddinInformation\AddinInfoForm.Designer.cs">
       <DependentUpon>AddinInfoForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="AlignTagTools\TagAlignCenter.cs" />
+    <Compile Include="AlignTagTools\TagAlignBottomAndCenter.cs" />
+    <Compile Include="AlignTagTools\TagAlignTopAndCenter.cs" />
+    <Compile Include="AlignTagTools\TagAlignRight.cs" />
+    <Compile Include="AlignTagTools\TagAlignLeft.cs" />
+    <Compile Include="AlignTagTools\TagAlignBottom.cs" />
+    <Compile Include="AlignTagTools\TagAlign.cs" />
     <Compile Include="AlignTagTools\TagAlignTop.cs" />
     <Compile Include="ChangePanelToSinglePhase\PanelTypeToSinglePhase.cs" />
     <Compile Include="CMW_Electrical_Ribbon.cs" />
