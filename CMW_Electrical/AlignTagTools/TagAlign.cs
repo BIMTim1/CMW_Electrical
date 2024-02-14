@@ -63,14 +63,16 @@ namespace AlignTagTools
                 case "TagAlignTop":
                     y = referenceTagBB.Max.Y;
 
-                    newXYZ = new XYZ(tagMin.X, y, tagMin.Z);
+                    newXYZ = new XYZ(tagMin.X, y + 0.125, tagMin.Z);
 
                     break;
 
                 case "TagAlignBottom":
                     y = referenceTagBB.Min.Y;
+                    XYZ bottomOffset = new XYZ(0, tagMax.Y - tagMin.Y, 0);
 
-                    newXYZ = new XYZ(tagMin.X, y, tagMin.Z);
+                    newXYZ = new XYZ(tagMin.X, y + 0.125, tagMin.Z);
+                    newXYZ -= bottomOffset;
 
                     break;
 
@@ -110,7 +112,7 @@ namespace AlignTagTools
                 case "TagAlignCenter":
                     x = tagMax.X - (tagMax.X - centerRefX) - (tagMax.X - centerTagX);
 
-                    newXYZ = new XYZ(x, tagMin.Y, tagMin.Z);
+                    newXYZ = new XYZ(x, tagMin.Y + 0.125, tagMin.Z);
                     
                     break;
                 default:
