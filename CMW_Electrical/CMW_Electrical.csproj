@@ -64,6 +64,14 @@
     <Compile Include="AddinInformation\AddinInfoForm.Designer.cs">
       <DependentUpon>AddinInfoForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="AlignTagTools\TagAlignCenter.cs" />
+    <Compile Include="AlignTagTools\TagAlignBottomAndCenter.cs" />
+    <Compile Include="AlignTagTools\TagAlignTopAndCenter.cs" />
+    <Compile Include="AlignTagTools\TagAlignRight.cs" />
+    <Compile Include="AlignTagTools\TagAlignLeft.cs" />
+    <Compile Include="AlignTagTools\TagAlignBottom.cs" />
+    <Compile Include="AlignTagTools\TagAlign.cs" />
+    <Compile Include="AlignTagTools\TagAlignTop.cs" />
     <Compile Include="ChangePanelToSinglePhase\PanelTypeToSinglePhase.cs" />
     <Compile Include="CMW_Electrical_Ribbon.cs" />
     <Compile Include="CorrectLightFixtures\CorrectLightFixtures.cs" />
@@ -148,6 +156,20 @@
     <Resource Include="Resources\OLUpdatePanelName32x32.png" />
     <Resource Include="Resources\OLPlaceEquip16x16.png" />
     <Resource Include="Resources\OLPlaceEquip32x32.png" />
+    <Resource Include="Resources\tagAlignBottom16x16.png" />
+    <Resource Include="Resources\tagAlignBottom32x32.png" />
+    <Resource Include="Resources\tagAlignBottomCenter16x16.png" />
+    <Resource Include="Resources\tagAlignBottomCenter32x32.png" />
+    <Resource Include="Resources\tagAlignCenter16x16.png" />
+    <Resource Include="Resources\tagAlignCenter32x32.png" />
+    <Resource Include="Resources\tagAlignLeft16x16.png" />
+    <Resource Include="Resources\tagAlignLeft32x32.png" />
+    <Resource Include="Resources\tagAlignRight16x16.png" />
+    <Resource Include="Resources\tagAlignRight32x32.png" />
+    <Resource Include="Resources\tagAlignTop16x16.png" />
+    <Resource Include="Resources\tagAlignTop32x32.png" />
+    <Resource Include="Resources\tagAlignTopCenter16x16.png" />
+    <Resource Include="Resources\tagAlignTopCenter32x32.png" />
     <Content Include="_Addin\CMW_Electrical.addin">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
