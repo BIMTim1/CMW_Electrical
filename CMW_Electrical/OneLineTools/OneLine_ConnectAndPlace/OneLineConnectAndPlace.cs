@@ -72,7 +72,7 @@ namespace OneLineConnectAndPlace
 
             if (equipSelectForm.DialogResult == System.Windows.Forms.DialogResult.Cancel)
             {
-                return Result.Failed;
+                return Result.Cancelled;
             }
 
             //collect Detail Item One-Line families
@@ -151,10 +151,10 @@ namespace OneLineConnectAndPlace
                 pickedPoint = uidoc.Selection.PickPoint("Select a Point at which to Place Detail Item.");
             }
 
-            catch (OperationCanceledException e)
+            catch (Autodesk.Revit.Exceptions.OperationCanceledException e)
             {
                 TaskDialog.Show("User canceled operation", "The tool was canceled.");
-                return Result.Failed;
+                return Result.Cancelled;
             }
 
             tracGroup.Start("Connect and Place Component");
@@ -177,6 +177,7 @@ namespace OneLineConnectAndPlace
             //collect location information to place Detail Lines
             XYZ startPoint = (connectEquip.Location as LocationPoint).Point;
             XYZ endPoint = pickedPoint;
+            //!!insert OLCreateFeeder class here
 
             XYZ firstPoint = null;
             XYZ midTopPoint = null;
@@ -292,38 +293,23 @@ namespace OneLineConnectAndPlace
                         .Cast<FamilyInstance>()
                         .First();
 
-                    ElectricalSystem elecSys = null;
-                    //collect Electrical Connector information to create circuit
-                    if (sourceEquipInst.MEPModel.GetElectricalSystems().Count() > 0)
+                    ConnectorSet connectors = (selectedEquip as FamilyInstance).MEPModel.ConnectorManager.UnusedConnectors;
+                    ElectricalSystem newcct;
+
+                    foreach (Connector conn in connectors)
                     {
-                        ISet<ElectricalSystem> sourceEquipSet = sourceEquipInst.MEPModel.GetElectricalSystems();
+                        ElectricalSystemType conn_type = conn.ElectricalSystemType;
+                        newcct = ElectricalSystem.Create(conn, conn_type);
 
-                        ElectricalSystem selectedElecSys = (from es in sourceEquipSet 
-                                   where es.BaseEquipment.LookupParameter("Panel Name").AsString() != 
-                                   selectedEquip.LookupParameter("Panel Name").AsString() 
-                                   select es)
-                                   .First();
-
-                        if (selectedElecSys != null)
+                        try
                         {
-                            elecSys = selectedElecSys;
+                            newcct.SelectPanel(sourceEquipInst);
+                        }
+                        catch (Exception ex)
+                        {
+                            TaskDialog.Show(ex.ToString(), ex.Message);
                         }
                     }
-                    else
-                    {
-                        ConnectorSet connectors = (selectedEquip as FamilyInstance).MEPModel.ConnectorManager.UnusedConnectors;
-
-                        Connector connector = null;
-                        foreach (Connector conn in connectors)
-                        {
-                            connector = conn;
-                        }
-
-                        elecSys = ElectricalSystem.Create(connector, ElectricalSystemType.PowerUnBalanced);
-                    }
-
-                    //assign ElectricalSystem to sourceEquip
-                    elecSys.SelectPanel(sourceEquipInst);
                 }
 
                 //update Detail Item - Line Based feeders with DIEqConId value
