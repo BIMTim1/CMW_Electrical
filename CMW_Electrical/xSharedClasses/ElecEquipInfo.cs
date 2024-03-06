@@ -7,24 +7,39 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Autodesk.Revit.DB.Electrical;
 
 namespace CMW_Electrical
 {
     internal class ElecEquipInfo
     {
+        private readonly FamilyInstance EEFamInst;
         private readonly Parameter EEName;
         private readonly Parameter EEEqConId;
         private readonly Parameter EEDistributionSystem;
         private FamilySymbol EEFamilyType;
+        private readonly PanelScheduleView EEScheduleView;
 
-        public ElecEquipInfo(Element elecEquip)
+        public ElecEquipInfo(Document document, Element elecEquip)
         {
-            FamilyInstance elecEquipInstance = elecEquip as FamilyInstance;
-            EEName = elecEquipInstance.LookupParameter("Panel Name");
-            EEEqConId = elecEquipInstance.LookupParameter("EqConId");
-            EEDistributionSystem = elecEquipInstance.LookupParameter("Distribution System");
+            EEFamInst = elecEquip as FamilyInstance;
+            EEName = EEFamInst.LookupParameter("Panel Name");
+            EEEqConId = EEFamInst.LookupParameter("EqConId");
+            EEDistributionSystem = EEFamInst.LookupParameter("Distribution System");
 
-            EEFamilyType = elecEquipInstance.Symbol;
+            EEFamilyType = EEFamInst.Symbol;
+
+            ElementClassFilter filter = new ElementClassFilter(typeof(PanelScheduleView));
+            EEScheduleView = document.GetElement(EEFamInst.GetDependentElements(filter).First()) as PanelScheduleView;
+        }
+
+        /// <summary>
+        /// Get the FamilyInstance of the Electrical Equipment Element.
+        /// </summary>
+        /// <value>Get the FamilyInstance of the Electrical Equipment Element.</value>
+        public FamilyInstance GetFamilyInstance
+        {
+            get { return EEFamInst; }
         }
 
         /// <summary>
@@ -61,6 +76,14 @@ namespace CMW_Electrical
         {
             get { return EEFamilyType; }
             set { EEFamilyType = value; }
+        }
+
+        /// <summary>
+        /// Get the PanelScheduleView of the Electrical Equipment FamilyInstance
+        /// </summary>
+        public PanelScheduleView GetScheduleView
+        {
+            get { return EEScheduleView;  }
         }
     }
 }

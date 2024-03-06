@@ -25,19 +25,26 @@ namespace OneLineUpdateDesignations
             UIDocument uidoc = uiapp.ActiveUIDocument;
 
             //collect Detail Items and Electrical Equipment with an DIEqConId
-            List<FamilyInstance> allDetailItems = new FilteredElementCollector(doc)
+            List<Element> allDetailItems = new FilteredElementCollector(doc)
                 .OfCategory(BuiltInCategory.OST_DetailComponents)
                 .OfClass(typeof(FamilyInstance))
+                .ToElements()
                 .Where(x => x.LookupParameter("EqConId").AsString() != "")
-                .Cast<FamilyInstance>()
                 .ToList();
 
-            List<FamilyInstance> allElectricalEquip = new FilteredElementCollector(doc)
+            List<Element> allElectricalEquip = new FilteredElementCollector(doc)
                 .OfCategory(BuiltInCategory.OST_ElectricalEquipment)
                 .OfClass(typeof(FamilyInstance))
+                .ToElements()
                 .Where(x => x.LookupParameter("EqConId").AsString() != "")
-                .Cast<FamilyInstance>()
                 .ToList();
+
+            //cancel tool if no items in list
+            if (!allDetailItems.Any())
+            {
+                TaskDialog.Show("Tool Canceled", "No Electrical Equipment families or Schematic Detail Items have a EqConId value.");
+                return Result.Cancelled;
+            }
 
             //create an instance of the WindowsForm for the user to select which update method to use
             dialogSelectUpdateMethod dialogSelectUpdateMethod = new dialogSelectUpdateMethod();
@@ -47,9 +54,104 @@ namespace OneLineUpdateDesignations
             if (dialogSelectUpdateMethod.DialogResult == System.Windows.Forms.DialogResult.Cancel)
             {
                 TaskDialog.Show("User Canceled", "The tool was canceled.");
-                return Result.Failed;
+                return Result.Cancelled;
             }
-            return Result.Succeeded;
+
+            using (Transaction trac = new Transaction(doc))
+            {
+                try
+                {
+                    int noUpdateCount = 0;
+                    int updateCount = 0;
+                    string tracName;
+
+                    if (dialogSelectUpdateMethod.rbtnUseEquipment.Checked)
+                    {
+                        //determine Transaction name from user selection
+                        tracName = "Update Schematic Detail Items from Electrical Equipment families";
+
+                        trac.Start(tracName);
+
+                        foreach (Element equip in allElectricalEquip)
+                        {
+                            ElecEquipInfo equipInst = new ElecEquipInfo(doc, equip);
+
+                            Element detailItem = (from di 
+                                                  in allDetailItems 
+                                                  where di.LookupParameter("EqConId").AsString() == equipInst.EqConId 
+                                                  select di)
+                                                  .First();
+
+                            if (detailItem != null)
+                            {
+                                DetailItemInfo detailItemInst = new DetailItemInfo(detailItem);
+
+                                //collect voltage information from equipment distribution system
+                                //int lineToLineVolt = Int32
+                                //    .Parse(doc.GetElement(equipInst.DistributionSystem)
+                                //    .LookupParameter("Line to Line Voltage")
+                                //    .AsValueString());
+                                ElecDistributionSystem elecDisSys = new ElecDistributionSystem(doc, equipInst.DistributionSystem);
+
+                                double voltCalc = 10.763910416709711538461538461538;
+
+                                //update detailItem parameters
+                                detailItemInst.Name = equipInst.Name;
+                                detailItemInst.Voltage = elecDisSys.GetLineToLineVoltage * voltCalc;
+                                detailItemInst.PhaseNum = elecDisSys.GetPhase;
+
+                                updateCount++;
+                            }
+                            else
+                            {
+                                noUpdateCount++;
+                            }
+                        }
+
+                        trac.Commit();
+                        TaskDialog.Show("", "");
+                    }
+                    else
+                    {
+                        tracName = "Update Electrical Equipment families from Schematic Detail Items";
+
+                        trac.Start(tracName);
+
+                        foreach (Element detItem in allDetailItems)
+                        {
+                            DetailItemInfo detItemInst = new DetailItemInfo(detItem);
+
+                            Element eqElem = (from eq 
+                                              in allElectricalEquip 
+                                              where eq.LookupParameter("EqConId").AsString() == detItemInst.EqConId 
+                                              select eq)
+                                              .First();
+
+                            if (detItem != null)
+                            {
+                                ElecEquipInfo equipInst = new ElecEquipInfo(doc, eqElem);
+
+                                equipInst.Name = detItemInst.Name;
+                                equipInst.GetScheduleView.LookupParameter("Panel Schedule Name").Set(detItemInst.Name);
+                                updateCount++;
+                            }
+                            else
+                            {
+                                noUpdateCount++;
+                            }
+                        }
+
+                        trac.Commit();
+                    }
+
+                    return Result.Succeeded;
+                }
+
+                catch (Exception ex)
+                {
+                    return Result.Failed;
+                }
+            }
         }
     }
 }
