@@ -127,6 +127,7 @@
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.Name = "dialogSelectUpdateMethod";
             this.ShowIcon = false;
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Select Update Method";
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();

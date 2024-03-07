@@ -29,8 +29,15 @@ namespace CMW_Electrical
 
             EEFamilyType = EEFamInst.Symbol;
 
-            ElementClassFilter filter = new ElementClassFilter(typeof(PanelScheduleView));
-            EEScheduleView = document.GetElement(EEFamInst.GetDependentElements(filter).First()) as PanelScheduleView;
+            try
+            {
+                ElementClassFilter filter = new ElementClassFilter(typeof(PanelScheduleView));
+                EEScheduleView = document.GetElement(EEFamInst.GetDependentElements(filter).First()) as PanelScheduleView;
+            }
+            catch
+            {
+                EEScheduleView = null;
+            }
         }
 
         /// <summary>

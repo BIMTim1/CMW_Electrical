@@ -29,14 +29,14 @@ namespace OneLineUpdateDesignations
                 .OfCategory(BuiltInCategory.OST_DetailComponents)
                 .OfClass(typeof(FamilyInstance))
                 .ToElements()
-                .Where(x => x.LookupParameter("EqConId").AsString() != "")
+                .Where(x => x.LookupParameter("EqConId").AsString() != null)
                 .ToList();
 
             List<Element> allElectricalEquip = new FilteredElementCollector(doc)
                 .OfCategory(BuiltInCategory.OST_ElectricalEquipment)
                 .OfClass(typeof(FamilyInstance))
                 .ToElements()
-                .Where(x => x.LookupParameter("EqConId").AsString() != "")
+                .Where(x => x.LookupParameter("EqConId").AsString() != null)
                 .ToList();
 
             //cancel tool if no items in list
@@ -93,11 +93,11 @@ namespace OneLineUpdateDesignations
                                 //    .AsValueString());
                                 ElecDistributionSystem elecDisSys = new ElecDistributionSystem(doc, equipInst.DistributionSystem);
 
-                                double voltCalc = 10.763910416709711538461538461538;
+                                //double voltCalc = 10.763910416709711538461538461538;
 
                                 //update detailItem parameters
                                 detailItemInst.Name = equipInst.Name;
-                                detailItemInst.Voltage = elecDisSys.GetLineToLineVoltage * voltCalc;
+                                detailItemInst.Voltage = elecDisSys.GetLineToLineVoltage;// * voltCalc;
                                 detailItemInst.PhaseNum = elecDisSys.GetPhase;
 
                                 updateCount++;
@@ -109,7 +109,7 @@ namespace OneLineUpdateDesignations
                         }
 
                         trac.Commit();
-                        TaskDialog.Show("", "");
+                        TaskDialog.Show("Components Updated", "Detail Items associated to Electrical Equipment families have been updated.");
                     }
                     else
                     {
@@ -132,7 +132,12 @@ namespace OneLineUpdateDesignations
                                 ElecEquipInfo equipInst = new ElecEquipInfo(doc, eqElem);
 
                                 equipInst.Name = detItemInst.Name;
-                                equipInst.GetScheduleView.LookupParameter("Panel Schedule Name").Set(detItemInst.Name);
+
+                                if (equipInst.GetScheduleView != null)
+                                {
+                                    equipInst.GetScheduleView.LookupParameter("Panel Schedule Name").Set(detItemInst.Name);
+                                }
+
                                 updateCount++;
                             }
                             else
@@ -142,6 +147,7 @@ namespace OneLineUpdateDesignations
                         }
 
                         trac.Commit();
+                        TaskDialog.Show("Equipment Updated", "Electrical Equipment families associated to Schematic Detail Items have been updated.");
                     }
 
                     return Result.Succeeded;
@@ -149,6 +155,7 @@ namespace OneLineUpdateDesignations
 
                 catch (Exception ex)
                 {
+                    TaskDialog.Show("An error occurred", "An error occurred, contact the BIM team for assistance.");
                     return Result.Failed;
                 }
             }
