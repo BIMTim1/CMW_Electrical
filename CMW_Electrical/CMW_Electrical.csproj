@@ -38,11 +38,11 @@
     </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="RevitAPI">
-      <HintPath>..\..\..\..\Program Files\Autodesk\Revit 2021\RevitAPI.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\..\Program Files\Autodesk\Revit 2021\RevitAPI.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="RevitAPIUI">
-      <HintPath>..\..\..\..\Program Files\Autodesk\Revit 2021\RevitAPIUI.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\..\Program Files\Autodesk\Revit 2021\RevitAPIUI.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="System" />
@@ -81,6 +81,13 @@
     <Compile Include="OneLineTools\OLEqConIdUpdate.cs" />
     <Compile Include="OneLineTools\OLUpdateInfo.cs" />
     <Compile Include="OneLineTools\JtWindowHandler.cs" />
+    <Compile Include="OneLineTools\OneLine_Associate\OneLineAssociateForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="OneLineTools\OneLine_Associate\OneLineAssociateForm.Designer.cs">
+      <DependentUpon>OneLineAssociateForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="OneLineTools\OneLine_Associate\OneLineAssociate.cs" />
     <Compile Include="OneLineTools\OneLine_UpdateDesignations\dialogSelectUpdateMethod.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -159,6 +166,9 @@
   <ItemGroup>
     <EmbeddedResource Include="AddinInformation\AddinInfoForm.resx">
       <DependentUpon>AddinInfoForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="OneLineTools\OneLine_Associate\OneLineAssociateForm.resx">
+      <DependentUpon>OneLineAssociateForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="OneLineTools\OneLine_ConnectAndPlace\SelectEquipmentToReferenceForm.resx">
       <DependentUpon>SelectEquipmentToReferenceForm.cs</DependentUpon>
