@@ -9,7 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace CMW_Electrical.OneLineTools.OneLine_Associate
+namespace OneLine_Associate
 {
     public partial class OneLineAssociateForm : Form
     {
@@ -23,16 +23,28 @@ namespace CMW_Electrical.OneLineTools.OneLine_Associate
             int nWidthEllipse,
             int nHeightEllipse
             );
-        public OneLineAssociateForm()
+        public OneLineAssociateForm(List<string> equipNames)
         {
             InitializeComponent();
 
             Region = System.Drawing.Region.FromHrgn(CreateRoundRectRgn(0, 0, Width, Height, 20, 20));
+
+            //update ComboBox with Electrical Equipment Names
+            cBoxEquipSelection.Items.AddRange(equipNames.ToArray());
+
+            ToolTip toolTip = new ToolTip();
+            toolTip.SetToolTip(cBoxEquipSelection, 
+                "Only Electrical Equipment not already associated to Detail Item families in the Electrical Schematic will appear in this list.");
         }
 
         public void Btn_Click(object sender, EventArgs eventArgs)
         {
             this.Close();
+        }
+
+        public void SelectedIndex_Changed(object sender, EventArgs eventArgs)
+        {
+            btnOK.Enabled = true;
         }
     }
 }

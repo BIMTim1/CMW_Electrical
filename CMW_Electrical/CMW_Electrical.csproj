@@ -156,6 +156,8 @@
     <Resource Include="Resources\OLUpdatePanelName32x32.png" />
     <Resource Include="Resources\OLPlaceEquip16x16.png" />
     <Resource Include="Resources\OLPlaceEquip32x32.png" />
+    <Resource Include="Resources\OLAssociate16x16.png" />
+    <Resource Include="Resources\OLAssociate32x32.png" />
     <Content Include="_Addin\CMW_Electrical.addin">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

@@ -15,6 +15,7 @@ using System.Xml;
 using OLUpdateInfo;
 using Autodesk.Revit.DB.Electrical;
 using OneLineTools;
+using CMW_Electrical;
 //using ComponentManager = Autodesk.Windows.ComponentManager;
 //using IWin32Window = System.Windows.Forms.IWin32Window;
 //using Keys = System.Windows.Forms.Keys;
@@ -278,7 +279,11 @@ namespace OneLineConnectAndPlace
 
                 //update DIEqConId of Detail Item and Electrical Equipment
                 OLEqConIdUpdateClass updateEqConId = new OLEqConIdUpdateClass();
-                updateEqConId.OneLineEqConIdValueUpdate(newFamInstance, selectedEquip as FamilyInstance, doc);
+
+                ElecEquipInfo elecEquip = new ElecEquipInfo(doc, selectedEquip);
+                DetailItemInfo detailItem = new DetailItemInfo(newFamInstance);
+
+                updateEqConId.OneLineEqConIdValueUpdate(elecEquip, detailItem, doc);
 
                 doc.Regenerate();
 

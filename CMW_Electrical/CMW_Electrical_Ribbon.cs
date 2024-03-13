@@ -354,8 +354,22 @@ namespace CMW_Electrical
                     Image = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/OLPlaceEquip16x16.png")),
                     ToolTip = "Select a Detail Item from your One-Line and Place the Corresponding Equipment in the model from a selected Level view."
             };
+
+
+            PushButtonData oneLineAssociateData = 
+                new PushButtonData(
+                    "cmdOneLineAssociate", 
+                    "Associate Equipment + Detail Item", 
+                    thisAssemblyPath, 
+                    "OneLine_Associate.OneLineAssociate")
+            {
+                LargeImage = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/OLAssociate32x32.png")),
+                Image = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/OLAssociate16x16.png")),
+                ToolTip = "Select an Electrical Equipment family from a list of Panel Names and associate to a selected Detail Item family in One-Line."
+            };
+
             oneLinePanel.AddStackedItems(oneLineConnectAndPlaceData, oneLineConnectData);
-            oneLinePanel.AddStackedItems(oneLineUpdateDesignations, oneLinePlaceEquipData);
+            oneLinePanel.AddStackedItems(oneLineUpdateDesignations, oneLineAssociateData, oneLinePlaceEquipData);
 
             //------------create push button for <button name>------------
         }
