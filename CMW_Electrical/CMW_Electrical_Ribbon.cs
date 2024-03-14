@@ -283,7 +283,7 @@ namespace CMW_Electrical
             correctLightFixturesBtn.ToolTip = "Updates all Lighting Fixtures to be the correct families based on the loaded E_LIGHT FIXTURE SCHEDULE.";
             correctLightFixturesBtn.LongDescription = "In October of 2022, the BIM Team updated all Lighting Fixture families" +
                 " to use Multiline Text parameters in lieu of typical text parameters. " +
-                "This change becomes confusion when jumping between various years of projects started " +
+                "This change becomes confusing when jumping between various years of projects started " +
                 "in various stages of the updated CMTA Midwest template. This tool will go through all " +
                 "Lighting Fixture families in the project, compare the family parameters to the parameters " +
                 "being used by the E_LIGHT FIXTURE SCHEDULE, and replace all Lighting Fixture families based on the referenced schedule.";
