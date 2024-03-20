@@ -105,6 +105,9 @@
     <Compile Include="OneLineTools\OneLine_Connect\OneLineConnect.cs" />
     <Compile Include="OneLineTools\OneLine_PlaceEquip\OneLinePlaceEquip.cs" />
     <Compile Include="OneLineTools\OneLine_UpdateDesignations\OneLineUpdateDesignations.cs" />
+    <Compile Include="PanelSchedFormatting\GetScheduleFormatting.cs" />
+    <Compile Include="PanelSchedFormatting\FinalFormat\PanelSchedFinalFormat.cs" />
+    <Compile Include="PanelSchedFormatting\SpareAndSpaceAlign\SpareAndSpaceAlign.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PanelScheduleReset\PanelScheduleReset.cs" />
     <Compile Include="AddElecCircuitNote\AddElecCircuitNote.cs" />
@@ -170,6 +173,10 @@
     <Resource Include="Resources\tagAlignTop32x32.png" />
     <Resource Include="Resources\tagAlignTopCenter16x16.png" />
     <Resource Include="Resources\tagAlignTopCenter32x32.png" />
+    <Resource Include="Resources\PanelSchedFormat16x16.png" />
+    <Resource Include="Resources\PanelSchedFormat32x32.png" />
+    <Resource Include="Resources\PanelSchedSpareAlign16x16.png" />
+    <Resource Include="Resources\PanelSchedSpareAlign32x32.png" />
     <Content Include="_Addin\CMW_Electrical.addin">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
