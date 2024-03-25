@@ -24,18 +24,20 @@ namespace PanelSchedFormatting
             }
             else if (panSchedType == PanelScheduleType.Branch)
             {
-                string templateName = document.GetElement(panSchedView.GetTemplate()).Name;
+                columns.Add(2);
+                columns.Add(13);
+                //string templateName = document.GetElement(panSchedView.GetTemplate()).Name.ToString();
 
-                if (templateName.Contains("Single"))
-                {
-                    columns.Add(2);
-                    columns.Add(11);
-                }
-                else
-                {
-                    columns.Add(2);
-                    columns.Add(13);
-                }
+                //if (templateName.Contains("Single"))
+                //{
+                //    columns.Add(2);
+                //    columns.Add(11);
+                //}
+                //else
+                //{
+                //    columns.Add(2);
+                //    columns.Add(13);
+                //}
             }
 
             return columns;
