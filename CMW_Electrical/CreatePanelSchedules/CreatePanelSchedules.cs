@@ -111,28 +111,24 @@ namespace CreatePanelSchedules
             return circuitBreakerNum;
         }
 
-        public List<Element> BranchScheduleTemplates(Document document)
+        public List<PanelScheduleTemplate> BranchScheduleTemplates(Document document)
         {
-            List<Element> branchTemp = new FilteredElementCollector(document).OfClass(typeof(PanelScheduleTemplate)).WherePasses(
-                new ElementParameterFilter(
-                    new FilterStringRule(
-                        new ParameterValueProvider(
-                            new ElementId(BuiltInParameter.ELEM_CATEGORY_PARAM_MT)),
-                            new FilterStringEquals(),
-                            "Panel Schedule Templates - Branch Panel", true))).ToList();
+            List<PanelScheduleTemplate> branchTemp = new FilteredElementCollector(document)
+                .OfClass(typeof(PanelScheduleTemplate))
+                .Cast<PanelScheduleTemplate>()
+                .Where(x => x.GetPanelScheduleType() == PanelScheduleType.Branch)
+                .ToList();
 
             return branchTemp;
         }
 
-        public List<Element> SwbdScheduleTemplates(Document document)
+        public List<PanelScheduleTemplate> SwbdScheduleTemplates(Document document)
         {
-            List<Element> swbdTemp = new FilteredElementCollector(document).OfClass(typeof(PanelScheduleTemplate)).WherePasses(
-                new ElementParameterFilter(
-                    new FilterStringRule(
-                        new ParameterValueProvider(
-                            new ElementId(BuiltInParameter.ELEM_CATEGORY_PARAM_MT)),
-                            new FilterStringEquals(),
-                            "Panel Schedule Templates - Switchboard", true))).ToList();
+            List<PanelScheduleTemplate> swbdTemp = new FilteredElementCollector(document)
+                .OfClass(typeof(PanelScheduleTemplate))
+                .Cast<PanelScheduleTemplate>()
+                .Where(x => x.GetPanelScheduleType() == PanelScheduleType.Switchboard)
+                .ToList();
 
             return swbdTemp;
         }

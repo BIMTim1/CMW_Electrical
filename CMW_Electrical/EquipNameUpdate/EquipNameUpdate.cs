@@ -87,14 +87,14 @@ namespace EquipNameUpdate
                     {
                         List<ElectricalSystem> eqSys = new List<ElectricalSystem>();
                         //verify Revit version and how to collect ElectricalSystem info
-                        if (revVer < 2021)
-                        {
-                            eqSys = EquipCircuits2020(eq);
-                        }
-                        else
+                        if (revVer > 2020)
                         {
                             eqSys = EquipCircuits2021(eq);
                         }
+                        //else
+                        //{
+                        //    eqSys = EquipCircuits2020(eq);
+                        //}
 
                         if (eqSys != null)
                         {
@@ -176,11 +176,11 @@ namespace EquipNameUpdate
             return equip_ccts;
         }
 
-        public List<ElectricalSystem> EquipCircuits2020(FamilyInstance equip)
-        {
-            List<ElectricalSystem> cct_set = equip.MEPModel.ElectricalSystems.Cast<ElectricalSystem>().ToList();
+        //public List<ElectricalSystem> EquipCircuits2020(FamilyInstance equip)
+        //{
+        //    List<ElectricalSystem> cct_set = equip.MEPModel.ElectricalSystems.Cast<ElectricalSystem>().ToList();
 
-            return cct_set;
-        }
+        //    return cct_set;
+        //}
     }
 }

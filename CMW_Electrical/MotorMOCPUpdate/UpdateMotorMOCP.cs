@@ -63,14 +63,14 @@ namespace MotorMOCPUpdate
                     //collect ElectricalSystem element from motor FamilyInstance
                     //error thrown if collection is in method
                     Element motorCircuit = null;
-                    if (rev_version < 2021)
+                    if (rev_version > 2020)
                     {
-                        motorCircuit = collectCircuit2020(motorCircuit, motor);
+                        motorCircuit = CollectCircuit2021(motorCircuit, motor);
                     }
-                    else
-                    {
-                        motorCircuit = collectCircuit2021(motorCircuit, motor);
-                    }
+                    //else
+                    //{
+                    //    motorCircuit = collectCircuit2020(motorCircuit, motor);
+                    //}
 
                     if (motorCircuit == null)
                     {
@@ -104,22 +104,22 @@ namespace MotorMOCPUpdate
             }
         }
 
-        public Element collectCircuit2020(Element mtrCct, FamilyInstance mtr)
-        {
-            ElectricalSystemSet mtrCctSet = mtr.MEPModel.ElectricalSystems;
+        //public Element collectCircuit2020(Element mtrCct, FamilyInstance mtr)
+        //{
+        //    ElectricalSystemSet mtrCctSet = mtr.MEPModel.ElectricalSystems;
 
-            if (mtrCctSet != null)
-            {
-                foreach (ElectricalSystem elecSys in mtrCctSet)
-                {
-                    mtrCct = elecSys;
-                }
-            }
+        //    if (mtrCctSet != null)
+        //    {
+        //        foreach (ElectricalSystem elecSys in mtrCctSet)
+        //        {
+        //            mtrCct = elecSys;
+        //        }
+        //    }
 
-            return mtrCct;
-        }
+        //    return mtrCct;
+        //}
 
-        public Element collectCircuit2021(Element mtrCct, FamilyInstance mtr)
+        public Element CollectCircuit2021(Element mtrCct, FamilyInstance mtr)
         {
             ISet<ElectricalSystem> mtrCctSet = mtr.MEPModel.GetElectricalSystems();
 
