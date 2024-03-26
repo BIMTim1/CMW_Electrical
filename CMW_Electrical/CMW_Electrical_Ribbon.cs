@@ -434,6 +434,43 @@ namespace CMW_Electrical
             splitButtonTagAlign.AddPushButton(tagAlignBottomAndCenterData);
 
 
+            //------------create push button for panelSchedFinalFormat------------
+            PushButtonData panelSchedFinalFormatData = new PushButtonData(
+                "cmdPanelSchedFinalFormat", 
+                "Panel Schedule Final Format", 
+                thisAssemblyPath, 
+                "PanelSchedFormatting.PanelSchedFinalFormat")
+            {
+                LargeImage = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/PanelSchedFormat32x32.png")),
+                Image = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/PanelSchedFormat16x16.png")),
+                ToolTip = "Moves all circuits breakers up to be aligned to the top of the Panelboard Schedule and adds Spares to all remaining circuit breakers. NOTE: Per NEC, 20% of panelboards circuit breakers shall be Spares."
+            };
+
+
+            //------------create push button for panelSchedSpareAndSpaceAlign------------
+            PushButtonData panelSchedSpareAndSpaceAlignData = new PushButtonData(
+                "cmdPanelSchedSpareAlign", 
+                "Spare and Space Align", 
+                thisAssemblyPath, 
+                "PanelSchedFormatting.SpareAndSpaceAlign")
+            {
+                LargeImage = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/PanelSchedSpareAlign32x32.png")),
+                Image = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/PanelSchedSpareAlign16x16.png")),
+                ToolTip = "All Spares assigned to a Panelboard will have their text justified to the right of the CIRCUIT DESCRIPTION column. All Spaces assigned to a Panelboard schedule will have their text justified to the center of the CIRCUIT DESCRIPTION column."
+            };
+
+
+            PulldownButtonData panelSchedFormatData = new PulldownButtonData(
+                "panelSchedFormatButton", 
+                "Panel Schedule" + System.Environment.NewLine + " Formatting")
+            {
+                LargeImage = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/PanelSchedFormat32x32.png"))
+            };
+            PulldownButton panelSchedFormatBtn = schedulePanel.AddItem(panelSchedFormatData) as PulldownButton;
+            panelSchedFormatBtn.AddPushButton(panelSchedFinalFormatData);
+            panelSchedFormatBtn.AddPushButton(panelSchedSpareAndSpaceAlignData);
+
+
             //------------create push button for <button name>------------
         }
 
