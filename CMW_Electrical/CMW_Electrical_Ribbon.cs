@@ -31,7 +31,7 @@ namespace CMW_Electrical
             RibbonPanel devicePanel = application.CreateRibbonPanel(tabName, "Devices");
             RibbonPanel equipPanel = application.CreateRibbonPanel(tabName, "Equipment");
             RibbonPanel schedulePanel = application.CreateRibbonPanel(tabName, "Panel Schedules");
-            //RibbonPanel oneLinePanel = application.CreateRibbonPanel(tabName, "One-Line / Equipment");
+            RibbonPanel oneLinePanel = application.CreateRibbonPanel(tabName, "One-Line");
 
             //get dll assembly path
             string thisAssemblyPath = Assembly.GetExecutingAssembly().Location;
@@ -45,14 +45,15 @@ namespace CMW_Electrical
 
             PushButton generalInfoBtn = aboutPanel.AddItem(generalInfoData) as PushButton;
             //generalInfoBtn ToolTip Information
-            //generalInfoBtn.ToolTip = "";
+            generalInfoBtn.ToolTip = "CMTA Midwest - Electrical Add-in Information";
             //generalInfoBtn.LongDescription = "";
             //generalInfoBtn.ToolTipImage = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/ToolTipImages/CircuitNoteTTImage.png"));
             //generalInfoBtn ContextualHelp Information
             //ContextualHelp generalInfoHelp = new ContextualHelp(ContextualHelpType.Url, "");
             //generalInfoBtn.SetContextualHelp(generalInfoHelp);
             //generalInfoBtn Image Information
-            BitmapImage generalInfoImage = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/Info32x32.png"));
+            BitmapImage generalInfoImage = new BitmapImage(new Uri(
+                "pack://application:,,,/CMW_Electrical;component/Resources/Info32x32.png"));
             generalInfoBtn.LargeImage = generalInfoImage;
             //create secondary image for Quick Access Toolbar
             //generalInfoBtn.Image = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/AddElecCctNote16x16.png"));
@@ -73,10 +74,12 @@ namespace CMW_Electrical
             //ContextualHelp cctNoteHelp = new ContextualHelp(ContextualHelpType.Url, "");
             //cctNoteBtn.SetContextualHelp(cctNoteHelp);
             //cctNoteBtn Image Information
-            BitmapImage cctNoteImage = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/AddElecCctNote32x32.png"));
+            BitmapImage cctNoteImage = new BitmapImage(new Uri(
+                "pack://application:,,,/CMW_Electrical;component/Resources/AddElecCctNote32x32.png"));
             cctNoteBtn.LargeImage = cctNoteImage;
             //create secondary image for Quick Access Toolbar
-            cctNoteBtn.Image = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/AddElecCctNote16x16.png"));
+            cctNoteBtn.Image = new BitmapImage(new Uri(
+                "pack://application:,,,/CMW_Electrical;component/Resources/AddElecCctNote16x16.png"));
 
 
             //------------create push button for PanelScheduleReset------------
@@ -94,10 +97,12 @@ namespace CMW_Electrical
             //ContextualHelp schedResetHelp = new ContextualHelp(ContextualHelpType.Url, "");
             //schedResetBtn.SetContextualHelp(schedResetHelp);
             //create main image information
-            BitmapImage schedResetImage = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/ResetPanelTemplate_32x32.png"));
+            BitmapImage schedResetImage = new BitmapImage(new Uri(
+                "pack://application:,,,/CMW_Electrical;component/Resources/ResetPanelTemplate_32x32.png"));
             schedResetBtn.LargeImage = schedResetImage;
             //create secondary image for Quick Access Toolbar
-            schedResetBtn.Image = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/ResetPanelTemplate_16x16.png"));
+            schedResetBtn.Image = new BitmapImage(new Uri(
+                "pack://application:,,,/CMW_Electrical;component/Resources/ResetPanelTemplate_16x16.png"));
 
 
             //------------create push button for PanelTypeToSinglePhase------------
@@ -114,10 +119,12 @@ namespace CMW_Electrical
             //ContextualHelp pnlTypeToSingleHelp = new ContextualHelp(ContextualHelpType.URL, ""pack://application:,,,/CMW_Electrical;component/Resources/ToolTipImages/");
             //pnlTypeToSingleBtn.SetContextualHelp(pnlTypeToSingleHelp);
             //pnlTypeToSingleBtn Image Information
-            BitmapImage pnlTypeToSingleImage = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/PanelToSinglePhase32x32.png"));
+            BitmapImage pnlTypeToSingleImage = new BitmapImage(new Uri(
+                "pack://application:,,,/CMW_Electrical;component/Resources/PanelToSinglePhase32x32.png"));
             pnlTypeToSingleBtn.LargeImage = pnlTypeToSingleImage;
             //pnlTypeToSingleBtn QuickAccess Image
-            pnlTypeToSingleBtn.Image = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/PanelToSinglePhase16x16.png"));
+            pnlTypeToSingleBtn.Image = new BitmapImage(new Uri(
+                "pack://application:,,,/CMW_Electrical;component/Resources/PanelToSinglePhase16x16.png"));
 
 
             //------------create push button for MutliLegSwitchLegUpdate------------
@@ -134,10 +141,12 @@ namespace CMW_Electrical
             //ContextualHelp switchMultiLegHelp = new ContextualHelp(ContextualHelpType.URL, ""pack://application:,,,/CMW_Electrical;component/Resources/ToolTipImages/");
             //switchMultiLegBtn.SetContextualHelp(switchMultiLegHelp);
             //switchMultiLegBtn Image Information
-            BitmapImage switchMultiLegImage = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/MultiLegSwitchIdUpdate32x32.png"));
+            BitmapImage switchMultiLegImage = new BitmapImage(new Uri(
+                "pack://application:,,,/CMW_Electrical;component/Resources/MultiLegSwitchIdUpdate32x32.png"));
             switchMultiLegBtn.LargeImage = switchMultiLegImage;
             //switchMultiLegBtn QuickAccess Image
-            switchMultiLegBtn.Image = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/MultiLegSwitchIdUpdate16x16.png"));
+            switchMultiLegBtn.Image = new BitmapImage(new Uri(
+                "pack://application:,,,/CMW_Electrical;component/Resources/MultiLegSwitchIdUpdate16x16.png"));
 
 
             //------------create push button for DeviceSymbolsRotate------------
@@ -154,10 +163,12 @@ namespace CMW_Electrical
             //ContextualHelp rotateSymHelp = new ContextualHelp(ContextualHelpType.URL, ""pack://application:,,,/CMW_Electrical;component/Resources/ToolTipImages/");
             //rotateSymBtn.SetContextualHelp(rotateSymHelp);
             //rotateSymBtn Image Information
-            BitmapImage rotateSymImage = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/SymbolRotate32x32.png"));
+            BitmapImage rotateSymImage = new BitmapImage(new Uri(
+                "pack://application:,,,/CMW_Electrical;component/Resources/SymbolRotate32x32.png"));
             rotateSymBtn.LargeImage = rotateSymImage;
             //rotateSymBtn QuickAccess Image
-            rotateSymBtn.Image = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/SymbolRotate16x16.png"));
+            rotateSymBtn.Image = new BitmapImage(new Uri(
+                "pack://application:,,,/CMW_Electrical;component/Resources/SymbolRotate16x16.png"));
 
 
             //------------create push button for EquipNameUpdate------------
@@ -174,10 +185,12 @@ namespace CMW_Electrical
             //ContextualHelp equipUpdateHelp = new ContextualHelp(ContextualHelpType.URL, ""pack://application:,,,/CMW_Electrical;component/Resources/ToolTipImages/");
             //equipUpdateBtn.SetContextualHelp(equipUpdateHelp);
             //equipUpdateBtn Image Information
-            BitmapImage equipUpdateImage = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/EquipNameUpdate32x32.png"));
+            BitmapImage equipUpdateImage = new BitmapImage(new Uri(
+                "pack://application:,,,/CMW_Electrical;component/Resources/EquipNameUpdate32x32.png"));
             equipUpdateBtn.LargeImage = equipUpdateImage;
             //equipUpdateBtn QuickAccess Image
-            equipUpdateBtn.Image = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/EquipNameUpdate16x16.png"));
+            equipUpdateBtn.Image = new BitmapImage(new Uri(
+                "pack://application:,,,/CMW_Electrical;component/Resources/EquipNameUpdate16x16.png"));
 
 
             //------------create push button for CreatePanelSchedules------------
@@ -194,10 +207,12 @@ namespace CMW_Electrical
             //ContextualHelp createPanSchedHelp = new ContextualHelp(ContextualHelpType.URL, ""pack://application:,,,/CMW_Electrical;component/Resources/ToolTipImages/");
             //createPanSchedBtn.SetContextualHelp(createPanSchedHelp);
             //createPanSched Image Information
-            BitmapImage createPanSchedImage = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/CreatePanelSchedules32x32.png"));
+            BitmapImage createPanSchedImage = new BitmapImage(new Uri(
+                "pack://application:,,,/CMW_Electrical;component/Resources/CreatePanelSchedules32x32.png"));
             createPanSchedBtn.LargeImage = createPanSchedImage;
             //equipUpdateBtn QuickAccess Image
-            createPanSchedBtn.Image = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/CreatePanelSchedules16x16.png"));
+            createPanSchedBtn.Image = new BitmapImage(new Uri(
+                "pack://application:,,,/CMW_Electrical;component/Resources/CreatePanelSchedules16x16.png"));
 
 
             //------------create push button for FlipFacingOrientation------------
@@ -214,30 +229,232 @@ namespace CMW_Electrical
             //ContextualHelp flipFacingOrientHelp = new ContextualHelp(ContextualHelpType.URL, ""pack://application:,,,/CMW_Electrical;component/Resources/ToolTipImages/");
             //flipFacingOrientBtn.SetContextualHelp(flipFacingOrientHelp);
             //flipFacingOrient Image Information
-            BitmapImage flipFacingOrientImage = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/FlipFacingOrientation32x32.png"));
+            BitmapImage flipFacingOrientImage = new BitmapImage(new Uri(
+                "pack://application:,,,/CMW_Electrical;component/Resources/FlipFacingOrientation32x32.png"));
             flipFacingOrientBtn.LargeImage = flipFacingOrientImage;
             //equipUpdateBtn QuickAccess Image
-            flipFacingOrientBtn.Image = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/FlipFacingOrientation16x16.png"));
+            flipFacingOrientBtn.Image = new BitmapImage(new Uri(
+                "pack://application:,,,/CMW_Electrical;component/Resources/FlipFacingOrientation16x16.png"));
 
 
             //------------create push button for UpdateMotorMOCP------------
-            PushButtonData motorMOCPUpdateData = new PushButtonData("cmdmotorMOCPUpdate",
-                "Update Motor" + System.Environment.NewLine + " MOCP ",
-                thisAssemblyPath, "MotorMOCPUpdate.UpdateMotorMOCP");
+            PushButtonData motorMOCPUpdateData = 
+                new PushButtonData(
+                    "cmdmotorMOCPUpdate",
+                    "Update Motor MOCP",
+                    thisAssemblyPath, "MotorMOCPUpdate.UpdateMotorMOCP")
+            {
+                Image = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/UpdateMotorMOCP16x16.png")),
+                LargeImage = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/UpdateMotorMOCP32x32.png")),
+                ToolTip = "Updates all Motor Electrical Circuit Ratings that have their MES_(MCA) MOCP parameter set to a non-blank value."
+            };
 
-            PushButton motorMOCPUpdateBtn = devicePanel.AddItem(motorMOCPUpdateData) as PushButton;
-            //motorMOCPUpdate ToolTip Information
-            motorMOCPUpdateBtn.ToolTip = "Using a Selection Window, select multiple Lighting Fixtures to Flip the Facing Orientation.";
-            motorMOCPUpdateBtn.LongDescription = "";
-            //motorMOCPUpdateBtn.ToolTipImage = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/ToolTipImages/"));
-            //motorMOCPUpdate ContextualHelp Information
-            //ContextualHelp motorMOCPUpdateHelp = new ContextualHelp(ContextualHelpType.URL, ""pack://application:,,,/CMW_Electrical;component/Resources/ToolTipImages/");
-            //motorMOCPUpdateBtn.SetContextualHelp(motorMOCPUpdateHelp);
-            //motorMOCPUpdate Image Information
-            BitmapImage motorMOCPUpdateImage = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/UpdateMotorMOCP32x32.png"));
-            motorMOCPUpdateBtn.LargeImage = motorMOCPUpdateImage;
+            //------------create push button for motorUIDUpdate------------
+            PushButtonData motorUIDUpdateData = 
+                new PushButtonData(
+                    "cmdMotorUIDUpdate", 
+                    "Update Motor UID", 
+                    thisAssemblyPath,
+                    "MotorUIDUpdate.UpdateMotorUID")
+            {
+                LargeImage = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/UpdateMotorUID32x32.png")),
+                Image = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/UpdateMotorUID16x16.png")),
+                ToolTip = "Update Motor UID values based on hosted Mechanical Equipment."
+            };
+
+            //create motorPulldownButton
+            PulldownButtonData motorPulldownButtonData = new PulldownButtonData("motorSplitButton", "Motor")
+            {
+                LargeImage = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/UpdateMotorMOCP32x32.png"))
+            };
+            PulldownButton motorPulldownButton = devicePanel.AddItem(motorPulldownButtonData) as PulldownButton;
+            //add motorMOCPUpdate PushButton to motorPulldownButton SplitButton
+            motorPulldownButton.AddPushButton(motorMOCPUpdateData);
+            motorPulldownButton.AddPushButton(motorUIDUpdateData);
+
+
+            //------------create push button for CorrectLightFixtures------------
+            PushButtonData correctLightFixturesData = new PushButtonData("cmdCorrectLightFixtures",
+                "Correct Light" + System.Environment.NewLine + " Fixtures ",
+                thisAssemblyPath, "CorrectLightFixtures.CorrectLightFixtures");
+
+            PushButton correctLightFixturesBtn = devicePanel.AddItem(correctLightFixturesData) as PushButton;
+            //correctLightFixtures ToolTip Information
+            correctLightFixturesBtn.ToolTip = "Updates all Lighting Fixtures to be the correct families based on the loaded E_LIGHT FIXTURE SCHEDULE.";
+            correctLightFixturesBtn.LongDescription = "In October of 2022, the BIM Team updated all Lighting Fixture families" +
+                " to use Multiline Text parameters in lieu of typical text parameters. " +
+                "This change becomes confusing when jumping between various years of projects started " +
+                "in various stages of the updated CMTA Midwest template. This tool will go through all " +
+                "Lighting Fixture families in the project, compare the family parameters to the parameters " +
+                "being used by the E_LIGHT FIXTURE SCHEDULE, and replace all Lighting Fixture families based on the referenced schedule.";
+            //correctLightFixturesBtn.ToolTipImage = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/ToolTipImages/"));
+            //correctLightFixtures ContextualHelp Information
+            //ContextualHelp correctLightFixturesHelp = new ContextualHelp(ContextualHelpType.URL, ""pack://application:,,,/CMW_Electrical;component/Resources/ToolTipImages/");
+            //correctLightFixturesBtn.SetContextualHelp(correctLightFixturesHelp);
+            //correctLightFixtures Image Information
+            BitmapImage correctLightFixturesImage = new BitmapImage(new Uri(
+                "pack://application:,,,/CMW_Electrical;component/Resources/CorrectLightFixtures32x32.png"));
+            correctLightFixturesBtn.LargeImage = correctLightFixturesImage;
             //equipUpdateBtn QuickAccess Image
-            motorMOCPUpdateBtn.Image = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/UpdateMotorMOCP16x16.png"));
+            correctLightFixturesBtn.Image = new BitmapImage(new Uri(
+                "pack://application:,,,/CMW_Electrical;component/Resources/CorrectLightFixtures16x16.png"));
+
+
+            //------------create push button for oneLineConnectAndPlace------------
+            PushButtonData oneLineConnectAndPlaceData = 
+                new PushButtonData(
+                    "cmdOneLineConnectAndPlace", 
+                    "Connect and Place Component", 
+                    thisAssemblyPath, 
+                    "OneLineConnectAndPlace.OneLineConnectAndPlace")
+            {
+                    LargeImage = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/OLConnectAndPlace32x32.png")),
+                    Image = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/OLConnectAndPlace16x16.png")),
+                    ToolTip = "Select an existing One-Line item to connect to, and place the down-stream equipment."
+            };
+
+
+            //------------create push button for oneLineConnect------------
+            PushButtonData oneLineConnectData = 
+                new PushButtonData(
+                    "cmdOneLineConnect", 
+                    "Connect Component", 
+                    thisAssemblyPath, 
+                    "OneLineConnect.OneLineConnect")
+            {
+                LargeImage = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/OLConnect32x32.png")),
+                Image = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/OLConnect16x16.png")),
+                ToolTip = "Select existing One-Line items to be connected together."
+            };
+
+
+            //------------create push button for oneLineUpdatePanelInfo------------
+            PushButtonData oneLineUpdateDesignations = 
+                new PushButtonData(
+                    "cmdOneLineUpdateDesignations", 
+                    "Update Component or Panel Designation", 
+                    thisAssemblyPath,
+                    "OneLineUpdateDesignations.OneLineUpdateDesignations")
+            {
+                    LargeImage = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/OLUpdatePanelName32x32.png")),
+                    Image = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/OLUpdatePanelName16x16.png")),
+                    ToolTip = "From a selection dialog, determine whether to update Electrical Equipment Panel Names from schematic Detail Items or the inverse.",
+                    LongDescription = "Any Electrical Equipment or Detail Item family with the same EqConId value will be updated as selected by the user."
+                };
+
+
+            PushButtonData oneLinePlaceEquipData =
+                new PushButtonData(
+                    "cmdOneLinePlaceEquip",
+                    "Place Equipment from One-Line",
+                    thisAssemblyPath,
+                    "OneLinePlaceEquip.OneLinePlaceEquip")
+                {
+                    LargeImage = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/OLPlaceEquip32x32.png")),
+                    Image = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/OLPlaceEquip16x16.png")),
+                    ToolTip = "Select a Detail Item from your One-Line and Place the Corresponding Equipment in the model from a selected Level view."
+            };
+            oneLinePanel.AddStackedItems(oneLineConnectAndPlaceData, oneLineConnectData);
+            oneLinePanel.AddStackedItems(oneLineUpdateDesignations, oneLinePlaceEquipData);
+
+
+            //create pushbuttons for AlignTagTools
+            PushButtonData tagAlignTopData = 
+                new PushButtonData(
+                    "cmdTagAlignTop",
+                    "Align Top",
+                    thisAssemblyPath,
+                    "AlignTagTools.TagAlignTop")
+            {
+                    LargeImage = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/tagAlignTop32x32.png")),
+                    Image = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/tagAlignTop16x16.png")),
+                    ToolTip = ""
+            };
+
+            PushButtonData tagAlignBottomData = 
+                new PushButtonData(
+                    "cmdTagAlignBottom", 
+                    "Align Bottom", 
+                    thisAssemblyPath, 
+                    "AlignTagTools.TagAlignBottom")
+            {
+                    LargeImage = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/tagAlignBottom32x32.png")),
+                    Image = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/tagAlignBottom16x16.png")),
+                    ToolTip = ""
+            };
+
+            PushButtonData tagAlignLeftData = 
+                new PushButtonData(
+                    "cmdTagAlignLeft", 
+                    "Align Left", 
+                    thisAssemblyPath, 
+                    "AlignTagTools.TagAlignLeft")
+            {
+                LargeImage = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/tagAlignLeft32x32.png")),
+                Image = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/tagAlignLeft16x16.png")),
+                ToolTip = ""
+            };
+
+            PushButtonData tagAlignRightData = 
+                new PushButtonData(
+                "cmdTagAlignRight", 
+                "Align Right", 
+                thisAssemblyPath, 
+                "AlignTagTools.TagAlignRight")
+            {
+                LargeImage = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/tagAlignRight32x32.png")),
+                Image = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/tagAlignRight16x16.png")),
+                ToolTip = ""
+            };
+
+            PushButtonData tagAlignTopAndCenterData = 
+                new PushButtonData(
+                    "cmdTagAlignTopAndCenter", 
+                    "Align Top and Center",
+                    thisAssemblyPath, 
+                    "AlignTagTools.TagAlignTopAndCenter")
+            {
+                LargeImage = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/tagAlignTopCenter32x32.png")),
+                Image = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/tagAlignTopCenter16x16.png")),
+                ToolTip = ""
+            };
+
+            PushButtonData tagAlignBottomAndCenterData = 
+                new PushButtonData(
+                    "cmdTagAlignBottomAndCenter", 
+                    "Align Bottom and Center",
+                    thisAssemblyPath, 
+                    "AlignTagTools.TagAlignBottomAndCenter")
+            {
+                LargeImage = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/tagAlignBottomCenter32x32.png")),
+                Image = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/tagAlignBottomCenter16x16.png")),
+                ToolTip = ""
+            };
+
+            PushButtonData tagAlignCenterData = 
+                new PushButtonData(
+                    "cmdTagAlignCenter", 
+                    "Align Center", 
+                    thisAssemblyPath, 
+                    "AlignTagTools.TagAlignCenter")
+            {
+                LargeImage = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/tagAlignCenter32x32.png")),
+                Image = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/tagAlignBottomCenter16x16.png")),
+                ToolTip = ""
+            };
+
+
+            SplitButtonData splitButtonTagAlignData = new SplitButtonData("Tag Align", "Tag Align");
+            SplitButton splitButtonTagAlign = devicePanel.AddItem(splitButtonTagAlignData) as SplitButton;
+            splitButtonTagAlign.IsSynchronizedWithCurrentItem = true;
+            //add PushButtonDatas of AlignTagTools to SplitButton
+            splitButtonTagAlign.AddPushButton(tagAlignTopData);
+            splitButtonTagAlign.AddPushButton(tagAlignBottomData);
+            splitButtonTagAlign.AddPushButton(tagAlignLeftData);
+            splitButtonTagAlign.AddPushButton(tagAlignRightData);
+            splitButtonTagAlign.AddPushButton(tagAlignCenterData);
+            splitButtonTagAlign.AddPushButton(tagAlignTopAndCenterData);
+            splitButtonTagAlign.AddPushButton(tagAlignBottomAndCenterData);
 
 
             //------------create push button for <button name>------------

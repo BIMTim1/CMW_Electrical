@@ -37,7 +37,7 @@ namespace ChangePanelTypeToSinglePhase
                 Reference selectPanel = uidoc.Selection.PickObject(ObjectType.Element, "Select a Panelboard Family");
                 FamilyInstance selectedPanel = doc.GetElement(selectPanel.ElementId) as FamilyInstance;
 
-                //get Panel Name to collect Electrical Equipment again
+                //get Panel DIName to collect Electrical Equipment again
                 string pnlName = selectedPanel.get_Parameter(BuiltInParameter.RBS_ELEC_PANEL_NAME).AsString();
                 //get Supply From parameter of Selected Electrical Equipment
                 string pnlSupply = selectedPanel.get_Parameter(BuiltInParameter.RBS_ELEC_PANEL_SUPPLY_FROM_PARAM).AsString();
