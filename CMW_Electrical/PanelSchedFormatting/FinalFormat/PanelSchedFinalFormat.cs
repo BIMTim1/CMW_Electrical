@@ -21,10 +21,8 @@ namespace PanelSchedFormatting
             //define background Revit information to reference
             UIApplication uiapp = commandData.Application;
             Document doc = uiapp.ActiveUIDocument.Document;
-            Application app = uiapp.Application;
-            UIDocument uidoc = uiapp.ActiveUIDocument;
 
-            int versionNum = Int32.Parse(app.VersionNumber);
+            //int versionNum = Int32.Parse(app.VersionNumber); //only applicable in Revit 2023 API
 
             //collect all PanelScheduleViews in model
             List<PanelScheduleView> allPanelSchedViews = 
@@ -143,6 +141,7 @@ namespace PanelSchedFormatting
             {
                 panSchedView.AddSpare(rowNumber, columnNumber);
             }
+
             return true;
         }
     }

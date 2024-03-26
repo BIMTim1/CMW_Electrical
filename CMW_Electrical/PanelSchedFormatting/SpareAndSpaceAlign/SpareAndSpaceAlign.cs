@@ -21,8 +21,6 @@ namespace PanelSchedFormatting
             //define background Revit information to reference
             UIApplication uiapp = commandData.Application;
             Document doc = uiapp.ActiveUIDocument.Document;
-            Application app = uiapp.Application;
-            UIDocument uidoc = uiapp.ActiveUIDocument;
 
             //collect all panelboard schedules in project
             List<PanelScheduleView> allPanelSchedules = 
@@ -71,15 +69,17 @@ namespace PanelSchedFormatting
                                 //collect TableCellStyle information to update with FontHorizontalAlignment determined by Spare or Space
                                 TableCellStyle cellStyle = sectionData.GetTableCellStyle(rowNum, colNum);
 
+                                string loadName = panSchedView.GetCircuitByCell(rowNum, colNum).LookupParameter("Load Name").AsString();
+
                                 HorizontalAlignmentStyle horizAlignment = new HorizontalAlignmentStyle();
 
                                 if (isSpare || isSpace)
                                 {
-                                    if (isSpare)
+                                    if (isSpare && loadName == "SPARE")
                                     {
                                         horizAlignment = HorizontalAlignmentStyle.Right;
                                     }
-                                    else if (isSpace)
+                                    else if (isSpace && loadName == "SPACE")
                                     {
                                         horizAlignment = HorizontalAlignmentStyle.Right;
                                     }
