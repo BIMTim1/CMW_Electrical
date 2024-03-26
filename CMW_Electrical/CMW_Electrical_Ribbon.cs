@@ -41,45 +41,29 @@ namespace CMW_Electrical
             PushButtonData generalInfoData = new PushButtonData(
                 "cmdAddinInformation",
                 "Add-in" + System.Environment.NewLine + " Information ",
-                thisAssemblyPath, "AddinInformation.AddinInfo");//<namespace name>.<cs name>
-
+                thisAssemblyPath, "AddinInformation.AddinInfo")
+            {
+                ToolTip = "CMTA Midwest - Electrical Add-in Information",
+                LargeImage = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/Info32x32.png"))
+            };
+            
             PushButton generalInfoBtn = aboutPanel.AddItem(generalInfoData) as PushButton;
-            //generalInfoBtn ToolTip Information
-            generalInfoBtn.ToolTip = "CMTA Midwest - Electrical Add-in Information";
-            //generalInfoBtn.LongDescription = "";
-            //generalInfoBtn.ToolTipImage = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/ToolTipImages/CircuitNoteTTImage.png"));
-            //generalInfoBtn ContextualHelp Information
-            //ContextualHelp generalInfoHelp = new ContextualHelp(ContextualHelpType.Url, "");
-            //generalInfoBtn.SetContextualHelp(generalInfoHelp);
-            //generalInfoBtn Image Information
-            BitmapImage generalInfoImage = new BitmapImage(new Uri(
-                "pack://application:,,,/CMW_Electrical;component/Resources/Info32x32.png"));
-            generalInfoBtn.LargeImage = generalInfoImage;
-            //create secondary image for Quick Access Toolbar
-            //generalInfoBtn.Image = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/AddElecCctNote16x16.png"));
 
 
             //------------create push button for AddElecCircuitNote------------
             PushButtonData cctNoteData = new PushButtonData(
                 "cmdAddElecCircuitNote",
                 "Add Cct" + System.Environment.NewLine + " Note ",
-                thisAssemblyPath, "AddNoteToElectricalCircuit.AddElecCircuitNote");//<namespace name>.<cs name>
+                thisAssemblyPath, "AddNoteToElectricalCircuit.AddElecCircuitNote")
+            {
+                ToolTip = "Updates Electrical Circuit Load Name parameters with custom Front or Back notes.",
+                LongDescription = "This tool will add the manual text parameter values of E_Circuit Note-Front and E_Circuit Note-Back to any applicable Electrical Circuit Load Name parameter. This function can be used to add EX to all existing Electrical Circuits or (NOTE 1) to the end of a Load Name to indicate a specific note defined by the user in the Panelboard Schedule.",
+                ToolTipImage = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/ToolTipImages/CircuitNoteTTImage.png")),
+                LargeImage = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/AddElecCctNote32x32.png")),
+                Image = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/AddElecCctNote16x16.png"))
+            };
 
             PushButton cctNoteBtn = circuitPanel.AddItem(cctNoteData) as PushButton;
-            //cctNoteBtn ToolTip Information
-            cctNoteBtn.ToolTip = "Updates Electrical Circuit Load Name parameters with custom Front or Back notes.";
-            cctNoteBtn.LongDescription = "This tool will add the manual text parameter values of E_Circuit Note-Front and E_Circuit Note-Back to any applicable Electrical Circuit Load Name parameter. This function can be used to add EX to all existing Electrical Circuits or (NOTE 1) to the end of a Load Name to indicate a specific note defined by the user in the Panelboard Schedule.";
-            cctNoteBtn.ToolTipImage = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/ToolTipImages/CircuitNoteTTImage.png"));
-            //cctNoteBtn ContextualHelp Information
-            //ContextualHelp cctNoteHelp = new ContextualHelp(ContextualHelpType.Url, "");
-            //cctNoteBtn.SetContextualHelp(cctNoteHelp);
-            //cctNoteBtn Image Information
-            BitmapImage cctNoteImage = new BitmapImage(new Uri(
-                "pack://application:,,,/CMW_Electrical;component/Resources/AddElecCctNote32x32.png"));
-            cctNoteBtn.LargeImage = cctNoteImage;
-            //create secondary image for Quick Access Toolbar
-            cctNoteBtn.Image = new BitmapImage(new Uri(
-                "pack://application:,,,/CMW_Electrical;component/Resources/AddElecCctNote16x16.png"));
 
 
             //------------create push button for PanelScheduleReset------------
@@ -127,26 +111,19 @@ namespace CMW_Electrical
                 "pack://application:,,,/CMW_Electrical;component/Resources/PanelToSinglePhase16x16.png"));
 
 
-            //------------create push button for MutliLegSwitchLegUpdate------------
-            PushButtonData switchMultiLegData = new PushButtonData("cmdMultiLegSwitchLegUpdate",
-                "Multi-Leg" + System.Environment.NewLine + " Id Update ",
-                thisAssemblyPath, "UpdateMultiLegSwitchIds.MutliLegSwitchLegUpdate");
-
-            PushButton switchMultiLegBtn = devicePanel.AddItem(switchMultiLegData) as PushButton;
-            //switchMultiLegBtn ToolTip Information
-            switchMultiLegBtn.ToolTip = "Updates Switch Id of E_LD_Nested Switch Leg Families";
-            switchMultiLegBtn.LongDescription = "Updates all E_LD_Nested Switch Leg family Switch Id parameters to match host family E_SWId parameter values. If the host value is blank, the Switch Id value will be updated to nothing.";
-            switchMultiLegBtn.ToolTipImage = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/ToolTipImages/MultiLegSwitchIdTTImage.png"));
-            //switchMultiLegBtn ContextualHelp Information
-            //ContextualHelp switchMultiLegHelp = new ContextualHelp(ContextualHelpType.URL, ""pack://application:,,,/CMW_Electrical;component/Resources/ToolTipImages/");
-            //switchMultiLegBtn.SetContextualHelp(switchMultiLegHelp);
-            //switchMultiLegBtn Image Information
-            BitmapImage switchMultiLegImage = new BitmapImage(new Uri(
-                "pack://application:,,,/CMW_Electrical;component/Resources/MultiLegSwitchIdUpdate32x32.png"));
-            switchMultiLegBtn.LargeImage = switchMultiLegImage;
-            //switchMultiLegBtn QuickAccess Image
-            switchMultiLegBtn.Image = new BitmapImage(new Uri(
-                "pack://application:,,,/CMW_Electrical;component/Resources/MultiLegSwitchIdUpdate16x16.png"));
+            ////------------create push button for MutliLegSwitchLegUpdate------------
+            //PushButtonData switchMultiLegData = new PushButtonData("cmdMultiLegSwitchLegUpdate",
+            //    "Multi-Leg" + System.Environment.NewLine + " Id Update ",
+            //    thisAssemblyPath, "UpdateMultiLegSwitchIds.MutliLegSwitchLegUpdate")
+            //{
+            //    ToolTip = "Updates Switch Id of E_LD_Nested Switch Leg Families",
+            //    LongDescription = "Updates all E_LD_Nested Switch Leg family Switch Id parameters to match host family E_SWId parameter values. If the host value is blank, the Switch Id value will be updated to nothing.",
+            //    ToolTipImage = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/ToolTipImages/MultiLegSwitchIdTTImage.png")),
+            //    LargeImage = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/MultiLegSwitchIdUpdate32x32.png")),
+            //    Image = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/MultiLegSwitchIdUpdate16x16.png"))
+            //};
+            
+            //PushButton switchMultiLegBtn = devicePanel.AddItem(switchMultiLegData) as PushButton;
 
 
             //------------create push button for DeviceSymbolsRotate------------
