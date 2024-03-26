@@ -88,7 +88,7 @@
             this.lblReleaseDateDisplay.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.lblReleaseDateDisplay.Size = new System.Drawing.Size(85, 16);
             this.lblReleaseDateDisplay.TabIndex = 4;
-            this.lblReleaseDateDisplay.Text = "March 2023";
+            this.lblReleaseDateDisplay.Text = "March 2024";
             // 
             // btnReportBug
             // 
@@ -99,7 +99,7 @@
             this.btnReportBug.TabIndex = 5;
             this.btnReportBug.Text = "Report Bug";
             this.btnReportBug.UseVisualStyleBackColor = true;
-            this.btnReportBug.Click += new System.EventHandler(this.BtnBugClicked);
+            this.btnReportBug.Click += new System.EventHandler(this.BtnClicked);
             // 
             // btnBIMSite
             // 
@@ -110,7 +110,7 @@
             this.btnBIMSite.TabIndex = 6;
             this.btnBIMSite.Text = "BIM SharePoint Site";
             this.btnBIMSite.UseVisualStyleBackColor = true;
-            this.btnBIMSite.Click += new System.EventHandler(this.BtnBIMSiteClicked);
+            this.btnBIMSite.Click += new System.EventHandler(this.BtnClicked);
             // 
             // cmwElecAddinInfo
             // 
@@ -124,6 +124,8 @@
             this.Controls.Add(this.lblReleaseDate);
             this.Controls.Add(this.lblVersionNum);
             this.Controls.Add(this.picBoxLogo);
+            this.MaximizeBox = false;
+            this.MinimizeBox = false;
             this.Name = "cmwElecAddinInfo";
             this.ShowIcon = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;

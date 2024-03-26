@@ -33,14 +33,19 @@ namespace CMW_Electrical.AddinInformation
             //this.picBoxLogo.Image = cmtaLogo;
         }
 
-        public void BtnBugClicked(object sender, EventArgs e)
+        public void BtnClicked(object sender, EventArgs eventArgs)
         {
-            Process.Start("https://therma123.sharepoint.com/:u:/r/sites/ObernelBIM/SitePages/Support.aspx?csf=1&web=1&e=VNHdtj");
-        }
+            Button btn = (Button)sender;
 
-        public void BtnBIMSiteClicked(object sender, EventArgs e)
-        {
-            Process.Start("https://therma123.sharepoint.com/sites/ObernelBIM");
+            if (btn.Name == btnReportBug.Name)
+            {
+                Process.Start("https://therma123.sharepoint.com/:u:/r/sites/ObernelBIM/SitePages/Support.aspx?csf=1&web=1&e=VNHdtj");
+            }
+
+            else if (btn.Name == btnBIMSite.Name)
+            {
+                Process.Start("https://therma123.sharepoint.com/sites/ObernelBIM");
+            }
         }
     }
 }
