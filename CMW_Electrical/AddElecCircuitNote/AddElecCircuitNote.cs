@@ -24,42 +24,48 @@ namespace AddNoteToElectricalCircuit
             //define background Revit information to reference
             UIApplication uiapp = commandData.Application;
             Document doc = uiapp.ActiveUIDocument.Document;
-            //Application app = uiapp.Application;
 
-            //create transaction to modify active document
-            Transaction trans = new Transaction(doc, "Update Electrical Circuits with Circuit Notes");
+            List<Element> allCircuits = new FilteredElementCollector(doc)
+                .OfCategory(BuiltInCategory.OST_ElectricalCircuit)
+                .WhereElementIsNotElementType()
+                .ToElements()
+                .ToList();
 
-            BuiltInCategory bic = BuiltInCategory.OST_ElectricalCircuit;
-            List<Element> allCircuits = new FilteredElementCollector(doc).OfCategory(bic).WhereElementIsNotElementType().ToElements().ToList();
-
-            if (allCircuits.Count != 0)
+            if (allCircuits.Any())
             {
-                try
+                using (Transaction trac = new Transaction(doc))
                 {
-                    trans.Start();
-
-                    foreach (Element cct in allCircuits)
+                    try
                     {
-                        SetLoadName(cct);
-                    }
-                    trans.Commit();
-                    return Result.Succeeded;
-                }
+                        trac.Start("Update Electrical Circuits with Circuit Notes");
 
-                catch (Exception ex)
-                {
-                    trans.RollBack();
-                    errorReport = ex.Message;
-                    TaskDialog.Show("Update Circuit Load Name Failed",
-                        "Something went wrong while trying to set the Electrical Circuit Load Name values. Contact the BIM Team for assistance.");
-                    return Result.Failed;
+                        foreach (Element cct in allCircuits)
+                        {
+                            SetLoadName(cct);
+                        }
+
+                        trac.Commit();
+
+                        return Result.Succeeded;
+                    }
+
+                    catch (Exception ex)
+                    {
+                        errorReport = ex.Message;
+
+                        TaskDialog.Show("Update Circuit Load Name Failed",
+                            "Something went wrong while trying to set the Electrical Circuit Load Name values. Contact the BIM Team for assistance.");
+                        
+                        return Result.Failed;
+                    }
                 }
             }
             else
             {
                 TaskDialog.Show("Circuit Notes to Load Name Failed",
-                    "There are no circuits in the project. Once circuits have been created, this tool can then be run.");
-                return Result.Failed;
+                    "There are no circuits in the project. Once circuits have been created, this tool can be run.");
+
+                return Result.Cancelled;
             }
         }
 
@@ -68,8 +74,9 @@ namespace AddNoteToElectricalCircuit
             //collect circuit parameters
             string frontNote = cct.LookupParameter("E_Circuit Note-Front").AsString();
             string endNote = cct.LookupParameter("E_Circuit Note-Back").AsString();
-            string currentLoadName = cct.LookupParameter("Load Name").AsString();
+
             Parameter cctLoadName = cct.LookupParameter("Load Name");
+            string currentLoadName = cctLoadName.AsString();
             //check if frontNote or endNote are blank
             if (frontNote != null) //only need to compare null as parameter = Project Parameter
             {
