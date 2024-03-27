@@ -85,18 +85,10 @@ namespace EquipNameUpdate
 
                     try
                     {
-                        List<ElectricalSystem> eqSys = new List<ElectricalSystem>();
-                        //verify Revit version and how to collect ElectricalSystem info
-                        if (revVer > 2020)
-                        {
-                            eqSys = EquipCircuits2021(eq);
-                        }
-                        //else
-                        //{
-                        //    eqSys = EquipCircuits2020(eq);
-                        //}
+                        //get ElectricalSystems from equipment
+                        ISet<ElectricalSystem> eqSys = eq.MEPModel.GetElectricalSystems();
 
-                        if (eqSys != null)
+                        if (eqSys.Any())
                         {
                             if (eq_type.Contains("Transformer") & !(eq_type.Contains("Utility")))
                             {
@@ -168,19 +160,5 @@ namespace EquipNameUpdate
                 return Result.Failed;
             }
         }
-
-        public List<ElectricalSystem> EquipCircuits2021(FamilyInstance equip)
-        {
-            List<ElectricalSystem> equip_ccts = equip.MEPModel.GetElectricalSystems().ToList();
-
-            return equip_ccts;
-        }
-
-        //public List<ElectricalSystem> EquipCircuits2020(FamilyInstance equip)
-        //{
-        //    List<ElectricalSystem> cct_set = equip.MEPModel.ElectricalSystems.Cast<ElectricalSystem>().ToList();
-
-        //    return cct_set;
-        //}
     }
 }

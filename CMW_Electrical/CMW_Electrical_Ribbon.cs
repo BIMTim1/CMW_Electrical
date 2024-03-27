@@ -17,7 +17,7 @@ namespace CMW_Electrical
     public class CMW_Electrical_Ribbon : IExternalApplication
     {
         public const string versionNumber = "1.0";
-        public const string releaseDate = "August 2023";
+        public const string releaseDate = "March 2024";
 
         static void AddRibbonPanel(UIControlledApplication application)
         {

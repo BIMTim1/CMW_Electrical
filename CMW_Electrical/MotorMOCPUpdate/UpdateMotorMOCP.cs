@@ -61,34 +61,25 @@ namespace MotorMOCPUpdate
                 foreach (FamilyInstance motor in all_motors)
                 {
                     //collect ElectricalSystem element from motor FamilyInstance
-                    //error thrown if collection is in method
-                    Element motorCircuit = null;
-                    if (rev_version > 2020)
+                    ISet<ElectricalSystem> motorCircuits = motor.MEPModel.GetElectricalSystems();
+
+                    if (motorCircuits.Any())
                     {
-                        motorCircuit = CollectCircuit2021(motorCircuit, motor);
+                        ElectricalSystem motorCircuit = motorCircuits.First();
+
+                        //collect motor MOCP
+                        string motor_mocp_str = motor.LookupParameter("MES_(MFS) MOCP").AsString();
+                        //verify if can be converted to number
+                        bool isNumber = Int32.TryParse(motor_mocp_str, out int motor_mocp);
+
+                        if (!isNumber)
+                        {
+                            continue;
+                        }
+
+                        motorCircuit.LookupParameter("Rating").Set(motor_mocp);
+                        count++;
                     }
-                    //else
-                    //{
-                    //    motorCircuit = collectCircuit2020(motorCircuit, motor);
-                    //}
-
-                    if (motorCircuit == null)
-                    {
-                        continue;
-                    }
-
-                    //collect motor MOCP
-                    string motor_mocp_str = motor.LookupParameter("MES_(MFS) MOCP").AsString();
-                    //verify if can be converted to number
-                    bool isNumber = Int32.TryParse(motor_mocp_str, out int motor_mocp);
-
-                    if (!isNumber)
-                    {
-                        continue;
-                    }
-
-                    motorCircuit.LookupParameter("Rating").Set(motor_mocp);
-                    count++;
                 }
 
                 TaskDialog.Show("Motor Circuit Ratings Updated", $"{count} Motor Circuits have been updated to display the most up to date MOCP information.");
@@ -102,33 +93,6 @@ namespace MotorMOCPUpdate
                 TaskDialog.Show("An Error Occurred", "Contact the BIM Team for Assistance.");
                 return Result.Failed;
             }
-        }
-
-        //public Element collectCircuit2020(Element mtrCct, FamilyInstance mtr)
-        //{
-        //    ElectricalSystemSet mtrCctSet = mtr.MEPModel.ElectricalSystems;
-
-        //    if (mtrCctSet != null)
-        //    {
-        //        foreach (ElectricalSystem elecSys in mtrCctSet)
-        //        {
-        //            mtrCct = elecSys;
-        //        }
-        //    }
-
-        //    return mtrCct;
-        //}
-
-        public Element CollectCircuit2021(Element mtrCct, FamilyInstance mtr)
-        {
-            ISet<ElectricalSystem> mtrCctSet = mtr.MEPModel.GetElectricalSystems();
-
-            if (mtrCctSet.Any())
-            {
-                mtrCct = mtrCctSet.First();
-            }
-
-            return mtrCct;
         }
     }
 }
