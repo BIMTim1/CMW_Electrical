@@ -21,8 +21,9 @@ namespace PanelSchedFormatting
             //define background Revit information to reference
             UIApplication uiapp = commandData.Application;
             Document doc = uiapp.ActiveUIDocument.Document;
+            Application app = uiapp.Application;
 
-            //int versionNum = Int32.Parse(app.VersionNumber); //only applicable in Revit 2023 API
+            int versionNum = Int32.Parse(app.VersionNumber); //only applicable in Revit 2023 API
 
             //collect all PanelScheduleViews in model
             List<PanelScheduleView> allPanelSchedViews = 
@@ -112,15 +113,16 @@ namespace PanelSchedFormatting
                             {
                                 AddSpares(panSched, rowNum, colNum);
 
-                                //if (versionNum > 2022)
-                                //{
-                                //    panSched.SetLockSlot(rowNum, colNum, false);
-                                //}
+                                if (versionNum > 2022)
+                                {
+                                    UnlockSlot(panSched, rowNum, colNum);
+                                }
                             }
                         }
                     }
 
                     trac.Commit();
+
                     return Result.Succeeded;
                 }
                 catch (Exception ex)
@@ -141,6 +143,13 @@ namespace PanelSchedFormatting
             {
                 panSchedView.AddSpare(rowNumber, columnNumber);
             }
+
+            return true;
+        }
+
+        public bool UnlockSlot(PanelScheduleView panSchedView, Int32 rowNumber, Int32 columnNumber)
+        {
+            panSchedView.SetLockSlot(rowNumber, columnNumber, false);
 
             return true;
         }
