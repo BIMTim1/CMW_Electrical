@@ -25,9 +25,48 @@ namespace OneLineTools
             bool polyLine = true;
 
             //find Y offsets of selected and placed Detail Items
-            double selYOffset = selectedDetailItem.Symbol.get_BoundingBox(activeView).Max[1];
+            //double selYOffset = selectedDetailItem.Symbol.get_BoundingBox(activeView).Max[1];
+            BoundingBoxXYZ selBB = selectedDetailItem.Symbol.get_BoundingBox(activeView);
+            double selYOffset;
+            double selCenterX;
 
             double placedYOffset = newDetailItem.Symbol.get_BoundingBox(activeView).Max[1];
+
+            if (selectedDetailItem.Name.Contains("Bus"))
+            {
+                //selYOffset = selBB.Max.Y - ((selBB.Max.Y - selBB.Min.Y) / 2);
+                double selBBCenterX = selBB.Max.X - ((selBB.Max.X - selBB.Min.X) / 2);
+                selCenterX = startPoint.X + selBBCenterX;
+
+                //create location data to place E_DI_OL_Circuit Breaker
+                FamilySymbol cbSymbol = new FilteredElementCollector(document)
+                    .OfCategory(BuiltInCategory.OST_DetailComponents)
+                    .Where(x => x.LookupParameter("Family Name").AsString() == "E_DI_OL_Circuit Breaker")
+                    .Cast<FamilySymbol>()
+                    .First();
+
+                BoundingBoxXYZ cbBB = cbSymbol.get_BoundingBox(activeView);
+
+                double cbYOffset = cbBB.Max.Y - ((cbBB.Max.Y + cbBB.Min.Y) / 2);
+
+                XYZ cbPlacePoint = new XYZ(selCenterX, startPoint.Y - cbYOffset, startPoint.Z);
+
+                //create E_DI_OL_Circuit Breaker FamilyInstance
+                FamilyInstance cbInst = document.Create.NewFamilyInstance(cbPlacePoint, cbSymbol, activeView);
+
+                //collect location and bounding box information of Circuit Breaker FamilyInstance
+                XYZ cbInstLoc = (cbInst.Location as LocationPoint).Point;
+
+                BoundingBoxXYZ cbInstBB = cbInst.get_BoundingBox(activeView);
+
+                //update startPoint and selYOffset to reference new Circuit Breaker FamilyInstance
+                startPoint = new XYZ(cbInstLoc.X, cbInstBB.Min.Y, cbInstLoc.Z);
+                selYOffset = cbInstBB.Max.Y;
+            }
+            else
+            {
+                selYOffset = selBB.Max.Y;
+            }
 
             //determine if multiple lines need to be created
             if (startPoint.X == endPoint.X)
@@ -55,7 +94,7 @@ namespace OneLineTools
 
             List<FamilyInstance> feederLines = new List<FamilyInstance>();
 
-            //create line work based on position of selected and placd elements
+            //create line work based on position of selected and placed elements
             if (!polyLine)
             {
                 Line curve = Line.CreateBound(firstPoint, secondPoint);
