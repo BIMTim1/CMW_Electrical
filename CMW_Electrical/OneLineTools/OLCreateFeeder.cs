@@ -9,9 +9,9 @@ namespace OneLineTools
 {
     public class OLCreateFeeder
     {
-        public List<FamilyInstance> CreateFeederCoordinates(FamilyInstance selectedDetailItem, FamilyInstance newDetailItem, XYZ selectedPoint, View activeView, Document document, FamilySymbol feederLine)
+        public List<FamilyInstance> CreateFeeder(FamilyInstance selectedDetailItem, FamilyInstance newDetailItem, XYZ selectedPoint, View activeView, Document document, FamilySymbol feederLine)
         {
-            XYZ startPoint = (selectedDetailItem.Location as LocationPoint).Point;
+            XYZ startPoint;
             XYZ endPoint = selectedPoint;
 
             XYZ firstPoint;
@@ -24,8 +24,7 @@ namespace OneLineTools
 
             bool polyLine = true;
 
-            //find Y offsets of selected and placed Detail Items
-            //double selYOffset = selectedDetailItem.Symbol.get_BoundingBox(activeView).Max[1];
+            //create initial offsets and BoundingBoxXYZ elements
             BoundingBoxXYZ selBB = selectedDetailItem.Symbol.get_BoundingBox(activeView);
             double selYOffset;
             double selCenterX;
@@ -34,25 +33,25 @@ namespace OneLineTools
 
             if (selectedDetailItem.Name.Contains("Bus"))
             {
-                //selYOffset = selBB.Max.Y - ((selBB.Max.Y - selBB.Min.Y) / 2);
-                double selBBCenterX = selBB.Max.X - ((selBB.Max.X - selBB.Min.X) / 2);
-                selCenterX = startPoint.X + selBBCenterX;
+                XYZ busPoint = (selectedDetailItem.Location as LocationPoint).Point;
 
-                //create location data to place E_DI_OL_Circuit Breaker
+                double selBBCenterX = selBB.Max.X - ((selBB.Max.X - selBB.Min.X) / 2);
+                selCenterX = busPoint.X + selBBCenterX;
+
                 FamilySymbol cbSymbol = new FilteredElementCollector(document)
                     .OfCategory(BuiltInCategory.OST_DetailComponents)
-                    .Where(x => x.LookupParameter("Family Name").AsString() == "E_DI_OL_Circuit Breaker")
+                    .OfClass(typeof(FamilySymbol))
+                    .Where(x => x.Name.Contains("Circuit"))
                     .Cast<FamilySymbol>()
                     .First();
 
-                BoundingBoxXYZ cbBB = cbSymbol.get_BoundingBox(activeView);
 
-                double cbYOffset = cbBB.Max.Y - ((cbBB.Max.Y + cbBB.Min.Y) / 2);
-
-                XYZ cbPlacePoint = new XYZ(selCenterX, startPoint.Y - cbYOffset, startPoint.Z);
+                XYZ cbPlacePoint = new XYZ(selCenterX, busPoint.Y, busPoint.Z);
 
                 //create E_DI_OL_Circuit Breaker FamilyInstance
                 FamilyInstance cbInst = document.Create.NewFamilyInstance(cbPlacePoint, cbSymbol, activeView);
+
+                document.Regenerate();
 
                 //collect location and bounding box information of Circuit Breaker FamilyInstance
                 XYZ cbInstLoc = (cbInst.Location as LocationPoint).Point;
@@ -61,10 +60,11 @@ namespace OneLineTools
 
                 //update startPoint and selYOffset to reference new Circuit Breaker FamilyInstance
                 startPoint = new XYZ(cbInstLoc.X, cbInstBB.Min.Y, cbInstLoc.Z);
-                selYOffset = cbInstBB.Max.Y;
+                selYOffset = 0;
             }
             else
             {
+                startPoint = (selectedDetailItem.Location as LocationPoint).Point;
                 selYOffset = selBB.Max.Y;
             }
 
@@ -98,7 +98,7 @@ namespace OneLineTools
             if (!polyLine)
             {
                 Line curve = Line.CreateBound(firstPoint, secondPoint);
-                //doc.Create.NewDetailCurve(activeView, curve);
+
                 FamilyInstance newFeeder = document.Create.NewFamilyInstance(curve, feederLine, activeView);
 
                 feederLines.Add(newFeeder);

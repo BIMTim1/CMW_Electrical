@@ -73,7 +73,7 @@ namespace OLUpdateInfo
                 inputPoles = 3;
             }
 
-            detailItem.LookupParameter("E_Number of Poles").Set(inputPoles);
+            detailItem.LookupParameter("Number of Phases - Detail").Set(inputPoles);
         }
     }
 }
