@@ -199,8 +199,16 @@ namespace OneLineConnectAndPlace
                             //connect fed from equipment to selected source
                             if (connectEquip.LookupParameter("EqConId").AsString() != "")
                             {
-                                //collect Electrical Equipment family in model with same DIEqConId value as selectedEquip
-                                ConnectEquipment(doc, connectEquip, selectedEquip as FamilyInstance);
+                                //create ElectricalSystem from user selected DetailItem
+                                CreateEquipmentCircuit equipCircuit = new CreateEquipmentCircuit();
+                                equipCircuit.CreateEquipCircuit(doc, connectEquip, selectedEquip as FamilyInstance);
+
+                                if (equipCircuit == null)
+                                {
+                                    TaskDialog.Show(
+                                        "Selected Detail Item has no Connected Equipment", 
+                                        "Selected Detail Item does not have a referenced Electrical Equipment family to reference. No circuit will be created.");
+                                }
                             }
 
                             //update Detail Item - Line Based feeders with DIEqConId value
@@ -287,41 +295,6 @@ namespace OneLineConnectAndPlace
             updateId = "NotAssigned" + num;
 
             return updateId;
-        }
-
-        public void ConnectEquipment(Document document, FamilyInstance sourceDetailItem, FamilyInstance fedToEquip)
-        {
-            BuiltInCategory bic = BuiltInCategory.OST_ElectricalEquipment;
-
-            //collect Electrical Equipment FamilyInstance with selected sourceDetailItem DIEqConId
-            FamilyInstance sourceEquip = 
-                new FilteredElementCollector(document)
-                .OfCategory(bic)
-                .OfClass(typeof(FamilyInstance))
-                .ToElements()
-                .Cast<FamilyInstance>()
-                .Where(x => x.LookupParameter("EqConId").AsString() == sourceDetailItem.LookupParameter("EqConId")
-                .AsString())
-                .First();
-
-            if (sourceEquip != null)
-            {
-                //circuit fedToEquip to sourceEquip
-                ConnectorSet connectorSet = fedToEquip.MEPModel.ConnectorManager.UnusedConnectors;
-                ElectricalSystem fedToCircuit;
-                foreach (Connector connector in connectorSet)
-                {
-                    ElectricalSystemType elecSysType = connector.ElectricalSystemType;
-                    fedToCircuit = ElectricalSystem.Create(connector, elecSysType);
-                    fedToCircuit.SelectPanel(sourceEquip);
-                }
-            }
-            else
-            {
-                TaskDialog.Show(
-                    "Selected Detail Item has no Connected Equipment", 
-                    "Selected Detail Item does not have a referenced Electrical Equipment family to reference. No circuit will be created.");
-            }
         }
     }
 }
