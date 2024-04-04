@@ -27,6 +27,11 @@ namespace ChangePanelTypeToSinglePhase
             Application app = uiapp.Application;
             UIDocument uidoc = uiapp.ActiveUIDocument;
 
+            //BuiltInParameter references
+            BuiltInParameter bipPanelName = BuiltInParameter.RBS_ELEC_PANEL_NAME;
+            BuiltInParameter bipRating = BuiltInParameter.RBS_ELEC_CIRCUIT_RATING_PARAM;
+            BuiltInParameter bipFrame = BuiltInParameter.RBS_ELEC_CIRCUIT_FRAME_PARAM;
+
             Reference selectPanel = null;
 
             try
@@ -52,14 +57,33 @@ namespace ChangePanelTypeToSinglePhase
             FamilyInstance selectedPanel = doc.GetElement(selectPanel.ElementId) as FamilyInstance;
 
             //get Panel DIName to collect Electrical Equipment again
-            string pnlName = selectedPanel.get_Parameter(BuiltInParameter.RBS_ELEC_PANEL_NAME).AsString();
+            string pnlName = selectedPanel.get_Parameter(bipPanelName).AsString();
             //get Supply From parameter of Selected Electrical Equipment
             string pnlSupply = selectedPanel.get_Parameter(BuiltInParameter.RBS_ELEC_PANEL_SUPPLY_FROM_PARAM).AsString();
 
             BuiltInCategory bic = BuiltInCategory.OST_ElectricalEquipment;
 
+            //collect selected panelboard circuit parameters to update once new circuit is created
+            List<ElectricalSystem> panelCircuits = (from x 
+                                                    in selectedPanel.MEPModel.GetElectricalSystems() 
+                                                    where x.PanelName != pnlName 
+                                                    select x)
+                                                    .ToList();
+
+            double panelRating = 20;
+            double panelFrame = 400;
+
+            if (panelCircuits.Any())
+            {
+                foreach (ElectricalSystem panelCircuit in panelCircuits)
+                {
+                    panelRating = panelCircuit.get_Parameter(bipRating).AsDouble();
+                    panelFrame = panelCircuit.get_Parameter(bipFrame).AsDouble();
+                }
+            }
+
             //get existing circuits of selected Electrical Equipment
-            List<ElectricalSystem> col_circuits = new FilteredElementCollector(doc).OfClass(typeof(ElectricalSystem))
+            List < ElectricalSystem > col_circuits = new FilteredElementCollector(doc).OfClass(typeof(ElectricalSystem))
                 .Where(x => x.get_Parameter(BuiltInParameter.RBS_ELEC_CIRCUIT_PANEL_PARAM).AsString() == pnlName)
                 .Cast<ElectricalSystem>().ToList();
 
@@ -67,7 +91,7 @@ namespace ChangePanelTypeToSinglePhase
             List<Element> source_panel = new FilteredElementCollector(doc)
                 .OfCategory(bic)
                 .WhereElementIsNotElementType()
-                .Where(x => x.get_Parameter(BuiltInParameter.RBS_ELEC_PANEL_NAME).AsString() == pnlSupply)
+                .Where(x => x.get_Parameter(bipPanelName).AsString() == pnlSupply)
                 .ToList();
 
             //get Panel family type to change to
@@ -108,7 +132,7 @@ namespace ChangePanelTypeToSinglePhase
                         FamilyInstance updated_pnl = new FilteredElementCollector(doc)
                             .OfCategory(bic)
                             .WhereElementIsNotElementType()
-                            .Where(x => x.get_Parameter(BuiltInParameter.RBS_ELEC_PANEL_NAME).AsString() == pnlName).First() as FamilyInstance;
+                            .Where(x => x.get_Parameter(bipPanelName).AsString() == pnlName).First() as FamilyInstance;
 
                         //re-create panel circuit and reconnect to source
                         if (source_panel.Any())
@@ -120,6 +144,10 @@ namespace ChangePanelTypeToSinglePhase
                                 ElectricalSystemType conn_type = conn.ElectricalSystemType;
                                 newcct = ElectricalSystem.Create(conn, conn_type);
                                 newcct.SelectPanel(source_panel.First() as FamilyInstance);
+
+                                //update Rating and Frame parameters of selected panelboard
+                                newcct.get_Parameter(bipRating).Set(panelRating);
+                                newcct.get_Parameter(bipFrame).Set(panelFrame);
                             }
                         }
 
