@@ -39,5 +39,39 @@ namespace CMW_Electrical
                 return false;
             }
         }
+
+        public class TagSelectionFilter : ISelectionFilter
+        {
+            public bool AllowElement(Element element)
+            {
+                if (element.Category.Name.Contains("Tags"))
+                {
+                    return true;
+                }
+                return false;
+            }
+
+            public bool AllowReference(Reference refer, XYZ point)
+            {
+                return false;
+            }
+        }
+
+        public class LightingSelectionFilter : ISelectionFilter
+        {
+            public bool AllowElement(Element element)
+            {
+                if (element.Category.Name == "Lighting Fixtures")
+                {
+                    return true;
+                }
+                return false;
+            }
+
+            public bool AllowReference(Reference refer, XYZ point)
+            {
+                return false;
+            }
+        }
     }
 }

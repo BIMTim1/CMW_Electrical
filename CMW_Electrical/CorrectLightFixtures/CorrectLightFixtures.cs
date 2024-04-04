@@ -93,47 +93,48 @@ namespace CorrectLightFixtures
             //test if E_LIGHT FIXTURE SCHEDULE contains Multiline Text parameters
             bool scheduleType = FindFieldByName((lightingSchedules.First() as ViewSchedule).Definition, PARAM_TEST, doc);
 
-            Transaction trac = new Transaction(doc);
-
-            try
+            using (Transaction trac = new Transaction(doc))
             {
-                string updateType;
-                string transactionName;
-
-                if (!scheduleType)
+                try
                 {
-                    updateType = "old";
-                    transactionName = "Convert New Fixtures to Old";
+                    string updateType;
+                    string transactionName;
+
+                    if (!scheduleType)
+                    {
+                        updateType = "old";
+                        transactionName = "Convert New Fixtures to Old";
+                    }
+                    else
+                    {
+                        updateType = "new";
+                        transactionName = "Convert Old Fixtures to New";
+                    }
+
+                    trac.Start(transactionName);
+
+                    UpdateFixtureInfo(
+                        updateType, LTGBIC, PARAM_TEST, allFixtureFamilyNames,
+                        familiesToDelete, new_string_parameters, old_string_parameters,
+                        sameParameters, doc, OLD_PATH, NEW_PATH, updatedNames, elemFilter);
+
+                    //delete incorrect families from project
+                    foreach (ElementId elemId in familiesToDelete)
+                    {
+                        doc.Delete(elemId);
+                    }
+
+                    trac.Commit();
+
+                    TaskDialog.Show("Lighting Fixtures Updated", "All Lighting Fixtures in the Project have been Corrected.");
+
+                    return Result.Succeeded;
                 }
-                else
+                catch (Exception ex)
                 {
-                    updateType = "new";
-                    transactionName = "Convert Old Fixtures to New";
+                    TaskDialog.Show("An error occurred", "An error has occurred. Contact the BIM team for assistance.");
+                    return Result.Failed;
                 }
-
-                trac.Start(transactionName);
-
-                UpdateFixtureInfo(
-                    updateType, LTGBIC, PARAM_TEST, allFixtureFamilyNames,
-                    familiesToDelete, new_string_parameters, old_string_parameters,
-                    sameParameters, doc, OLD_PATH, NEW_PATH, updatedNames, elemFilter);
-
-                //delete incorrect families from project
-                foreach (ElementId elemId in familiesToDelete)
-                {
-                    doc.Delete(elemId);
-                }
-
-                trac.Commit();
-
-                TaskDialog.Show("Lighting Fixtures Updated", "All Lighting Fixtures in the Project have been Corrected.");
-
-                return Result.Succeeded;
-            }
-            catch (Exception ex)
-            {
-                TaskDialog.Show("An error occurred", "An error has occurred. Contact the BIM team for assistance.");
-                return Result.Failed;
             }
         }
 

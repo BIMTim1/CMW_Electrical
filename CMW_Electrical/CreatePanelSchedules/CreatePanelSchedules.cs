@@ -33,55 +33,55 @@ namespace CreatePanelSchedules
             //get Revit version number (default string)
             int revNum = int.Parse(uiapp.Application.VersionNumber);
 
-            //create Transaction
-            Transaction trac = new Transaction(doc);
-
-            try
+            using (Transaction trac = new Transaction(doc))
             {
-                trac.Start("Create Panelboard Schedules");
-                ///define failure handling options of Transaction
-                FailureHandlingOptions options = trac.GetFailureHandlingOptions();
-                options.SetFailuresPreprocessor(new CMWElec_FailureHandlers.CircuitBreakerWarningSwallower());
-                trac.SetFailureHandlingOptions(options);
-
-                foreach (Element eq in elecEquip)
+                try
                 {
-                    //test if schedule already created for Electrical Equipment
-                    bool exSched = CheckExistingSchedule(eq);
-                    if (!exSched)
+                    trac.Start("Create Panelboard Schedules");
+                    ///define failure handling options of Transaction
+                    FailureHandlingOptions options = trac.GetFailureHandlingOptions();
+                    options.SetFailuresPreprocessor(new CMWElec_FailureHandlers.CircuitBreakerWarningSwallower());
+                    trac.SetFailureHandlingOptions(options);
+
+                    foreach (Element eq in elecEquip)
                     {
-                        //get Max # Circuit Breakers of Element
-                        int cbNum = GetCircuitBreakersNum(eq, revNum);
-
-                        //collect parameters of Electrical Equipment family to compare
-                        string famName = eq.LookupParameter("Family").AsValueString();
-                        string panName = eq.LookupParameter("Panel Name").AsString();
-                        string panPhDemo = eq.LookupParameter("Phase Demolished").AsValueString();
-                        string elecData = eq.LookupParameter("Electrical Data").AsString();
-
                         //test if schedule already created for Electrical Equipment
-
-                        ElementId tempId = GetScheduleId(panName, panPhDemo, famName, elecData, doc, revNum, cbNum);
-
-                        if (tempId != ElementId.InvalidElementId)
+                        bool exSched = CheckExistingSchedule(eq);
+                        if (!exSched)
                         {
-                            //add IFailuresPreprocessor Interface to address issues with 2022 and earlier Distribution Equipment schedule creation
-                            PanelScheduleView.CreateInstanceView(doc, tempId, eq.Id);
-                            count += 1;
+                            //get Max # Circuit Breakers of Element
+                            int cbNum = GetCircuitBreakersNum(eq, revNum);
+
+                            //collect parameters of Electrical Equipment family to compare
+                            string famName = eq.LookupParameter("Family").AsValueString();
+                            string panName = eq.LookupParameter("Panel Name").AsString();
+                            string panPhDemo = eq.LookupParameter("Phase Demolished").AsValueString();
+                            string elecData = eq.LookupParameter("Electrical Data").AsString();
+
+                            //test if schedule already created for Electrical Equipment
+
+                            ElementId tempId = GetScheduleId(panName, panPhDemo, famName, elecData, doc, revNum, cbNum);
+
+                            if (tempId != ElementId.InvalidElementId)
+                            {
+                                //add IFailuresPreprocessor Interface to address issues with 2022 and earlier Distribution Equipment schedule creation
+                                PanelScheduleView.CreateInstanceView(doc, tempId, eq.Id);
+                                count += 1;
+                            }
                         }
                     }
-                }
 
-                trac.Commit();
-                TaskDialog.Show("Created Panelboard Schedules",
-                    $"The tool has run successfully. {count} Panelboard Schedules were created");
-                return Result.Succeeded;
-            }
-            catch (Exception ex)
-            {
-                errorReport = ex.Message;
-                TaskDialog.Show("Panel Schedule Creation Failed", "Panel Schedules failed to create. Contact the BIM Team for assistance.");
-                return Result.Failed;
+                    trac.Commit();
+                    TaskDialog.Show("Created Panelboard Schedules",
+                        $"The tool has run successfully. {count} Panelboard Schedules were created");
+                    return Result.Succeeded;
+                }
+                catch (Exception ex)
+                {
+                    errorReport = ex.Message;
+                    TaskDialog.Show("Panel Schedule Creation Failed", "Panel Schedules failed to create. Contact the BIM Team for assistance.");
+                    return Result.Failed;
+                }
             }
         }
 

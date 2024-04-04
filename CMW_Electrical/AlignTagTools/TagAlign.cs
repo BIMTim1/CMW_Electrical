@@ -10,6 +10,7 @@ using Autodesk.Revit.ApplicationServices;
 using Autodesk.Revit.DB.Electrical;
 using Autodesk.Revit.UI;
 using Autodesk.Revit.UI.Selection;
+using CMW_Electrical;
 
 namespace AlignTagTools
 {
@@ -17,8 +18,8 @@ namespace AlignTagTools
     {
         public void SelectAndAlignTags(UIDocument uidoc, Document doc, string alignTagId)
         {
-            ISelectionFilter tagFilter = new MySelectionFilter();
-            //Reference selRefTag = uidoc.Selection.PickObject(ObjectType.Element, tagFilter, "Select Reference Tag to Align to");
+            ISelectionFilter selFilter = new CMWElecSelectionFilter.TagSelectionFilter();
+            //Reference selRefTag = uidoc.Selection.PickObject(ObjectType.Element, selFilter, "Select Reference Tag to Align to");
             Reference selRefTag = uidoc.Selection.PickObject(ObjectType.Element, "Select Reference Tag to Align to"); //debug only
 
             Element refTag = doc.GetElement(selRefTag);
