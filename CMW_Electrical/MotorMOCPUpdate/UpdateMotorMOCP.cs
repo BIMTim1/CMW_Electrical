@@ -49,49 +49,50 @@ namespace MotorMOCPUpdate
             if (all_motors.Count == 0)
             {
                 TaskDialog.Show("No Motors in Project", "There are no Motor Families placed in the Active Project. The tool will now close.");
-                return Result.Failed;
+                return Result.Cancelled;
             }
 
-            Transaction trac = new Transaction(doc);
-
-            try
+            using (Transaction trac = new Transaction(doc))
             {
-                trac.Start("Update Motor Circuit Load Name from MOCP");
-
-                foreach (FamilyInstance motor in all_motors)
+                try
                 {
-                    //collect ElectricalSystem element from motor FamilyInstance
-                    ISet<ElectricalSystem> motorCircuits = motor.MEPModel.GetElectricalSystems();
+                    trac.Start("Update Motor Circuit Load Name from MOCP");
 
-                    if (motorCircuits.Any())
+                    foreach (FamilyInstance motor in all_motors)
                     {
-                        ElectricalSystem motorCircuit = motorCircuits.First();
+                        //collect ElectricalSystem element from motor FamilyInstance
+                        ISet<ElectricalSystem> motorCircuits = motor.MEPModel.GetElectricalSystems();
 
-                        //collect motor MOCP
-                        string motor_mocp_str = motor.LookupParameter("MES_(MFS) MOCP").AsString();
-                        //verify if can be converted to number
-                        bool isNumber = Int32.TryParse(motor_mocp_str, out int motor_mocp);
-
-                        if (!isNumber)
+                        if (motorCircuits.Any())
                         {
-                            continue;
+                            ElectricalSystem motorCircuit = motorCircuits.First();
+
+                            //collect motor MOCP
+                            string motor_mocp_str = motor.LookupParameter("MES_(MFS) MOCP").AsString();
+                            //verify if can be converted to number
+                            bool isNumber = Int32.TryParse(motor_mocp_str, out int motor_mocp);
+
+                            if (!isNumber)
+                            {
+                                continue;
+                            }
+
+                            motorCircuit.LookupParameter("Rating").Set(motor_mocp);
+                            count++;
                         }
-
-                        motorCircuit.LookupParameter("Rating").Set(motor_mocp);
-                        count++;
                     }
+
+                    TaskDialog.Show("Motor Circuit Ratings Updated", $"{count} Motor Circuits have been updated to display the most up to date MOCP information.");
+
+                    trac.Commit();
+
+                    return Result.Succeeded;
                 }
-
-                TaskDialog.Show("Motor Circuit Ratings Updated", $"{count} Motor Circuits have been updated to display the most up to date MOCP information.");
-
-                trac.Commit();
-
-                return Result.Succeeded;
-            }
-            catch (Exception ex)
-            {
-                TaskDialog.Show("An Error Occurred", "Contact the BIM Team for Assistance.");
-                return Result.Failed;
+                catch (Exception ex)
+                {
+                    TaskDialog.Show("An Error Occurred", "Contact the BIM Team for Assistance.");
+                    return Result.Failed;
+                }
             }
         }
     }

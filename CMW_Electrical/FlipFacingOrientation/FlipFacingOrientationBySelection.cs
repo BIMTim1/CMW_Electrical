@@ -11,6 +11,7 @@ using Autodesk.Revit.ApplicationServices;
 using Autodesk.Revit.DB.Electrical;
 using Autodesk.Revit.UI;
 using Autodesk.Revit.UI.Selection;
+using CMW_Electrical;
 
 namespace FlipFacingOrientation
 {
@@ -31,7 +32,7 @@ namespace FlipFacingOrientation
 
             try
             {
-                ISelectionFilter selection_filter = new LightingSelectionFilter();
+                ISelectionFilter selection_filter = new CMWElecSelectionFilter.LightingSelectionFilter();
 
                 string selection_prompt = "Select Elements by Rectangle to Flip Host";
 
@@ -45,42 +46,35 @@ namespace FlipFacingOrientation
                 return Result.Failed;
             }
 
-            Transaction trac = new Transaction(doc);
-
-            trac.Start("Flip Work Plane of Selected Lighting Fixtures");
-
-            int count = 0;
-
-            foreach (FamilyInstance lighting_fixture in user_selection)
+            using (Transaction trac = new Transaction(doc))
             {
-                if (lighting_fixture.CanFlipWorkPlane & lighting_fixture.IsWorkPlaneFlipped)
+                try
                 {
-                    lighting_fixture.IsWorkPlaneFlipped = false;
-                    count++;
+                    trac.Start("Flip Work Plane of Selected Lighting Fixtures");
+
+                    int count = 0;
+
+                    foreach (FamilyInstance lighting_fixture in user_selection)
+                    {
+                        if (lighting_fixture.CanFlipWorkPlane & lighting_fixture.IsWorkPlaneFlipped)
+                        {
+                            lighting_fixture.IsWorkPlaneFlipped = false;
+                            count++;
+                        }
+                    }
+
+                    trac.Commit();
+
+                    TaskDialog.Show("Lighting Fixtures Modification Complete", $"{count} Lighting Fixtures have had their Host Orientation Flipped.");
+
+                    return Result.Succeeded;
                 }
-            }
-
-            trac.Commit();
-
-            TaskDialog.Show("Lighting Fixtures Modification Complete", $"{count} Lighting Fixtures have had their Host Orientation Flipped.");
-            
-            return Result.Succeeded;
-        }
-
-        public class LightingSelectionFilter : ISelectionFilter
-        {
-            public bool AllowElement(Element element)
-            {
-                if (element.Category.Name == "Lighting Fixtures")
+                catch (Exception ex)
                 {
-                    return true;
-                }
-                return false;
-            }
+                    TaskDialog.Show("An error occurred", "An error occurred that has caused the tool to stop. Contact the BIM team for assistance.");
 
-            public bool AllowReference(Reference refer, XYZ point)
-            {
-                return false;
+                    return Result.Failed;
+                }
             }
         }
     }
