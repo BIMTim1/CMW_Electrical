@@ -11,6 +11,7 @@ using Autodesk.Revit.ApplicationServices;
 using Autodesk.Revit.DB.Electrical;
 using Autodesk.Revit.UI;
 using Autodesk.Revit.UI.Selection;
+using CMW_Electrical;
 
 namespace ChangePanelTypeToSinglePhase
 {
@@ -37,10 +38,13 @@ namespace ChangePanelTypeToSinglePhase
             try
             {
                 //create selection elements
-                //ISelectionFilter selFilter = new EquipmentSelectionFilter();
-                //Reference selectPanel = uidoc.Selection.PickObject(ObjectType.Element, selFilter, "Select a Panelboard Family to Update the Type to Single Phase.");
+                ISelectionFilter selFilter = new CMWElecSelectionFilter.EquipmentSelectionFilter();
                 selectPanel = uidoc.Selection.PickObject(ObjectType.Element, 
+                    selFilter, 
                     "Select a Panelboard Family to Update the Type to Single Phase.");
+
+                selectPanel = uidoc.Selection.PickObject(ObjectType.Element, 
+                    "Select a Panelboard Family to Update the Type to Single Phase."); //debug only
             }
             catch (OperationCanceledException ex)
             {
@@ -181,19 +185,6 @@ namespace ChangePanelTypeToSinglePhase
                 tracGroup.Assimilate();
 
                 return Result.Succeeded;
-            }
-        }
-
-        public class EquipmentSelectionFilter : ISelectionFilter
-        {
-            public bool AllowElement(Element element)
-            {
-                return element.Category.Name == "Electrical Equipment";
-            }
-
-            public bool AllowReference(Reference refer, XYZ point)
-            {
-                return false;
             }
         }
 

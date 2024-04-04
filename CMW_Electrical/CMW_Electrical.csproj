@@ -117,6 +117,7 @@
     <Compile Include="xSharedClasses\ElecDistributionSystem.cs" />
     <Compile Include="xSharedClasses\ElecEquipInfo.cs" />
     <Compile Include="xSharedClasses\DetailItemInfo.cs" />
+    <Compile Include="xSharedClasses\SelectionFilters\CMWElecSelectionFilter.cs" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\AddElecCctNote32x32.png" />
