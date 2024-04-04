@@ -17,15 +17,7 @@ namespace CMW_Electrical
     {
         public ElectricalSystem CreateEquipCircuit(FamilyInstance sourceEquipment, FamilyInstance fedToEquipment)
         {
-            ConnectorSet connectorSet = fedToEquipment.MEPModel.ConnectorManager.UnusedConnectors;
-            ElectricalSystem createdCircuit = null;
-
-            foreach (Connector connector in connectorSet)
-            {
-                ElectricalSystemType elecSysType = connector.ElectricalSystemType;
-                createdCircuit = ElectricalSystem.Create(connector, elecSysType);
-                createdCircuit.SelectPanel(sourceEquipment);
-            }
+            ElectricalSystem createdCircuit = CreateCircuit(sourceEquipment, fedToEquipment);
 
             return createdCircuit;
         }
@@ -50,14 +42,7 @@ namespace CMW_Electrical
                     .Where(x => x.get_Parameter(BuiltInParameter.RBS_ELEC_PANEL_NAME).AsString() == fedToEquipmentName)
                     .First() as FamilyInstance;
 
-                ConnectorSet connectorSet = fedToEquipment.MEPModel.ConnectorManager.UnusedConnectors;
-
-                foreach (Connector connector in connectorSet)
-                {
-                    ElectricalSystemType elecSysType = connector.ElectricalSystemType;
-                    createdCircuit = ElectricalSystem.Create(connector, elecSysType);
-                    createdCircuit.SelectPanel(sourceEquipmentList.First() as FamilyInstance);
-                }
+                createdCircuit = CreateCircuit(sourceEquipmentList.First() as FamilyInstance, fedToEquipment);
             }
 
             return createdCircuit;
@@ -77,14 +62,23 @@ namespace CMW_Electrical
 
             if (sourceEquipment != null)
             {
-                ConnectorSet connectorSet = fedToEquipment.MEPModel.ConnectorManager.UnusedConnectors;
+                createdCircuit = CreateCircuit(sourceEquipment, fedToEquipment);
+            }
 
-                foreach (Connector connector in connectorSet)
-                {
-                    ElectricalSystemType elecSysType = connector.ElectricalSystemType;
-                    createdCircuit = ElectricalSystem.Create(connector, elecSysType);
-                    createdCircuit.SelectPanel(sourceEquipment);
-                }
+            return createdCircuit;
+        }
+
+        private ElectricalSystem CreateCircuit(FamilyInstance sourceEquipment, FamilyInstance fedToEquipment)
+        {
+            ElectricalSystem createdCircuit = null;
+
+            ConnectorSet connectorSet = fedToEquipment.MEPModel.ConnectorManager.UnusedConnectors;
+
+            foreach (Connector connector in connectorSet)
+            {
+                ElectricalSystemType elecSysType = connector.ElectricalSystemType;
+                createdCircuit = ElectricalSystem.Create(connector, elecSysType);
+                createdCircuit.SelectPanel(sourceEquipment);
             }
 
             return createdCircuit;
