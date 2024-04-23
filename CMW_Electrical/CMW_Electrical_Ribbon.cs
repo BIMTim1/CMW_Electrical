@@ -471,6 +471,23 @@ namespace CMW_Electrical
             panelSchedFormatBtn.AddPushButton(panelSchedSpareAndSpaceAlignData);
 
 
+            //------------create push button for panelLegendUpdate------------
+            PushButtonData panelLegendUpdateData = new PushButtonData(
+                "cmdPanelLegendUpdate", 
+                "Schedule Legend" + System.Environment.NewLine + "Autofill", 
+                thisAssemblyPath, 
+                "ScheduleLegendUpdate.PanelLegendUpdate")
+            {
+                LargeImage = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/PanelLegendAutofill32x32.png")),
+                Image = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/PanelLegendAutofill16x16.png")),
+                ToolTip = "Updates the E_GA_Schedule Legend of the current sheet.",
+                LongDescription = "Updates the E_GA_Schedule Legend on the current sheet based on " +
+                    "the number of PanelScheduleInstances and ScheduleSheetInstances on the current sheet. " +
+                    "NOTE: If the current view is not a Sheet View, the tool will cancel."
+            };
+
+            PushButton panelLegendUpdateBtn = schedulePanel.AddItem(panelLegendUpdateData) as PushButton;
+
             //------------create push button for <button name>------------
         }
 
