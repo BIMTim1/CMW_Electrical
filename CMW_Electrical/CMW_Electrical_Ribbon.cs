@@ -368,15 +368,23 @@ namespace CMW_Electrical
                 ToolTip = "Select an Electrical Equipment family from a list of Panel Names and associate to a selected Detail Item family in One-Line."
             };
 
-            PushButtonData oneLineHalftoneExistingData = new PushButtonData("cmdOneLineHalftoneExisting", "Halftone Existing", thisAssemblyPath, "OneLine_HalftoneExisting.OneLineHalftoneExisting")
+
+            PushButtonData oneLineHalftoneExistingData = 
+                new PushButtonData(
+                    "cmdOneLineHalftoneExisting", 
+                    "Halftone Existing", 
+                    thisAssemblyPath,
+                    "OneLine_HalftoneExisting.OneLineHalftoneExisting")
             {
                 LargeImage = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/OLHalftoneExisting32x32.png")),
                 Image = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/OlHalftoneExisting16x16.png")),
                 ToolTip = "Sets the Graphic Override for all Existing phased content in active Schematic Drafting View to be Halftone."
             };
 
-            oneLinePanel.AddStackedItems(oneLineConnectAndPlaceData, oneLineConnectData, oneLineHalftoneExistingData);
+            oneLinePanel.AddStackedItems(oneLineConnectAndPlaceData, oneLineConnectData);
             oneLinePanel.AddStackedItems(oneLineUpdateDesignations, oneLineAssociateData, oneLinePlaceEquipData);
+
+            PushButton oneLineHalftoneExistingBtn = oneLinePanel.AddItem(oneLineHalftoneExistingData) as PushButton;
 
             //------------create push button for <button name>------------
         }

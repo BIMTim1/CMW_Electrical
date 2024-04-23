@@ -48,19 +48,44 @@ namespace CMW_Electrical
             return createdCircuit;
         }
 
-        public ElectricalSystem CreateEquipCircuit(Document document, FamilyInstance sourceEquipmentDetailItem, FamilyInstance fedToEquipment)
+        public ElectricalSystem CreateEquipCircuit(Document document, FamilyInstance sourceEquipmentInput, FamilyInstance fedToEquipmentInput)
         {
             ElectricalSystem createdCircuit = null;
 
-            FamilyInstance sourceEquipment = new FilteredElementCollector(document)
+            FamilyInstance sourceEquipment = null;
+            FamilyInstance fedToEquipment = null;
+
+            //set sourceEquipment to input instance or collect from model
+            if (sourceEquipmentInput.Category.Name == "Detail Items")
+            {
+                sourceEquipment = new FilteredElementCollector(document)
                 .OfCategory(BuiltInCategory.OST_ElectricalEquipment)
                 .OfClass(typeof(FamilyInstance))
                 .ToElements()
                 .Cast<FamilyInstance>()
-                .Where(x => x.LookupParameter("EqConId").AsString() == sourceEquipmentDetailItem.LookupParameter("EqConId").AsString())
+                .Where(x => x.LookupParameter("EqConId").AsString() == sourceEquipmentInput.LookupParameter("EqConId").AsString())
                 .First();
+            }
+            else
+            {
+                sourceEquipment = sourceEquipmentInput;
+            }
 
-            if (sourceEquipment != null)
+            //set fedToEquipment to input instance or collect from model
+            if (fedToEquipmentInput.Category.Name == "Detail Items")
+            {
+                fedToEquipment = new FilteredElementCollector(document)
+                    .OfCategory(BuiltInCategory.OST_ElectricalEquipment)
+                    .OfClass(typeof(FamilyInstance))
+                    .ToElements()
+                    .Cast<FamilyInstance>()
+                    .Where(x => x.LookupParameter("EqConId").AsString() == fedToEquipmentInput.LookupParameter("EqConId").AsString())
+                    .First();
+            }
+
+            //update method to accept detail items or equipment
+
+            if (sourceEquipment != null && fedToEquipment != null)
             {
                 createdCircuit = CreateCircuit(sourceEquipment, fedToEquipment);
             }

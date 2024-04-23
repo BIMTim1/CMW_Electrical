@@ -1,11 +1,18 @@
 ﻿using Autodesk.Revit.Attributes;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
+using Autodesk.Revit.ApplicationServices;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Autodesk.Revit.DB.Events;
+using Autodesk.Revit.UI.Selection;
+using OLUpdateInfo;
+using Autodesk.Revit.DB.Electrical;
+using OneLineTools;
+using CMW_Electrical;
 
 namespace OneLineConnect
 {
@@ -15,7 +22,106 @@ namespace OneLineConnect
     {
         public Result Execute(ExternalCommandData commandData, ref string errorReport, ElementSet elementSet)
         {
-            return Result.Succeeded;
+            //define background Revit information to reference
+            UIApplication uiapp = commandData.Application;
+            Document doc = uiapp.ActiveUIDocument.Document;
+            Application app = uiapp.Application;
+            UIDocument uidoc = uiapp.ActiveUIDocument;
+
+            View activeView = doc.ActiveView;
+
+            //stop tool if activeView is not a Drafting View
+            if (activeView.ViewType != ViewType.DraftingView)
+            {
+                TaskDialog.Show("Incorrect View Type", "Open a Drafting View that contains your One-Line Diagram and rerun the tool.");
+                return Result.Cancelled;
+            }
+
+            Element sourceDetailItem;
+            Element fedToDetailItem;
+            //prompt user to select (2) DetailComponents
+            try
+            {
+                //ISelectionFilter selFilter = new DetailItemSelectionFilter();
+                //sourceDetailItemSelection = uidoc.Selection.PickObject(ObjectType.Element, selFilter, "Select the Source Detail Item.");
+                Reference sourceDetailItemSelection = uidoc.Selection.PickObject(ObjectType.Element, "Select the Source Detail Item."); //debug only
+
+                sourceDetailItem = doc.GetElement(sourceDetailItemSelection);
+
+                //fedToDetailItemSelection = uidoc.Selection.PickObject(ObjectType.Element, selFilter, "Select the Fed To Detail Item.");
+                Reference fedToDetailItemSelection = uidoc.Selection.PickObject(ObjectType.Element, "Select the Fed To Detail Item."); //debug only
+
+                fedToDetailItem = doc.GetElement(fedToDetailItemSelection);
+            }
+            catch (OperationCanceledException ex)
+            {
+                return Result.Cancelled;
+            }
+            catch (Exception ex)
+            {
+                TaskDialog.Show("An error occurred", 
+                    "An error occurred that has prevented the tool from running. Contact the BIM team for assistance.");
+                
+                return Result.Failed;
+            }
+
+            //start updating process
+            using (Transaction trac = new Transaction(doc))
+            {
+                try
+                {
+                    //collect E_DI_Feeder-Line Based Detail Item
+                    FamilySymbol feederLine = (new FilteredElementCollector(doc)
+                        .OfCategory(BuiltInCategory.OST_DetailComponents)
+                        .WhereElementIsElementType()
+                        .ToElements()
+                        .Where(x => x.LookupParameter("Family Name").AsString() == "E_DI_Feeder-Line Based")
+                        .ToList())
+                        .First()
+                        as FamilySymbol;
+
+                    //create feeder lines
+                    List<FamilyInstance> feederLines = new OLCreateFeeder().CreateFeeder(
+                        sourceDetailItem as FamilyInstance,
+                        fedToDetailItem as FamilyInstance,
+                        (fedToDetailItem.Location as LocationPoint).Point,
+                        activeView,
+                        doc,
+                        feederLine);
+
+                    //delete old feeder connections?
+
+                    //create ElectricalSystem of selected DetailItems
+                    ElectricalSystem createdCircuit = 
+                        new CreateEquipmentCircuit().CreateEquipCircuit(
+                            doc, 
+                            sourceDetailItem as FamilyInstance, 
+                            fedToDetailItem as FamilyInstance);
+
+                    return Result.Succeeded;
+                }
+                catch (Exception ex)
+                {
+                    return Result.Failed;
+                }
+            }
+        }
+
+        public class DetailItemSelectionFilter : ISelectionFilter
+        {
+            public bool AllowElement(Element element)
+            {
+                if (element.Category.Name == "Detail Items")
+                {
+                    return true;
+                }
+                return false;
+            }
+
+            public bool AllowReference(Reference refer, XYZ point)
+            {
+                return false;
+            }
         }
     }
 }
