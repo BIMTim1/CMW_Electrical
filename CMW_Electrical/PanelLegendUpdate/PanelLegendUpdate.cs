@@ -66,7 +66,7 @@ namespace ScheduleLegendUpdate
                     //prompt user to select point at which to place Generic Annotation
                     selPoint = uidoc.Selection.PickPoint("Select a Point at which to place an instance of the the E_GA_Schedule Legend.");
                 }
-                catch (OperationCanceledException ex)
+                catch (Autodesk.Revit.Exceptions.OperationCanceledException ex)
                 {
                     return Result.Cancelled;
                 }
@@ -104,7 +104,7 @@ namespace ScheduleLegendUpdate
                     }
 
                     //define variables to collect parameters from E_GA_Schedule Legend FamilyInstance
-                    int schedRows = 9;
+                    int schedRows = 8;
                     List<string> schedCols = new List<string>()
                     {
                         "A", "B", "C", "D", "E"
@@ -117,9 +117,15 @@ namespace ScheduleLegendUpdate
                         foreach (string col in schedCols)
                         {
                             string paramName = "CELL" + i.ToString() + col;
-                            paramList.Add(schedLegendInst.LookupParameter(paramName));
+                            Parameter param = schedLegendInst.LookupParameter(paramName);
+                            paramList.Add(param);
+
+                            //reset values of legend in case user is updating schedule
+                            param.Set("");
                         }
                     }
+
+                    doc.Regenerate();
 
                     //sort PanelScheduleSheetInstances by Origin
                     List<PanelScheduleSheetInstance> sortList = panelSchedules.OrderBy(x => x.Origin[1]).ToList();
@@ -221,18 +227,21 @@ namespace ScheduleLegendUpdate
 
             foreach (PanelScheduleSheetInstance pnlSched in panelScheduleList)
             {
-                if (!numCols.Contains(pnlSched.Origin.X))
+                double roundedX = Math.Round(pnlSched.Origin.X, 3);
+                double roundedY = Math.Round(pnlSched.Origin.Y, 3);
+
+                if (!numCols.Contains(roundedX))
                 {
-                    numCols.Add(pnlSched.Origin.X);
+                    numCols.Add(roundedX);
                 }
 
-                if (!numRows.Contains(pnlSched.Origin.Y))
+                if (!numRows.Contains(roundedY))
                 {
-                    numRows.Add(pnlSched.Origin.Y);
+                    numRows.Add(roundedY);
                 }
             }
 
-            scheduleLegendInstance.LookupParameter("Columns").Set(numCols.Count() - 1);
+            scheduleLegendInstance.LookupParameter("Columns").Set(numCols.Count());
             scheduleLegendInstance.LookupParameter("Rows").Set(numRows.Count());
         }
     }
