@@ -58,7 +58,7 @@ namespace ScheduleLegendUpdate
                 .Where(x => !x.IsTitleblockRevisionSchedule)
                 .ToList();
 
-            if (schedLegend == null)
+            if (schedLegend.Count() == 0)
             {
                 try
                 {
@@ -110,7 +110,7 @@ namespace ScheduleLegendUpdate
                         "A", "B", "C", "D", "E"
                     };
 
-                    List<Parameter> paramList = null;
+                    List<Parameter> paramList = new List<Parameter>();
 
                     for (int i = 1; i <= schedRows; i++)
                     {
@@ -125,7 +125,10 @@ namespace ScheduleLegendUpdate
                     List<PanelScheduleSheetInstance> sortList = panelSchedules.OrderBy(x => x.Origin[1]).ToList();
 
                     //Update E_GA_Schedule Legend with Panelboard Schedule Names
-                    //PanelScheduleInfoToLegend(sortList, )
+                    PanelScheduleInfoToLegend(sortList, schedCols, paramList);
+
+                    UpdateLegendGraphics(schedLegendInst, sortList);
+
                     trac.Commit();
                     return Result.Succeeded;
                 }
@@ -146,20 +149,15 @@ namespace ScheduleLegendUpdate
             List<ScheduleSheetInstance> sortedSchedule = scheduleSheetInstances.OrderBy(x => x.get_BoundingBox(view).Max.Y).ToList();
 
             List<Parameter> legendParameters = new List<Parameter>();
-            foreach (Parameter param in legendParameters)
+            foreach (Parameter param in scheduleLegendInstance.Parameters)
             {
-                legendParameters.Add(param);
+                if (param.Definition != null && param.Definition.Name.Contains("Sched") && !param.IsReadOnly)
+                {
+                    legendParameters.Add(param);
+                }
             }
 
-            //create variables for while loop
-            List<Parameter> legendParams = (from param 
-                                            in legendParameters 
-                                            where param.Definition != null 
-                                            && param.Definition.Name.Contains("Sched") 
-                                            && !param.IsReadOnly select param)
-                                            .ToList();
-
-            legendParams = (legendParams.OrderByDescending(x => x.Definition.Name)).ToList();
+            legendParameters = (legendParameters.OrderByDescending(x => x.Definition.Name)).ToList();
 
             int scheduleIter = 0;
             int legendIter = 0;
@@ -170,12 +168,7 @@ namespace ScheduleLegendUpdate
                 string currentSchedName = currentSched.Name.ToString();
                 currentSchedName = currentSchedName.Replace("E_", "");
 
-                //if (scheduleIter == scheduleSheetInstances.Count())
-                //{
-                //    break;
-                //}
-
-                Parameter legendParam = legendParams[legendIter];
+                Parameter legendParam = legendParameters[legendIter];
                 legendParam.Set(currentSchedName);
 
                 scheduleIter++;
@@ -183,14 +176,64 @@ namespace ScheduleLegendUpdate
             }
         }
 
-        public void PanelScheduleInfoToLegend(List<PanelScheduleSheetInstance> panelScheduleList, int scheduleColumns, List<Parameter> legendParameterList)
+        public void PanelScheduleInfoToLegend(List<PanelScheduleSheetInstance> panelScheduleList, List<string> scheduleColumns, List<Parameter> legendParameterList)
         {
+            XYZ previousSchedOrigin = new XYZ(0, 0, 0);
+            XYZ currentSchedOrigin = new XYZ(0, 0, 0);
+            int schedVal = 0;
+            int cellRowVal = 8;
+            int cellColVal = 4;
 
+            while (schedVal < panelScheduleList.Count())
+            {
+                //collect current schedule information
+                PanelScheduleSheetInstance currentSched = panelScheduleList[schedVal];
+                currentSchedOrigin = currentSched.Origin;
+                string currentSchedName = currentSched.Name.ToString();
+
+                //determine if the current schedule has a different Y coordinate from previous schedule, reset to E_GA_Schedule Legend right side
+                if (previousSchedOrigin.Y != 0)
+                {
+                    if (currentSchedOrigin.Y != previousSchedOrigin.Y)
+                    {
+                        cellRowVal -= 1;
+                        cellColVal = 4;
+                    }
+                }
+
+                string cellParamName = "CELL" + cellRowVal.ToString() + scheduleColumns[cellColVal];
+                Parameter selParam = (from param in legendParameterList where param.Definition.Name.ToString() == cellParamName select param).First();
+
+                //set parameter value
+                selParam.Set(currentSchedName);
+
+                //reset parameters for next iteration
+                previousSchedOrigin = currentSchedOrigin;
+                cellColVal -= 1;
+                schedVal++;
+            }
         }
 
         public void UpdateLegendGraphics(FamilyInstance scheduleLegendInstance, List<PanelScheduleSheetInstance> panelScheduleList)
         {
+            List<double> numRows = new List<double>();
+            List<double> numCols = new List<double>();
 
+            foreach (PanelScheduleSheetInstance pnlSched in panelScheduleList)
+            {
+                if (!numCols.Contains(pnlSched.Origin.X))
+                {
+                    numCols.Add(pnlSched.Origin.X);
+                }
+
+                if (!numRows.Contains(pnlSched.Origin.Y))
+                {
+                    numRows.Add(pnlSched.Origin.Y);
+                }
+            }
+
+            scheduleLegendInstance.LookupParameter("Columns").Set(numCols.Count() - 1);
+            scheduleLegendInstance.LookupParameter("Rows").Set(numRows.Count());
         }
     }
 }
