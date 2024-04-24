@@ -103,6 +103,7 @@
     <Compile Include="OneLineTools\OneLine_Connect\OneLineConnect.cs" />
     <Compile Include="OneLineTools\OneLine_PlaceEquip\OneLinePlaceEquip.cs" />
     <Compile Include="OneLineTools\OneLine_UpdateDesignations\OneLineUpdateDesignations.cs" />
+    <Compile Include="PanelLegendUpdate\PanelLegendUpdate.cs" />
     <Compile Include="PanelSchedFormatting\GetScheduleFormatting.cs" />
     <Compile Include="PanelSchedFormatting\FinalFormat\PanelSchedFinalFormat.cs" />
     <Compile Include="PanelSchedFormatting\SpareAndSpaceAlign\SpareAndSpaceAlign.cs" />
@@ -176,6 +177,8 @@
     <Resource Include="Resources\PanelSchedFormat32x32.png" />
     <Resource Include="Resources\PanelSchedSpareAlign16x16.png" />
     <Resource Include="Resources\PanelSchedSpareAlign32x32.png" />
+    <Resource Include="Resources\PanelLegendAutofill16x16.png" />
+    <Resource Include="Resources\PanelLegendAutofill32x32.png" />
     <Content Include="_Addin\CMW_Electrical.addin">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
