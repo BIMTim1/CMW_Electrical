@@ -88,7 +88,10 @@
       <DependentUpon>OneLineAssociateForm.cs</DependentUpon>
     </Compile>
     <Compile Include="OneLineTools\OneLine_Associate\OneLineAssociate.cs" />
+    <Compile Include="OneLineTools\OneLine_Copy\OneLineCopy.cs" />
+    <Compile Include="OneLineTools\OneLine_Draw\OneLineDraw.cs" />
     <Compile Include="OneLineTools\OneLine_HalftoneExisting\OneLineHalftoneExisting.cs" />
+    <Compile Include="OneLineTools\OneLine_TrimExtend\OneLineTrimExtend.cs" />
     <Compile Include="OneLineTools\OneLine_UpdateDesignations\dialogSelectUpdateMethod.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -162,6 +165,8 @@
     <Resource Include="Resources\OLAssociate32x32.png" />
     <Resource Include="Resources\OLHalftoneExisting16x16.png" />
     <Resource Include="Resources\OLHalftoneExisting32x32.png" />
+    <Resource Include="Resources\OLDraw16x16.png" />
+    <Resource Include="Resources\OLDraw32x32.png" />
     <Content Include="_Addin\CMW_Electrical.addin">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
