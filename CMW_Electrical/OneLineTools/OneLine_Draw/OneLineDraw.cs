@@ -54,6 +54,7 @@ namespace OneLineDraw
 
                 List<XYZ> points = new List<XYZ>();
                 List<FamilyInstance> newFamInstances = new List<FamilyInstance>();
+                FamilyInstance tempLine = null;
 
                 while (run)
                 {
@@ -70,11 +71,21 @@ namespace OneLineDraw
 
                         points.Add(point);
 
+                        if (points.Count() == 1)
+                        {
+                            XYZ tempPoint = new XYZ(points[0].X, points[0].Y + 0.1, points[0].Z);
+                            Line tempCurve = Line.CreateBound(points[0], tempPoint);
+                            tempLine = doc.Create.NewFamilyInstance(tempCurve, feederLine, activeView);
+
+                            doc.Regenerate();
+                        }
+
                         if (points.Count() == 2)
                         {
                             Line curve = Line.CreateBound(points[0], points[1]);
 
                             FamilyInstance newFeederLine = doc.Create.NewFamilyInstance(curve, feederLine, activeView); //create feeder line
+                            newFamInstances.Add(newFeederLine);
 
                             doc.Regenerate();
 
@@ -91,6 +102,15 @@ namespace OneLineDraw
                     }
                 }
                 //code to prompt user to update assignment of feeders?
+                if (tempLine != null)
+                {
+                    doc.Delete(tempLine.Id);
+                }
+
+                foreach (FamilyInstance famInst in newFamInstances)
+                {
+
+                }
 
                 trac.Commit();
                 return Result.Succeeded;
