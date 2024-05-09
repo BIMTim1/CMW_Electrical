@@ -30,6 +30,14 @@ namespace OneLineDraw
 
             View activeView = doc.ActiveView;
 
+            if (activeView.ViewType != ViewType.DraftingView)
+            {
+                TaskDialog.Show("Incorrect View Type", 
+                    "This tool can only be run in a Drafting View. Change the current view to a Drafting View and rerun the tool.");
+
+                return Result.Cancelled;
+            }
+
             //collect E_DI_Feeder-Line Based Detail Item
             FamilySymbol feederLine = (new FilteredElementCollector(doc)
                 .OfCategory(BuiltInCategory.OST_DetailComponents)
@@ -53,6 +61,7 @@ namespace OneLineDraw
                 bool run = true;
 
                 List<XYZ> points = new List<XYZ>();
+                XYZ firstPoint = new XYZ();
                 List<FamilyInstance> newFamInstances = new List<FamilyInstance>();
                 FamilyInstance tempLine = null;
 
@@ -76,6 +85,8 @@ namespace OneLineDraw
                             XYZ tempPoint = new XYZ(points[0].X, points[0].Y + 0.1, points[0].Z);
                             Line tempCurve = Line.CreateBound(points[0], tempPoint);
                             tempLine = doc.Create.NewFamilyInstance(tempCurve, feederLine, activeView);
+
+                            firstPoint = points[0];
 
                             doc.Regenerate();
                         }
@@ -107,13 +118,94 @@ namespace OneLineDraw
                     doc.Delete(tempLine.Id);
                 }
 
-                foreach (FamilyInstance famInst in newFamInstances)
+                //prompt user to select downstream equipment reference
+                try
                 {
+                    //ISelectionFilter selFilter = new DetailItemSelectionFilter();
 
+                    //Reference sourceDetailItem = uidoc.Selection.PickObject(ObjectType.Element, selFilter, "Select source equipment for feeder reference.");
+                    Reference sourceDetailItemRef = uidoc.Selection.PickObject(ObjectType.Element, "Select source equipment for feeder reference.");
+
+                    //Reference fedToDetailItem = uidoc.Selection.PickObject(ObjectType.Element, selFilter, "Select downstream equipment for feeder reference.");
+                    Reference fedToDetailItem = uidoc.Selection.PickObject(ObjectType.Element, "Select downstream equipment for feeder reference."); //debug only
+
+                    FamilyInstance sourceDetailItem = doc.GetElement(sourceDetailItemRef) as FamilyInstance;
+
+                    bool deleteFirst = false;
+
+                    //check if source equipment is bus and create E_DI_OL_Circuit Breaker Family Instance
+                    if (sourceDetailItem.Name.Contains("Bus"))
+                    {
+                        FamilySymbol cbSymbol = new FilteredElementCollector(doc)
+                            .OfCategory(BuiltInCategory.OST_DetailComponents)
+                            .OfClass(typeof(FamilySymbol))
+                            .Where(x => x.Name.Contains("Circuit"))
+                            .Cast<FamilySymbol>()
+                            .First();
+
+                        FamilyInstance circuitBreaker = doc.Create.NewFamilyInstance(firstPoint, cbSymbol, activeView);
+                        newFamInstances.Add(circuitBreaker);
+
+                        doc.Regenerate();
+
+                        BoundingBoxXYZ cbBoundingBox = circuitBreaker.get_BoundingBox(activeView);
+
+                        XYZ startPoint = new XYZ(firstPoint.X, cbBoundingBox.Min.Y, firstPoint.Z);
+                        XYZ endPoint = new XYZ(firstPoint.X, newFamInstances[0].get_BoundingBox(activeView).Min.Y, firstPoint.Z);
+
+                        Line replaceCurve = Line.CreateBound(startPoint, endPoint);
+
+                        FamilyInstance newLine = doc.Create.NewFamilyInstance(replaceCurve, feederLine, activeView);
+                        newFamInstances.Add(newLine);
+
+                        doc.Regenerate();
+
+                        deleteFirst = true;
+                    }
+
+                    DetailItemInfo selItem = new DetailItemInfo(doc.GetElement(fedToDetailItem));
+
+                    //set EqConId value of created Feeder Lines
+                    foreach (FamilyInstance fam in newFamInstances)
+                    {
+                        fam.LookupParameter("EqConId").Set(selItem.EqConId);
+                    }
+
+                    if (deleteFirst)
+                    {
+                        doc.Delete(newFamInstances[0].Id);
+
+                        doc.Regenerate();
+                    }
+                }
+                catch (Autodesk.Revit.Exceptions.OperationCanceledException ex)
+                {
+                    TaskDialog.Show("User canceled", 
+                        "User canceled the selection operation. Feeder lines were created but not assigned to an Equipment reference.");
+                }
+                catch (Exception ex)
+                {
+                    //error occurred
+                    return Result.Failed;
                 }
 
                 trac.Commit();
                 return Result.Succeeded;
+            }
+        }
+        public class DetailItemSelectionFilter : ISelectionFilter
+        {
+            public bool AllowElement(Element element)
+            {
+                if (element.Category.Name == "Detail Items")
+                {
+                    return true;
+                }
+                return false;
+            }
+            public bool AllowReference(Reference refer, XYZ point)
+            {
+                return false;
             }
         }
     }
