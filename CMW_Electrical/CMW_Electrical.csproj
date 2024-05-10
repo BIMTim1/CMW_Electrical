@@ -88,6 +88,12 @@
       <DependentUpon>OneLineAssociateForm.cs</DependentUpon>
     </Compile>
     <Compile Include="OneLineTools\OneLine_Associate\OneLineAssociate.cs" />
+    <Compile Include="OneLineTools\OneLine_Copy\CopySelectionReferenceForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="OneLineTools\OneLine_Copy\CopySelectionReferenceForm.Designer.cs">
+      <DependentUpon>CopySelectionReferenceForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="OneLineTools\OneLine_Copy\OneLineCopy.cs" />
     <Compile Include="OneLineTools\OneLine_Draw\OneLineDraw.cs" />
     <Compile Include="OneLineTools\OneLine_HalftoneExisting\OneLineHalftoneExisting.cs" />
@@ -166,6 +172,8 @@
     <Resource Include="Resources\OLHalftoneExisting32x32.png" />
     <Resource Include="Resources\OLDraw16x16.png" />
     <Resource Include="Resources\OLDraw32x32.png" />
+    <Resource Include="Resources\OLCopy16x16.png" />
+    <Resource Include="Resources\OLCopy32x32.png" />
     <Content Include="_Addin\CMW_Electrical.addin">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -182,6 +190,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="OneLineTools\OneLine_ConnectAndPlace\SelectEquipmentToReferenceForm.resx">
       <DependentUpon>SelectEquipmentToReferenceForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="OneLineTools\OneLine_Copy\CopySelectionReferenceForm.resx">
+      <DependentUpon>CopySelectionReferenceForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="OneLineTools\OneLine_UpdateDesignations\dialogSelectUpdateMethod.resx">
       <DependentUpon>dialogSelectUpdateMethod.cs</DependentUpon>

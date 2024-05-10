@@ -30,6 +30,7 @@ namespace OneLineCopy
 
             View activeView = doc.ActiveView;
 
+            //cancel tool if Current View is not a DraftingView
             if (activeView.ViewType != ViewType.DraftingView)
             {
                 TaskDialog.Show("Incorrect View Type",
@@ -40,6 +41,7 @@ namespace OneLineCopy
             ICollection<ElementId> selectedIds = uidoc.Selection.GetElementIds();
             ICollection<Element> selectedElems = new List<Element>();
 
+            //prompt user to select multiple objects in a rectangular selection if no objects already selected
             if (selectedIds.Count() == 0)
             {
                 try
@@ -67,7 +69,93 @@ namespace OneLineCopy
                 }
             }
 
-            return Result.Succeeded;
+            XYZ startPoint = new XYZ(0, 0, 0);
+            XYZ endPoint = new XYZ(0, 0, 0);
+            //prompt user to select points to start for copy location
+            try
+            {
+                startPoint = uidoc.Selection.PickPoint(ObjectSnapTypes.Midpoints
+                            | ObjectSnapTypes.Endpoints
+                            | ObjectSnapTypes.Intersections
+                            | ObjectSnapTypes.Nearest
+                            | ObjectSnapTypes.Quadrants
+                            | ObjectSnapTypes.Perpendicular
+                            | ObjectSnapTypes.Points,
+                            "Select basepoint to copy from.");
+
+                endPoint = uidoc.Selection.PickPoint(ObjectSnapTypes.Midpoints
+                            | ObjectSnapTypes.Endpoints
+                            | ObjectSnapTypes.Intersections
+                            | ObjectSnapTypes.Nearest
+                            | ObjectSnapTypes.Quadrants
+                            | ObjectSnapTypes.Perpendicular
+                            | ObjectSnapTypes.Points,
+                            "Select destination point");
+            }
+            catch (Autodesk.Revit.Exceptions.OperationCanceledException ex)
+            {
+                return Result.Cancelled;
+            }
+            catch (Exception ex)
+            {
+                TaskDialog.Show("Error occurred", "An error occurred that has prevented the tool from running. Contact the BIM team for assistance.");
+                return Result.Failed;
+            }
+
+            using (Transaction trac = new Transaction(doc))
+            {
+                try
+                {
+                    trac.Start("Copy One Line Elements");
+
+                    ICollection<ElementId> elementsToCopy = (from elem in selectedElems select elem.Id).ToList();
+
+                    //create translation XYZ to adjust elements
+                    XYZ translationPoint = new XYZ(0, 0, 0);
+                    double startX = startPoint.X;
+                    double startY = startPoint.Y;
+                    double startZ = startPoint.Z;
+
+                    double endX = endPoint.X;
+                    double endY = endPoint.Y;
+                    double endZ = endPoint.Z;
+
+                    double transX;
+
+                    //if (startX < 0)
+                    //{
+                    //    if (endX < 0)
+                    //    {
+                    //        transX = -((-startX) - (-endX));
+                    //    }
+                    //    else
+                    //    {
+                    //        transX = (-startX) + startX + endX;
+                    //    }
+                    //}
+                    //else
+                    //{
+                    //    if (endX < 0)
+                    //    {
+                    //        transX = -(startX - startX + (-endX));
+                    //    }
+                    //    else
+                    //    {
+                    //        transX = 
+                    //    }
+                    //}
+
+                    ICollection<ElementId> copiedElems = ElementTransformUtils.CopyElements(doc, elementsToCopy, endPoint);
+
+                    trac.Commit();
+                    return Result.Succeeded;
+                }
+                catch (Exception ex)
+                {
+                    TaskDialog.Show("Error occurred", "An error occurred that has prevented the tool from running. Contact the BIM team for assistance.");
+                    return Result.Failed;
+                }
+            }
         }
 
         public class DetailItemSelectionFilter : ISelectionFilter

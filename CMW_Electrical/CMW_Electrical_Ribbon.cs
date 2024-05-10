@@ -380,6 +380,17 @@ namespace CMW_Electrical
                 ToolTip = "Create Detail Item Lines for Feeder Representation in OneLine Schematic views."
             };
 
+            PushButtonData oneLineCopy = new PushButtonData(
+                "cmdOneLineCopy", 
+                "Copy Components", 
+                thisAssemblyPath, 
+                "OneLineCopy.OneLineCopy")
+            {
+                LargeImage = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/OLCopy32x32.png")),
+                Image = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/OLCopy16x16.png")),
+                ToolTip = "Copy One Line Detail Components and assign Model Building Elements."
+            };
+
 
             PushButtonData oneLineHalftoneExistingData = 
                 new PushButtonData(
@@ -393,8 +404,9 @@ namespace CMW_Electrical
                 ToolTip = "Sets the Graphic Override for all Existing phased content in active Schematic Drafting View to be Halftone."
             };
 
-            oneLinePanel.AddStackedItems(oneLineConnectAndPlaceData, oneLineConnectData, oneLineDraw);
+            oneLinePanel.AddStackedItems(oneLineConnectAndPlaceData, oneLineConnectData);
             oneLinePanel.AddStackedItems(oneLineUpdateDesignations, oneLineAssociateData, oneLinePlaceEquipData);
+            oneLinePanel.AddStackedItems(oneLineDraw, oneLineCopy);
 
             PushButton oneLineHalftoneExistingBtn = oneLinePanel.AddItem(oneLineHalftoneExistingData) as PushButton;
 
