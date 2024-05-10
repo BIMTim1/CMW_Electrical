@@ -109,6 +109,7 @@ namespace OneLineDraw
                     }
                     catch (Exception ex)
                     {
+                        TaskDialog.Show("Error occurred", "An error occurred that has prevented the tool from running. Contact the BIM team for assistance.");
                         return Result.Failed;
                     }
                 }
@@ -186,6 +187,7 @@ namespace OneLineDraw
                 catch (Exception ex)
                 {
                     //error occurred
+                    TaskDialog.Show("Error occurred", "An error occurred that has prevented the tool from running. Contact the BIM team for assistance.");
                     return Result.Failed;
                 }
 
