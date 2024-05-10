@@ -91,7 +91,6 @@
     <Compile Include="OneLineTools\OneLine_Copy\OneLineCopy.cs" />
     <Compile Include="OneLineTools\OneLine_Draw\OneLineDraw.cs" />
     <Compile Include="OneLineTools\OneLine_HalftoneExisting\OneLineHalftoneExisting.cs" />
-    <Compile Include="OneLineTools\OneLine_TrimExtend\OneLineTrimExtend.cs" />
     <Compile Include="OneLineTools\OneLine_UpdateDesignations\dialogSelectUpdateMethod.cs">
       <SubType>Form</SubType>
     </Compile>
