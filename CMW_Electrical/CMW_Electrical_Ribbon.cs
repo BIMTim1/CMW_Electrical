@@ -392,6 +392,18 @@ namespace CMW_Electrical
             };
 
 
+            PushButtonData oneLineSelect = new PushButtonData(
+                "cmdOneLineSelect", 
+                "Select", 
+                thisAssemblyPath, 
+                "OneLineSelect.OneLineSelect")
+            {
+                LargeImage = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/OLSelect32x32.png")),
+                Image = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/OLSelect16x16.png")),
+                ToolTip = "Select an Detail Item or Electrical Equipment family and select the associated component in a Floor Plan View or Drafting View."
+            };
+
+
             PushButtonData oneLineHalftoneExistingData = 
                 new PushButtonData(
                     "cmdOneLineHalftoneExisting", 
@@ -406,7 +418,7 @@ namespace CMW_Electrical
 
             oneLinePanel.AddStackedItems(oneLineConnectAndPlaceData, oneLineConnectData);
             oneLinePanel.AddStackedItems(oneLineUpdateDesignations, oneLineAssociateData, oneLinePlaceEquipData);
-            oneLinePanel.AddStackedItems(oneLineDraw, oneLineCopy);
+            oneLinePanel.AddStackedItems(oneLineDraw, oneLineCopy, oneLineSelect);
 
             PushButton oneLineHalftoneExistingBtn = oneLinePanel.AddItem(oneLineHalftoneExistingData) as PushButton;
 

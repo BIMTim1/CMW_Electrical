@@ -77,6 +77,7 @@
     <Compile Include="MotorMOCPUpdate\UpdateMotorMOCP.cs" />
     <Compile Include="MotorUIDUpdate\UpdateMotorUID.cs" />
     <Compile Include="MultiLegSwitchIdUpdate\MultiLegSwitchIdUpdate.cs" />
+    <Compile Include="OneLineTools\OneLine_Select\OneLineSelect.cs" />
     <Compile Include="OneLineTools\OLCreateFeeder.cs" />
     <Compile Include="OneLineTools\OLEqConIdUpdate.cs" />
     <Compile Include="OneLineTools\OLUpdateInfo.cs" />
@@ -174,6 +175,8 @@
     <Resource Include="Resources\OLDraw32x32.png" />
     <Resource Include="Resources\OLCopy16x16.png" />
     <Resource Include="Resources\OLCopy32x32.png" />
+    <Resource Include="Resources\OLSelect16x16.png" />
+    <Resource Include="Resources\OLSelect32x32.png" />
     <Content Include="_Addin\CMW_Electrical.addin">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
