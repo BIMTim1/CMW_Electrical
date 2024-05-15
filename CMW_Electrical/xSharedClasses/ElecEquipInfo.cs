@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Autodesk.Revit.DB.Electrical;
+using System.Runtime.CompilerServices;
 
 namespace CMW_Electrical
 {
@@ -20,12 +21,14 @@ namespace CMW_Electrical
         private FamilySymbol EEFamilyType;
         private readonly PanelScheduleView EEScheduleView;
 
-        public ElecEquipInfo(Document document, Element elecEquip)
+        public ElecEquipInfo(Element elecEquip)
         {
             EEFamInst = elecEquip as FamilyInstance;
             EEName = EEFamInst.LookupParameter("Panel Name");
             EEEqConId = EEFamInst.LookupParameter("EqConId");
             EEDistributionSystem = EEFamInst.LookupParameter("Distribution System");
+
+            Document document = elecEquip.Document;
 
             EEFamilyType = EEFamInst.Symbol;
 

@@ -32,25 +32,48 @@ namespace OneLineSelect
 
             View activeView = doc.ActiveView;
 
+            //!test if user already has elements selected
+            //
+            ICollection<ElementId> selectedElementIds = uidoc.Selection.GetElementIds();
+
+            if (selectedElementIds.Any())
+            {
+                //filter preselected list
+                ElementCategoryFilter filter = new ElementCategoryFilter(BuiltInCategory.OST_DetailComponents);
+
+                List<Element> filteredElemList =
+                    new FilteredElementCollector(doc, selectedElementIds)
+                    .WherePasses(filter)
+                    .ToList();
+
+                if (filteredElemList.Count() == 1)
+                {
+                    //!work with filtered selected elements
+                }
+            }
+
             ISelectionFilter selFilter;
             string statusPrompt;
             Reference selItem = null;
+            string selType;
 
             //!test for EqConId parameter in project
-            
+            //
 
             if (activeView.ViewType == ViewType.DraftingView)
             {
                 selFilter = new DetailItemSelectionFilter();
                 statusPrompt = "Select a Detail Item reference.";
+                selType = "Detail Item";
             }
             else
             {
                 selFilter = new ElectricalEquipmnentSelectionFilter();
                 statusPrompt = "Select an Electrical Equipment family reference.";
+                selType = "Electrical Equipment";
             }
 
-            //prompt user to select an item based on current view
+            // Prompt user to select an item based on current view
             try
             {
                 //selItem = uidoc.Selection.PickObject(ObjectType.Element, selFilter, statusPrompt);
@@ -67,36 +90,56 @@ namespace OneLineSelect
 
             Element selElem = doc.GetElement(selItem);
 
-            var relevantViewList = FindAllViewsThatCanDisplayElements(doc);
+            BuiltInCategory bic;
+            string compId;
 
-            ElementId selElemId = selElem.Id;
-            var idsToCheck = new List<ElementId>()
+            // Select connected element by EqConId
+            if (selType == "Detail Item")
             {
-                selElemId
+                bic = BuiltInCategory.OST_ElectricalEquipment;
+                DetailItemInfo detItemInfo = new DetailItemInfo(selElem);
+                compId = detItemInfo.EqConId;
+            }
+            else
+            {
+                bic = BuiltInCategory.OST_DetailComponents;
+                ElecEquipInfo equipInfo = new ElecEquipInfo(selElem);
+                compId = equipInfo.EqConId;
+            }
+
+            if (compId == null || compId == "")
+            {
+                TaskDialog.Show("Tool canceled", "The Selected Reference does not have an associated element. The tool will now cancel.");
+                return Result.Cancelled;
+            }
+
+            Element connectedElem = (from el in 
+                                         new FilteredElementCollector(doc)
+                                         .OfCategory(bic)
+                                         .WhereElementIsNotElementType()
+                                         .ToElements() 
+                                     where el.LookupParameter("EqConId").AsString() == compId 
+                                     select el)
+                                     .First();
+
+            var views = connectedElem.FindAllViewsWhereAllElementsVisible();
+            ICollection<ElementId> connectedElemList = new List<ElementId>
+            {
+                connectedElem.Id
             };
 
-            IEnumerable<View> viewList = from v 
-                                  in relevantViewList 
-                                  let idList = 
-                                  new FilteredElementCollector(doc, v.Id)
-                                  .WhereElementIsNotElementType()
-                                  .ToElementIds() 
-                                  where !idsToCheck.Except(idList).Any() 
-                                  select v;
+            //if (null == views) throw new ArgumentNullException("no views");
+            if (!views.Any()) return Result.Failed;
+
+            View selView = views.First();
+
+            uidoc.RequestViewChange(selView);
+
+            uidoc.ShowElements(connectedElem);
+
+            uidoc.Selection.SetElementIds(connectedElemList);
 
             return Result.Succeeded;
-        }
-
-        private static IEnumerable<View> FindAllViewsThatCanDisplayElements(this Document doc)
-        {
-            var filter = new ElementMulticlassFilter(new List<Type>()
-            {
-                typeof(View3D),
-                typeof(ViewPlan),
-                typeof(ViewSection)
-            });
-
-            return new FilteredElementCollector(doc).WherePasses(filter).Cast<View>().Where(v => !v.IsTemplate);
         }
 
         public class DetailItemSelectionFilter : ISelectionFilter

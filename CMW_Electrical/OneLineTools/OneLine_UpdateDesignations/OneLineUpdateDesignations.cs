@@ -74,7 +74,7 @@ namespace OneLineUpdateDesignations
 
                         foreach (Element equip in allElectricalEquip)
                         {
-                            ElecEquipInfo equipInst = new ElecEquipInfo(doc, equip);
+                            ElecEquipInfo equipInst = new ElecEquipInfo(equip);
 
                             Element detailItem = (from di 
                                                   in allDetailItems 
@@ -129,7 +129,7 @@ namespace OneLineUpdateDesignations
 
                             if (detItem != null)
                             {
-                                ElecEquipInfo equipInst = new ElecEquipInfo(doc, eqElem);
+                                ElecEquipInfo equipInst = new ElecEquipInfo(eqElem);
 
                                 equipInst.Name = detItemInst.Name;
 

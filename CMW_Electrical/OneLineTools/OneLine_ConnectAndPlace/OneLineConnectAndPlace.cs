@@ -189,7 +189,7 @@ namespace OneLineConnectAndPlace
                             //update DIEqConId of Detail Item and Electrical Equipment
                             OLEqConIdUpdateClass updateEqConId = new OLEqConIdUpdateClass();
 
-                            ElecEquipInfo elecEquip = new ElecEquipInfo(doc, selectedEquip);
+                            ElecEquipInfo elecEquip = new ElecEquipInfo(selectedEquip);
                             DetailItemInfo detailItem = new DetailItemInfo(newFamInstance);
 
                             updateEqConId.OneLineEqConIdValueUpdate(elecEquip, detailItem, doc);

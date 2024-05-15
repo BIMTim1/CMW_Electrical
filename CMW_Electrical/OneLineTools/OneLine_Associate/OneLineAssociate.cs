@@ -75,8 +75,7 @@ namespace OneLine_Associate
 
             //collect Electrical Equipment selected by user
             ElecEquipInfo elecEquip = 
-                new ElecEquipInfo(
-                    doc, 
+                new ElecEquipInfo( 
                     (from eq 
                      in allElecEquip 
                      where form.cBoxEquipSelection.SelectedItem.ToString().Contains(eq.LookupParameter("Panel Name").AsString()) 
