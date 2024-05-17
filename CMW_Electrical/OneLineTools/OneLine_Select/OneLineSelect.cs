@@ -32,63 +32,82 @@ namespace OneLineSelect
 
             View activeView = doc.ActiveView;
 
-            //!test if user already has elements selected
-            //
-            ICollection<ElementId> selectedElementIds = uidoc.Selection.GetElementIds();
-
-            if (selectedElementIds.Any())
-            {
-                //filter preselected list
-                ElementCategoryFilter filter = new ElementCategoryFilter(BuiltInCategory.OST_DetailComponents);
-
-                List<Element> filteredElemList =
-                    new FilteredElementCollector(doc, selectedElementIds)
-                    .WherePasses(filter)
-                    .ToList();
-
-                if (filteredElemList.Count() == 1)
-                {
-                    //!work with filtered selected elements
-                }
-            }
-
             ISelectionFilter selFilter;
             string statusPrompt;
             Reference selItem = null;
             string selType;
+            BuiltInCategory selectBic;
 
-            //!test for EqConId parameter in project
-            //
+            Element selElem;
 
             if (activeView.ViewType == ViewType.DraftingView)
             {
                 selFilter = new DetailItemSelectionFilter();
+                selectBic = BuiltInCategory.OST_DetailComponents;
                 statusPrompt = "Select a Detail Item reference.";
                 selType = "Detail Item";
             }
             else
             {
                 selFilter = new ElectricalEquipmnentSelectionFilter();
+                selectBic = BuiltInCategory.OST_ElectricalEquipment;
                 statusPrompt = "Select an Electrical Equipment family reference.";
                 selType = "Electrical Equipment";
             }
 
-            // Prompt user to select an item based on current view
-            try
+            //!test if user already has elements selected
+            //
+            bool preSelect = true;
+            ICollection<ElementId> selectedElementIds = uidoc.Selection.GetElementIds();
+
+            if (selectedElementIds.Any())
             {
-                //selItem = uidoc.Selection.PickObject(ObjectType.Element, selFilter, statusPrompt);
-                selItem = uidoc.Selection.PickObject(ObjectType.Element, statusPrompt); //debug only
+                //filter preselected list
+                ElementCategoryFilter filter = new ElementCategoryFilter(selectBic);
+
+                List<Element> filteredElemList =
+                    new FilteredElementCollector(doc, selectedElementIds)
+                    .WherePasses(filter)
+                    .ToList();
+
+                if (filteredElemList.Count() != 1)
+                {
+                    preSelect = false;
+                    selElem = null;
+                }
+                else
+                {
+                    selElem = filteredElemList.First();
+                }
             }
-            catch (Autodesk.Revit.Exceptions.OperationCanceledException ex)
+            else
             {
-                return Result.Cancelled;
-            }
-            catch (Exception ex)
-            {
-                return Result.Failed;
+                preSelect = false;
+                selElem = null;
             }
 
-            Element selElem = doc.GetElement(selItem);
+            if (!preSelect)
+            {
+                // Prompt user to select an item based on current view
+                try
+                {
+                    selItem = uidoc.Selection.PickObject(ObjectType.Element, selFilter, statusPrompt);
+                    //selItem = uidoc.Selection.PickObject(ObjectType.Element, statusPrompt); //debug only
+                }
+                catch (Autodesk.Revit.Exceptions.OperationCanceledException ex)
+                {
+                    return Result.Cancelled;
+                }
+                catch (Exception ex)
+                {
+                    return Result.Failed;
+                }
+
+                selElem = doc.GetElement(selItem);
+            }
+
+            //!test for EqConId parameter in project
+            //
 
             BuiltInCategory bic;
             string compId;
