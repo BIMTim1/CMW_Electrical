@@ -33,44 +33,73 @@ namespace ChangePanelTypeToSinglePhase
             BuiltInParameter bipRating = BuiltInParameter.RBS_ELEC_CIRCUIT_RATING_PARAM;
             BuiltInParameter bipFrame = BuiltInParameter.RBS_ELEC_CIRCUIT_FRAME_PARAM;
 
-            Reference selectPanel = null;
-
-            try
-            {
-                //create selection elements
-                ISelectionFilter selFilter = new CMWElecSelectionFilter.EquipmentSelectionFilter();
-                selectPanel = uidoc.Selection.PickObject(ObjectType.Element, 
-                    selFilter, 
-                    "Select a Panelboard Family to Update the Type to Single Phase.");
-
-                selectPanel = uidoc.Selection.PickObject(ObjectType.Element, 
-                    "Select a Panelboard Family to Update the Type to Single Phase."); //debug only
-            }
-            catch (OperationCanceledException ex)
-            {
-                errorReport = ex.Message;
-                TaskDialog.Show("User Canceled Operation", "Tool operation canceled.");
-                return Result.Cancelled;
-            }
-            catch (Exception ex)
-            {
-                errorReport = ex.Message;
-                return Result.Failed;
-            }
-            
-            FamilyInstance selectedPanel = doc.GetElement(selectPanel.ElementId) as FamilyInstance;
-
-            //get Panel DIName to collect Electrical Equipment again
-            string pnlName = selectedPanel.get_Parameter(bipPanelName).AsString();
-            //get Supply From parameter of Selected Electrical Equipment
-            string pnlSupply = selectedPanel.get_Parameter(BuiltInParameter.RBS_ELEC_PANEL_SUPPLY_FROM_PARAM).AsString();
-
+            //Reference selectPanel = null;
             BuiltInCategory bic = BuiltInCategory.OST_ElectricalEquipment;
 
+            FamilyInstance selElem;
+            ICollection<ElementId> selectedElementIds = uidoc.Selection.GetElementIds();
+
+            if (selectedElementIds.Any())
+            {
+                //filter preselected list
+                ElementCategoryFilter filter = new ElementCategoryFilter(bic);
+
+                List<Element> filteredElemList = new FilteredElementCollector(doc, selectedElementIds).WherePasses(filter).ToList();
+
+                if (filteredElemList.Count() != 1)
+                {
+                    selElem = null;
+                }
+                else
+                {
+                    selElem = filteredElemList.First() as FamilyInstance;
+                }
+            }
+            else
+            {
+                selElem = null;
+            }
+
+            if (selElem == null)
+            {
+                Reference selItem;
+                try
+                {
+                    //create selection elements
+                    ISelectionFilter selFilter = new CMWElecSelectionFilter.EquipmentSelectionFilter();
+                    selItem = uidoc.Selection.PickObject(ObjectType.Element,
+                        selFilter,
+                        "Select a Panelboard Family to Update the Type to Single Phase.");
+
+                    //selItem = uidoc.Selection.PickObject(ObjectType.Element,
+                    //"Select a Panelboard Family to Update the Type to Single Phase."); //debug only
+                }
+                catch (OperationCanceledException ex)
+                {
+                    errorReport = ex.Message;
+                    TaskDialog.Show("User Canceled Operation", "Tool operation canceled.");
+                    return Result.Cancelled;
+                }
+                catch (Exception ex)
+                {
+                    errorReport = ex.Message;
+                    return Result.Failed;
+                }
+
+                selElem = doc.GetElement(selItem) as FamilyInstance;
+            }
+
+            //FamilyInstance selElem = doc.GetElement(selElem.Id) as FamilyInstance;
+
+            //get Panel DIName to collect Electrical Equipment again
+            string pnlName = selElem.get_Parameter(bipPanelName).AsString();
+            //get Supply From parameter of Selected Electrical Equipment
+            string pnlSupply = selElem.get_Parameter(BuiltInParameter.RBS_ELEC_PANEL_SUPPLY_FROM_PARAM).AsString();
+
             //collect selected panelboard circuit parameters to update once new circuit is created
-            List<ElectricalSystem> panelCircuits = (from x 
-                                                    in selectedPanel.MEPModel.GetElectricalSystems() 
-                                                    where x.PanelName != pnlName 
+            List<ElectricalSystem> panelCircuits = (from x
+                                                    in selElem.MEPModel.GetElectricalSystems()
+                                                    where x.PanelName != pnlName
                                                     select x)
                                                     .ToList();
 
@@ -87,7 +116,7 @@ namespace ChangePanelTypeToSinglePhase
             }
 
             //get existing circuits of selected Electrical Equipment
-            List < ElectricalSystem > col_circuits = new FilteredElementCollector(doc).OfClass(typeof(ElectricalSystem))
+            List<ElectricalSystem> col_circuits = new FilteredElementCollector(doc).OfClass(typeof(ElectricalSystem))
                 .Where(x => x.get_Parameter(BuiltInParameter.RBS_ELEC_CIRCUIT_PANEL_PARAM).AsString() == pnlName)
                 .Cast<ElectricalSystem>().ToList();
 
@@ -108,7 +137,7 @@ namespace ChangePanelTypeToSinglePhase
             foreach (FamilySymbol fam_type in single_ph_types)
             {
                 string fam_name = fam_type.get_Parameter(BuiltInParameter.ALL_MODEL_FAMILY_NAME).AsString();
-                if (fam_name == selectedPanel.get_Parameter(BuiltInParameter.ELEM_FAMILY_PARAM).AsValueString() & fam_type.get_Parameter(BuiltInParameter.SYMBOL_NAME_PARAM).AsString().Contains("Single"))
+                if (fam_name == selElem.get_Parameter(BuiltInParameter.ELEM_FAMILY_PARAM).AsValueString() & fam_type.get_Parameter(BuiltInParameter.SYMBOL_NAME_PARAM).AsString().Contains("Single"))
                 {
                     single_ph_type = fam_type;
                 }
@@ -125,7 +154,7 @@ namespace ChangePanelTypeToSinglePhase
                         trac.Start("Update Panel Type to Single Phase");
 
                         //change selected Electrical Equipment Type Id
-                        Parameter pnlTypeParam = selectedPanel.get_Parameter(BuiltInParameter.ELEM_TYPE_PARAM);
+                        Parameter pnlTypeParam = selElem.get_Parameter(BuiltInParameter.ELEM_TYPE_PARAM);
                         pnlTypeParam.Set(single_ph_type.Id);
 
                         trac.Commit();
@@ -235,9 +264,22 @@ namespace ChangePanelTypeToSinglePhase
             return confirmBool;
         }
 
+        public List<PanelScheduleTemplate> BranchScheduleTemplates(Document document)
+        {
+            List<PanelScheduleTemplate> branchTemp = new FilteredElementCollector(document)
+                .OfClass(typeof(PanelScheduleTemplate))
+                .Cast<PanelScheduleTemplate>()
+                .Where(x => x.GetPanelScheduleType() == PanelScheduleType.Branch)
+                .ToList();
+
+            return branchTemp;
+        }
+
         public bool UpdatePanelScheduleView(Document document, FamilyInstance panel, string pnl_name)
         {
             bool panel_bool = false;
+            ElementId tempId = null;
+            string cbStr = panel.LookupParameter("Max Number of Single Pole Breakers").AsInteger().ToString();
 
             //get all PanelScheduleViews in project
             List<PanelScheduleView> pnlSchedViews = new FilteredElementCollector(document)
@@ -246,21 +288,27 @@ namespace ChangePanelTypeToSinglePhase
                 .Cast<PanelScheduleView>()
                 .ToList();
 
-            //get all PanelScheduleTemplates
-            PanelScheduleTemplate schedTemp = new FilteredElementCollector(document)
-                .OfClass(typeof(PanelScheduleTemplate))
-                .Where(x => x.Name == "ONE Branch Panel - Single Phase")
-                .Cast<PanelScheduleTemplate>()
-                .ToList()
-                .First();
+            foreach (PanelScheduleTemplate schTemp in BranchScheduleTemplates(document))
+            {
+                string testSchName = $"ONE Branch Panel - {cbStr} Circuit";
+                string schTempName = schTemp.Name;
+
+                if (testSchName == schTempName)
+                {
+                    tempId = schTemp.Id;
+                }
+            }
 
             //filter out just the panel schedule of the selected panel
-            foreach (PanelScheduleView sched in pnlSchedViews)
+            if (tempId != null)
             {
-                if (document.GetElement(sched.GetPanel()).LookupParameter("Panel Name").AsString() == pnl_name)
+                foreach (PanelScheduleView sched in pnlSchedViews)
                 {
-                    sched.GenerateInstanceFromTemplate(schedTemp.Id);
-                    panel_bool = true;
+                    if (document.GetElement(sched.GetPanel()).LookupParameter("Panel Name").AsString() == pnl_name)
+                    {
+                        sched.GenerateInstanceFromTemplate(tempId);
+                        panel_bool = true;
+                    }
                 }
             }
 

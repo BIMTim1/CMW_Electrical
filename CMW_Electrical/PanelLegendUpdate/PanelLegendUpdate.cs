@@ -131,9 +131,13 @@ namespace ScheduleLegendUpdate
                     List<PanelScheduleSheetInstance> sortList = panelSchedules.OrderBy(x => x.Origin[1]).ToList();
 
                     //Update E_GA_Schedule Legend with Panelboard Schedule Names
-                    PanelScheduleInfoToLegend(sortList, schedCols, paramList);
+                    List<int> scheduleInfo = PanelScheduleInfoToLegend(sortList, schedCols, paramList);
 
-                    UpdateLegendGraphics(schedLegendInst, sortList);
+                    //update the E_GA_Schedule Legend FamilyInstance column values
+                    int maxCol = scheduleInfo.Max();
+                    UpdateLegendGraphics(schedLegendInst, sortList, maxCol);
+
+                    //UpdateLegendGraphics(schedLegendInst, sortList);
 
                     trac.Commit();
                     return Result.Succeeded;
@@ -182,13 +186,16 @@ namespace ScheduleLegendUpdate
             }
         }
 
-        public void PanelScheduleInfoToLegend(List<PanelScheduleSheetInstance> panelScheduleList, List<string> scheduleColumns, List<Parameter> legendParameterList)
+        public List<int> PanelScheduleInfoToLegend(List<PanelScheduleSheetInstance> panelScheduleList, List<string> scheduleColumns, List<Parameter> legendParameterList)
         {
             XYZ previousSchedOrigin = new XYZ(0, 0, 0);
             XYZ currentSchedOrigin = new XYZ(0, 0, 0);
             int schedVal = 0;
             int cellRowVal = 8;
             int cellColVal = 4;
+
+            int colCount = 1;
+            List<int> columnCounts = new List<int>();
 
             while (schedVal < panelScheduleList.Count())
             {
@@ -200,10 +207,14 @@ namespace ScheduleLegendUpdate
                 //determine if the current schedule has a different Y coordinate from previous schedule, reset to E_GA_Schedule Legend right side
                 if (previousSchedOrigin.Y != 0)
                 {
-                    if (currentSchedOrigin.Y != previousSchedOrigin.Y)
+                    if (Math.Round(currentSchedOrigin.Y, 3) != Math.Round(previousSchedOrigin.Y, 3))
                     {
                         cellRowVal -= 1;
                         cellColVal = 4;
+
+                        columnCounts.Add(colCount);
+                        colCount = 1;
+
                     }
                 }
 
@@ -217,23 +228,27 @@ namespace ScheduleLegendUpdate
                 previousSchedOrigin = currentSchedOrigin;
                 cellColVal -= 1;
                 schedVal++;
+
+                colCount++;
             }
+
+            return columnCounts;
         }
 
-        public void UpdateLegendGraphics(FamilyInstance scheduleLegendInstance, List<PanelScheduleSheetInstance> panelScheduleList)
+        public void UpdateLegendGraphics(FamilyInstance scheduleLegendInstance, List<PanelScheduleSheetInstance> panelScheduleList, int colNumber)
         {
             List<double> numRows = new List<double>();
-            List<double> numCols = new List<double>();
+            //List<double> numCols = new List<double>();
 
             foreach (PanelScheduleSheetInstance pnlSched in panelScheduleList)
             {
-                double roundedX = Math.Round(pnlSched.Origin.X, 3);
+                //double roundedX = Math.Round(pnlSched.Origin.X, 3);
                 double roundedY = Math.Round(pnlSched.Origin.Y, 3);
 
-                if (!numCols.Contains(roundedX))
-                {
-                    numCols.Add(roundedX);
-                }
+                //if (!numCols.Contains(roundedX))
+                //{
+                //    numCols.Add(roundedX);
+                //}
 
                 if (!numRows.Contains(roundedY))
                 {
@@ -241,7 +256,7 @@ namespace ScheduleLegendUpdate
                 }
             }
 
-            scheduleLegendInstance.LookupParameter("Columns").Set(numCols.Count());
+            scheduleLegendInstance.LookupParameter("Columns").Set(colNumber);
             scheduleLegendInstance.LookupParameter("Rows").Set(numRows.Count());
         }
     }
