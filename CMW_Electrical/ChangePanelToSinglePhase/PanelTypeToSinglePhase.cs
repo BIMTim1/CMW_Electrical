@@ -39,11 +39,11 @@ namespace ChangePanelTypeToSinglePhase
             {
                 //create selection elements
                 ISelectionFilter selFilter = new CMWElecSelectionFilter.EquipmentSelectionFilter();
-                selectPanel = uidoc.Selection.PickObject(ObjectType.Element, 
-                    selFilter, 
-                    "Select a Panelboard Family to Update the Type to Single Phase.");
+                //selectPanel = uidoc.Selection.PickObject(ObjectType.Element,
+                //    selFilter,
+                //    "Select a Panelboard Family to Update the Type to Single Phase.");
 
-                selectPanel = uidoc.Selection.PickObject(ObjectType.Element, 
+                selectPanel = uidoc.Selection.PickObject(ObjectType.Element,
                     "Select a Panelboard Family to Update the Type to Single Phase."); //debug only
             }
             catch (OperationCanceledException ex)
@@ -57,7 +57,7 @@ namespace ChangePanelTypeToSinglePhase
                 errorReport = ex.Message;
                 return Result.Failed;
             }
-            
+
             FamilyInstance selectedPanel = doc.GetElement(selectPanel.ElementId) as FamilyInstance;
 
             //get Panel DIName to collect Electrical Equipment again
@@ -68,9 +68,9 @@ namespace ChangePanelTypeToSinglePhase
             BuiltInCategory bic = BuiltInCategory.OST_ElectricalEquipment;
 
             //collect selected panelboard circuit parameters to update once new circuit is created
-            List<ElectricalSystem> panelCircuits = (from x 
-                                                    in selectedPanel.MEPModel.GetElectricalSystems() 
-                                                    where x.PanelName != pnlName 
+            List<ElectricalSystem> panelCircuits = (from x
+                                                    in selectedPanel.MEPModel.GetElectricalSystems()
+                                                    where x.PanelName != pnlName
                                                     select x)
                                                     .ToList();
 
@@ -87,7 +87,7 @@ namespace ChangePanelTypeToSinglePhase
             }
 
             //get existing circuits of selected Electrical Equipment
-            List < ElectricalSystem > col_circuits = new FilteredElementCollector(doc).OfClass(typeof(ElectricalSystem))
+            List<ElectricalSystem> col_circuits = new FilteredElementCollector(doc).OfClass(typeof(ElectricalSystem))
                 .Where(x => x.get_Parameter(BuiltInParameter.RBS_ELEC_CIRCUIT_PANEL_PARAM).AsString() == pnlName)
                 .Cast<ElectricalSystem>().ToList();
 
