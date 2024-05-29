@@ -13,6 +13,7 @@ using OLUpdateInfo;
 using Autodesk.Revit.DB.Electrical;
 using OneLineTools;
 using CMW_Electrical;
+using CMW_Electrical.OneLineTools.OneLine_Copy;
 
 namespace OneLineCopy
 {
@@ -112,40 +113,169 @@ namespace OneLineCopy
 
                     //create translation XYZ to adjust elements
                     XYZ translationPoint = new XYZ(0, 0, 0);
-                    double startX = startPoint.X;
-                    double startY = startPoint.Y;
+                    double startX = Math.Round(startPoint.X, 3);
+                    double startY = Math.Round(startPoint.Y, 3);
                     double startZ = startPoint.Z;
 
-                    double endX = endPoint.X;
-                    double endY = endPoint.Y;
+                    double endX = Math.Round(endPoint.X, 3);
+                    double endY = Math.Round(endPoint.Y, 3);
                     double endZ = endPoint.Z;
 
                     double transX;
+                    double transY;
 
-                    //if (startX < 0)
-                    //{
-                    //    if (endX < 0)
-                    //    {
-                    //        transX = -((-startX) - (-endX));
-                    //    }
-                    //    else
-                    //    {
-                    //        transX = (-startX) + startX + endX;
-                    //    }
-                    //}
-                    //else
-                    //{
-                    //    if (endX < 0)
-                    //    {
-                    //        transX = -(startX - startX + (-endX));
-                    //    }
-                    //    else
-                    //    {
-                    //        transX = 
-                    //    }
-                    //}
+                    //get translation distance of X coordinate in DraftingView
+                    if (startX == endX)
+                    {
+                        transX = 0.0;
+                    }
+                    else
+                    {
+                        if (startX < 0) //check if negative double
+                        {
+                            if (endX < 0) //check if a negative double
+                            {
+                                if (endX < startX)
+                                {
+                                    transX = endX - startX; //result should be a negative number
+                                }
+                                else
+                                {
+                                    transX = -(startX) + endX;
+                                }
+                            }
+                            else //endX is a positive #
+                            {
+                                transX = endX - startX; //result should be a positive number
+                            }
+                        }
+                        else //startX is a positive double
+                        {
+                            if (endX < 0) //check if endX is a negative double
+                            {
+                                transX = endX - startX;
+                            }
+                            else
+                            {
+                                if (endX < startX)
+                                {
+                                    transX = -(startX - endX);
+                                }
+                                else
+                                {
+                                    transX = endX - startX;
+                                }
+                            }
+                        }
+                    }
 
-                    ICollection<ElementId> copiedElems = ElementTransformUtils.CopyElements(doc, elementsToCopy, endPoint);
+
+                    //get translation distance of Y coordinate in DraftingView
+                    if (startY == endY)
+                    {
+                        transY = 0.0;
+                    }
+                    else
+                    {
+                        if (startY < 0) //check if negative double
+                        {
+                            if (endY < 0) //check if a negative double
+                            {
+                                if (endY < startY)
+                                {
+                                    transY = endY - startY; //result should be a negative number
+                                }
+                                else
+                                {
+                                    transY = -(startY) + endY;
+                                }
+                            }
+                            else //endY is a positive #
+                            {
+                                transY = endY - startY; //result should be a positive number
+                            }
+                        }
+                        else //startY is a positive double
+                        {
+                            if (endY < 0) //check if endY is a negative double
+                            {
+                                transY = endY - startY;
+                            }
+                            else
+                            {
+                                if (endY < startY)
+                                {
+                                    transY = -(startY - endY);
+                                }
+                                else
+                                {
+                                    transY = endY - startY;
+                                }
+                            }
+                        }
+                    }
+
+                    XYZ translationDist = new XYZ(transX, transY, startZ);
+
+                    ICollection<ElementId> copiedElemIds = ElementTransformUtils.CopyElements(doc, elementsToCopy, translationDist);
+
+                    //launch form for user selection of equipment connection
+                    List<Element> filteredEquip = new FilteredElementCollector(doc)
+                        .OfCategory(BuiltInCategory.OST_ElectricalEquipment)
+                        .WhereElementIsNotElementType()
+                        .ToElements()
+                        .Where(x => x.LookupParameter("EqConId").AsString() == null || x.LookupParameter("EqConId").AsString() == "")
+                        .ToList();
+
+                    List<string> equipNames = (from pnl 
+                                               in filteredEquip 
+                                               select pnl.LookupParameter("Panel Name").AsString())
+                                               .ToList();
+
+                    CopySelectionReferenceForm copyForm = new CopySelectionReferenceForm(equipNames);
+                    copyForm.ShowDialog();
+
+                    //result if canceled by user
+                    if (copyForm.DialogResult == System.Windows.Forms.DialogResult.Cancel)
+                    {
+                        TaskDialog.Show("User canceled assignment", "The selected elemnts have been copied, but not assigned to any Electrical Equipment.");
+                        
+                        trac.Commit();
+                        return Result.Cancelled;
+                    }
+
+                    //result if not completed by user
+                    Element selEquip = (from pnl 
+                                        in filteredEquip 
+                                        where pnl.LookupParameter("Panel Name").AsString() == copyForm.cBoxEquipSelect.Text 
+                                        select pnl)
+                                        .ToList()
+                                        .First();
+
+                    ElecEquipInfo selEquipInfo = new ElecEquipInfo(selEquip);
+
+                    List<Element> copiedElems = (from id in copiedElemIds select doc.GetElement(id)).ToList();
+                    Element mainDetItem = (from el in copiedElems where el.LookupParameter("Family").AsValueString().Contains("Panelboard") select el).ToList().First();
+
+                    DetailItemInfo detItemInfo = new DetailItemInfo(mainDetItem);
+                    detItemInfo.Name = selEquipInfo.Name;
+
+                    OLEqConIdUpdateClass updateEqConId = new OLEqConIdUpdateClass();
+                    updateEqConId.OneLineEqConIdValueUpdate(selEquipInfo, detItemInfo, doc);
+
+                    doc.Regenerate();
+
+                    copiedElemIds.Remove(mainDetItem.Id);
+
+                    foreach (ElementId elemId in copiedElemIds)
+                    {
+                        Element copiedElem = doc.GetElement(elemId);
+
+                        if (copiedElem.Category.Name == "Detail Items")
+                        {
+                            copiedElem.LookupParameter("EqConId").Set(selEquipInfo.EqConId);
+                        }
+                    }
 
                     trac.Commit();
                     return Result.Succeeded;
