@@ -111,111 +111,8 @@ namespace OneLineCopy
 
                     ICollection<ElementId> elementsToCopy = (from elem in selectedElems select elem.Id).ToList();
 
-                    //create translation XYZ to adjust elements
-                    XYZ translationPoint = new XYZ(0, 0, 0);
-                    double startX = Math.Round(startPoint.X, 3);
-                    double startY = Math.Round(startPoint.Y, 3);
-                    double startZ = startPoint.Z;
-
-                    double endX = Math.Round(endPoint.X, 3);
-                    double endY = Math.Round(endPoint.Y, 3);
-                    double endZ = endPoint.Z;
-
-                    double transX;
-                    double transY;
-
-                    //get translation distance of X coordinate in DraftingView
-                    if (startX == endX)
-                    {
-                        transX = 0.0;
-                    }
-                    else
-                    {
-                        if (startX < 0) //check if negative double
-                        {
-                            if (endX < 0) //check if a negative double
-                            {
-                                if (endX < startX)
-                                {
-                                    transX = endX - startX; //result should be a negative number
-                                }
-                                else
-                                {
-                                    transX = -(startX) + endX;
-                                }
-                            }
-                            else //endX is a positive #
-                            {
-                                transX = endX - startX; //result should be a positive number
-                            }
-                        }
-                        else //startX is a positive double
-                        {
-                            if (endX < 0) //check if endX is a negative double
-                            {
-                                transX = endX - startX;
-                            }
-                            else
-                            {
-                                if (endX < startX)
-                                {
-                                    transX = -(startX - endX);
-                                }
-                                else
-                                {
-                                    transX = endX - startX;
-                                }
-                            }
-                        }
-                    }
-
-
-                    //get translation distance of Y coordinate in DraftingView
-                    if (startY == endY)
-                    {
-                        transY = 0.0;
-                    }
-                    else
-                    {
-                        if (startY < 0) //check if negative double
-                        {
-                            if (endY < 0) //check if a negative double
-                            {
-                                if (endY < startY)
-                                {
-                                    transY = endY - startY; //result should be a negative number
-                                }
-                                else
-                                {
-                                    transY = -(startY) + endY;
-                                }
-                            }
-                            else //endY is a positive #
-                            {
-                                transY = endY - startY; //result should be a positive number
-                            }
-                        }
-                        else //startY is a positive double
-                        {
-                            if (endY < 0) //check if endY is a negative double
-                            {
-                                transY = endY - startY;
-                            }
-                            else
-                            {
-                                if (endY < startY)
-                                {
-                                    transY = -(startY - endY);
-                                }
-                                else
-                                {
-                                    transY = endY - startY;
-                                }
-                            }
-                        }
-                    }
-
-                    XYZ translationDist = new XYZ(transX, transY, startZ);
+                    //get translation XYZ
+                    XYZ translationDist = GetTranslationXYZ(startPoint, endPoint);
 
                     ICollection<ElementId> copiedElemIds = ElementTransformUtils.CopyElements(doc, elementsToCopy, translationDist);
 
@@ -302,6 +199,117 @@ namespace OneLineCopy
             {
                 return false;
             }
+        }
+
+        public XYZ GetTranslationXYZ(XYZ startPoint, XYZ endPoint)
+        {
+            //create translation XYZ to adjust elements
+            XYZ translationDist = new XYZ(0, 0, 0);
+            double startX = Math.Round(startPoint.X, 3);
+            double startY = Math.Round(startPoint.Y, 3);
+            double startZ = startPoint.Z;
+
+            double endX = Math.Round(endPoint.X, 3);
+            double endY = Math.Round(endPoint.Y, 3);
+            double endZ = endPoint.Z;
+
+            double transX;
+            double transY;
+
+            //get translation distance of X coordinate in DraftingView
+            if (startX == endX)
+            {
+                transX = 0.0;
+            }
+            else
+            {
+                if (startX < 0) //check if negative double
+                {
+                    if (endX < 0) //check if a negative double
+                    {
+                        if (endX < startX)
+                        {
+                            transX = endX - startX; //result should be a negative number
+                        }
+                        else
+                        {
+                            transX = -(startX) + endX;
+                        }
+                    }
+                    else //endX is a positive #
+                    {
+                        transX = endX - startX; //result should be a positive number
+                    }
+                }
+                else //startX is a positive double
+                {
+                    if (endX < 0) //check if endX is a negative double
+                    {
+                        transX = endX - startX;
+                    }
+                    else
+                    {
+                        if (endX < startX)
+                        {
+                            transX = -(startX - endX);
+                        }
+                        else
+                        {
+                            transX = endX - startX;
+                        }
+                    }
+                }
+            }
+
+
+            //get translation distance of Y coordinate in DraftingView
+            if (startY == endY)
+            {
+                transY = 0.0;
+            }
+            else
+            {
+                if (startY < 0) //check if negative double
+                {
+                    if (endY < 0) //check if a negative double
+                    {
+                        if (endY < startY)
+                        {
+                            transY = endY - startY; //result should be a negative number
+                        }
+                        else
+                        {
+                            transY = -(startY) + endY;
+                        }
+                    }
+                    else //endY is a positive #
+                    {
+                        transY = endY - startY; //result should be a positive number
+                    }
+                }
+                else //startY is a positive double
+                {
+                    if (endY < 0) //check if endY is a negative double
+                    {
+                        transY = endY - startY;
+                    }
+                    else
+                    {
+                        if (endY < startY)
+                        {
+                            transY = -(startY - endY);
+                        }
+                        else
+                        {
+                            transY = endY - startY;
+                        }
+                    }
+                }
+            }
+
+            translationDist = new XYZ(transX, transY, startZ);
+
+            return translationDist;
         }
     }
 }

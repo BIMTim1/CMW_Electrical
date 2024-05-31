@@ -130,8 +130,7 @@ namespace OneLineConnectAndPlace
                 //    selFilter, 
                 //    "Select a Detail Item to be the Source Equipment.");
 
-                //debug only
-                Reference connectEquipRef = uidoc.Selection.PickObject(ObjectType.Element, "Select a Detail Item to be the Source Equipment");
+                Reference connectEquipRef = uidoc.Selection.PickObject(ObjectType.Element, "Select a Detail Item to be the Source Equipment"); //debug only
 
                 connectEquip = doc.GetElement(connectEquipRef) as FamilyInstance;
 
