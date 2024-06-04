@@ -78,6 +78,12 @@
     <Compile Include="MotorUIDUpdate\UpdateMotorUID.cs" />
     <Compile Include="MultiLegSwitchIdUpdate\MultiLegSwitchIdUpdate.cs" />
     <Compile Include="OneLineTools\ExentsionMethods.cs" />
+    <Compile Include="OneLineTools\OneLine_PlaceEquip\OLSelectDetItemForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="OneLineTools\OneLine_PlaceEquip\OLSelectDetItemForm.Designer.cs">
+      <DependentUpon>OLSelectDetItemForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="OneLineTools\OneLine_Select\OneLineSelect.cs" />
     <Compile Include="OneLineTools\OLCreateFeeder.cs" />
     <Compile Include="OneLineTools\OLEqConIdUpdate.cs" />
@@ -197,6 +203,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="OneLineTools\OneLine_Copy\CopySelectionReferenceForm.resx">
       <DependentUpon>CopySelectionReferenceForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="OneLineTools\OneLine_PlaceEquip\OLSelectDetItemForm.resx">
+      <DependentUpon>OLSelectDetItemForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="OneLineTools\OneLine_UpdateDesignations\dialogSelectUpdateMethod.resx">
       <DependentUpon>dialogSelectUpdateMethod.cs</DependentUpon>
