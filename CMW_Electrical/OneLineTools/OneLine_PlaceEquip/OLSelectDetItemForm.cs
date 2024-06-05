@@ -36,10 +36,10 @@ namespace CMW_Electrical.OneLineTools.OneLine_PlaceEquip
             List<string> equipTypeNames = new List<string>()
             {
                 "Panelboard",
-                "Dry-Type Transformer",
+                "Transformer-Dry Type",
                 "Utility Transformer",
                 "Automatic Transfer Switch",
-                "Distribution Panel",
+                "Distribution Panelboard",
                 "Swithboard"
             };
 
@@ -56,7 +56,7 @@ namespace CMW_Electrical.OneLineTools.OneLine_PlaceEquip
         {
             btnOK.Enabled = true;
 
-            string compStr = cboxDetailItemList.SelectedItem.ToString().Split(' ')[1];
+            string compStr = cboxDetailItemList.SelectedItem.ToString();//.Split(' ')[1];
 
             if (compStr.Contains("Panelboard"))
             {

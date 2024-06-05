@@ -88,7 +88,7 @@
             // 
             this.cboxDetailItemList.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cboxDetailItemList.FormattingEnabled = true;
-            this.cboxDetailItemList.Location = new System.Drawing.Point(15, 47);
+            this.cboxDetailItemList.Location = new System.Drawing.Point(15, 49);
             this.cboxDetailItemList.Name = "cboxDetailItemList";
             this.cboxDetailItemList.Size = new System.Drawing.Size(278, 21);
             this.cboxDetailItemList.TabIndex = 3;
@@ -109,7 +109,7 @@
             // 
             this.cboxFamilyTypeSelection.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cboxFamilyTypeSelection.FormattingEnabled = true;
-            this.cboxFamilyTypeSelection.Location = new System.Drawing.Point(15, 97);
+            this.cboxFamilyTypeSelection.Location = new System.Drawing.Point(15, 98);
             this.cboxFamilyTypeSelection.Name = "cboxFamilyTypeSelection";
             this.cboxFamilyTypeSelection.Size = new System.Drawing.Size(242, 21);
             this.cboxFamilyTypeSelection.TabIndex = 5;
