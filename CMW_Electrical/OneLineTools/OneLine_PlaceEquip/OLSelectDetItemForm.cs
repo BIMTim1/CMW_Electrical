@@ -35,7 +35,7 @@ namespace CMW_Electrical.OneLineTools.OneLine_PlaceEquip
             //create objects for cbox
             List<string> equipTypeNames = new List<string>()
             {
-                "Panelboard",
+                "Branch Panelboard",
                 "Transformer-Dry Type",
                 "Utility Transformer",
                 "Automatic Transfer Switch",

@@ -88,7 +88,7 @@
             // 
             this.cboxDetailItemList.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cboxDetailItemList.FormattingEnabled = true;
-            this.cboxDetailItemList.Location = new System.Drawing.Point(15, 49);
+            this.cboxDetailItemList.Location = new System.Drawing.Point(15, 52);
             this.cboxDetailItemList.Name = "cboxDetailItemList";
             this.cboxDetailItemList.Size = new System.Drawing.Size(278, 21);
             this.cboxDetailItemList.TabIndex = 3;
@@ -109,7 +109,7 @@
             // 
             this.cboxFamilyTypeSelection.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cboxFamilyTypeSelection.FormattingEnabled = true;
-            this.cboxFamilyTypeSelection.Location = new System.Drawing.Point(15, 98);
+            this.cboxFamilyTypeSelection.Location = new System.Drawing.Point(15, 99);
             this.cboxFamilyTypeSelection.Name = "cboxFamilyTypeSelection";
             this.cboxFamilyTypeSelection.Size = new System.Drawing.Size(242, 21);
             this.cboxFamilyTypeSelection.TabIndex = 5;
@@ -118,7 +118,7 @@
             // 
             this.lblSelectType.AutoSize = true;
             this.lblSelectType.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblSelectType.Location = new System.Drawing.Point(12, 81);
+            this.lblSelectType.Location = new System.Drawing.Point(12, 82);
             this.lblSelectType.Name = "lblSelectType";
             this.lblSelectType.Size = new System.Drawing.Size(125, 13);
             this.lblSelectType.TabIndex = 4;
