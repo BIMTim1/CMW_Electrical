@@ -96,7 +96,7 @@ namespace OneLinePlaceEquip
 
             BuiltInCategory bicEq = BuiltInCategory.OST_ElectricalEquipment;
 
-            if (compType == "Branch Panelboard" || compType == "Distribution Panelboard")
+            if (compType == "Branch Panelboard" || compType == "Distribution Panelboard" || compType == "Switchboard")
             {
                 string compVolt = (detailItemInfo.Voltage / 10.763910416709711538461538461538).ToString();
 
@@ -112,7 +112,10 @@ namespace OneLinePlaceEquip
                     .Where(x => x.FamilyName != null && x.FamilyName.Contains($"{compType}_{compVolt}"))
                     .ToList();
 
-                famInstOptions.FaceBasedPlacementType = FaceBasedPlacementType.PlaceOnVerticalFace;
+                if (compType != "Switchboard")
+                {
+                    famInstOptions.FaceBasedPlacementType = FaceBasedPlacementType.PlaceOnVerticalFace;
+                }
             }
             else
             {
@@ -122,13 +125,6 @@ namespace OneLinePlaceEquip
                     .Cast<FamilySymbol>()
                     .Where(x => x.FamilyName != null && x.FamilyName.Contains(compType))
                     .ToList();
-                //famSymbols = new FilteredElementCollector(doc)
-                //    .OfCategory(bicEq)
-                //    .OfClass(typeof(FamilySymbol))
-                //    .Cast<FamilySymbol>()
-                //    .Where(x => x.LookupParameter("Family Name").AsString().Contains(compType)).ToList();
-
-                famInstOptions.FaceBasedPlacementType = FaceBasedPlacementType.PlaceOnWorkPlane;
             }
 
             //cancel if no FamilySymbol can be found

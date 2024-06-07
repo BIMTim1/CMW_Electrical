@@ -40,7 +40,7 @@ namespace CMW_Electrical.OneLineTools.OneLine_PlaceEquip
                 "Utility Transformer",
                 "Automatic Transfer Switch",
                 "Distribution Panelboard",
-                "Swithboard"
+                "Switchboard"
             };
 
             cboxFamilyTypeSelection.Items.AddRange(equipTypeNames.ToArray());
