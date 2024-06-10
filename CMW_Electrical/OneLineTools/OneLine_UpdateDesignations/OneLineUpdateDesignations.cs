@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using OneLineTools;
 
 namespace OneLineUpdateDesignations
 {
@@ -23,6 +24,17 @@ namespace OneLineUpdateDesignations
             Document doc = uiapp.ActiveUIDocument.Document;
             Application app = uiapp.Application;
             UIDocument uidoc = uiapp.ActiveUIDocument;
+
+            //check for EqConId Current Value parameter
+            EqConIdCheck eqConIdCheck = new EqConIdCheck();
+            bool eqConIdExists = eqConIdCheck.EqConIdCurrentValueExists(doc);
+
+            if (!eqConIdExists)
+            {
+                TaskDialog.Show("Parameter Does not Exist",
+                    "The EqConId Current Value parameter does not exist in the current Document. Contact the BIM team for assistance.");
+                return Result.Cancelled;
+            }
 
             //collect Detail Items and Electrical Equipment with an DIEqConId
             List<Element> allDetailItems = new FilteredElementCollector(doc)

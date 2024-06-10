@@ -40,6 +40,17 @@ namespace OneLineSelect
 
             Element selElem;
 
+            //check for EqConId Current Value parameter
+            EqConIdCheck eqConIdCheck = new EqConIdCheck();
+            bool eqConIdExists = eqConIdCheck.EqConIdCurrentValueExists(doc);
+
+            if (!eqConIdExists)
+            {
+                TaskDialog.Show("Parameter Does not Exist",
+                    "The EqConId Current Value parameter does not exist in the current Document. Contact the BIM team for assistance.");
+                return Result.Cancelled;
+            }
+
             if (activeView.ViewType == ViewType.DraftingView)
             {
                 selFilter = new DetailItemSelectionFilter();
