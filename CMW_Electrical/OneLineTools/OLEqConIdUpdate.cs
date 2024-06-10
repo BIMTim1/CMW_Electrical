@@ -30,5 +30,35 @@ namespace OneLineTools
             //update Project Information parameter
             EqConIdParam.Set(nextEqConIdVal);
         }
+
+        public void OneLineEqConIdValueUpdateTemporary(ElecEquipInfo elecEquipClass, Document document)
+        {
+            Parameter EqConIdParam = document.ProjectInformation.LookupParameter("EqConId Temp Current Value");
+
+            int nextEqConIdValue = EqConIdParam.AsInteger() + 1;
+
+            //update Project Information parameter
+            EqConIdParam.Set(nextEqConIdValue);
+
+            //update ElecEquipInfo item
+            string famInstVal = "EqIdTemp" + nextEqConIdValue.ToString();
+
+            elecEquipClass.EqConId = famInstVal;
+        }
+
+        public void OneLineEqConIdValueUpdateTemporary(DetailItemInfo detailItemClass, Document document)
+        {
+            Parameter EqConIdParam = document.ProjectInformation.LookupParameter("EqConId Temp Current Value");
+
+            int nextEqConIdValue = EqConIdParam.AsInteger() + 1;
+
+            //update Project Information parameter
+            EqConIdParam.Set(nextEqConIdValue);
+
+            //update ElecEquipInfo item
+            string famInstVal = "EqIdTemp" + nextEqConIdValue.ToString();
+
+            detailItemClass.EqConId = famInstVal;
+        }
     }
 }
