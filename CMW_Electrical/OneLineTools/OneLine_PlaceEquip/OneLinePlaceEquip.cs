@@ -50,6 +50,18 @@ namespace OneLinePlaceEquip
             }
 
             //add a Workset check for E_Panels?
+            Workset panelWorkset = new FilteredWorksetCollector(doc)
+                .OfKind(WorksetKind.UserWorkset)
+                .Where(x => x.Name == "E_Panels")
+                .ToList()
+                .First();
+
+            WorksetTable worksetTable = doc.GetWorksetTable();
+
+            if (worksetTable.GetActiveWorksetId() != panelWorkset.Id)
+            {
+                worksetTable.SetActiveWorksetId(panelWorkset.Id);
+            }
 
             List<Element> filteredDetItems = new FilteredElementCollector(doc)
                 .OfCategory(BuiltInCategory.OST_DetailComponents)
