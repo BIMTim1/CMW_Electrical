@@ -73,21 +73,22 @@ namespace PanelSchedFormatting
 
                                 HorizontalAlignmentStyle horizAlignment = new HorizontalAlignmentStyle();
 
-                                if (isSpare || isSpace)
+                                if (isSpare && loadName == "SPARE")
                                 {
-                                    if (isSpare && loadName == "SPARE")
-                                    {
-                                        horizAlignment = HorizontalAlignmentStyle.Right;
-                                    }
-                                    else if (isSpace && loadName == "SPACE")
-                                    {
-                                        horizAlignment = HorizontalAlignmentStyle.Right;
-                                    }
-
-                                    cellStyle.FontHorizontalAlignment = horizAlignment;
-
-                                    sectionData.SetCellStyle(rowNum, colNum, cellStyle);
+                                    horizAlignment = HorizontalAlignmentStyle.Right;
                                 }
+                                else if (isSpace && loadName == "SPACE")
+                                {
+                                    horizAlignment = HorizontalAlignmentStyle.Center;
+                                }
+                                else
+                                {
+                                    horizAlignment = HorizontalAlignmentStyle.Left;
+                                }
+
+                                cellStyle.FontHorizontalAlignment = horizAlignment;
+
+                                sectionData.SetCellStyle(rowNum, colNum, cellStyle);
 
                             }
                         }
