@@ -149,7 +149,7 @@ namespace OneLineCopy
                         TaskDialog.Show("User canceled assignment", "The selected elemnts have been copied, but not assigned to any Electrical Equipment.");
                         
                         trac.Commit();
-                        return Result.Cancelled;
+                        return Result.Succeeded;
                     }
 
                     //result if not completed by user
