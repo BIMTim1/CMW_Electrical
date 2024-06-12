@@ -49,7 +49,7 @@ namespace OneLinePlaceEquip
                 return Result.Cancelled;
             }
 
-            //add a Workset check for E_Panels?
+            //check active Workset for E_Panels
             Workset panelWorkset = new FilteredWorksetCollector(doc)
                 .OfKind(WorksetKind.UserWorkset)
                 .Where(x => x.Name == "E_Panels")
