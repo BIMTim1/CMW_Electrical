@@ -24,6 +24,8 @@ namespace OneLineTools
 
             bool polyLine = true;
 
+            List<FamilyInstance> feederLines = new List<FamilyInstance>();
+
             //create initial offsets and BoundingBoxXYZ elements
             BoundingBoxXYZ selBB = selectedDetailItem.Symbol.get_BoundingBox(activeView);
             double selYOffset;
@@ -50,6 +52,7 @@ namespace OneLineTools
 
                 //create E_DI_OL_Circuit Breaker FamilyInstance
                 FamilyInstance cbInst = document.Create.NewFamilyInstance(cbPlacePoint, cbSymbol, activeView);
+                feederLines.Add(cbInst);
 
                 document.Regenerate();
 
@@ -91,8 +94,6 @@ namespace OneLineTools
                 firstPoint = new XYZ(endPoint.X, topY, endPoint.Z);
                 secondPoint = new XYZ(startPoint.X, bottomY, endPoint.Z);
             }
-
-            List<FamilyInstance> feederLines = new List<FamilyInstance>();
 
             //create line work based on position of selected and placed elements
             if (!polyLine)

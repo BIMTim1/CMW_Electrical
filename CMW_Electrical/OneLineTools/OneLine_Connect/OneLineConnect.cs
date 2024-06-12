@@ -81,26 +81,44 @@ namespace OneLineConnect
             {
                 try
                 {
-                    //collect E_DI_Feeder-Line Based Detail Item
-                    FamilySymbol feederLine = (new FilteredElementCollector(doc)
+                    trac.Start("CMWElec-Power");
+
+                    DetailItemInfo detItemInfo = new DetailItemInfo(fedToDetailItem);
+
+                    //verify if feeder lines already exist
+                    List<Element> createdFeederLines = new FilteredElementCollector(doc)
                         .OfCategory(BuiltInCategory.OST_DetailComponents)
-                        .WhereElementIsElementType()
+                        .WhereElementIsNotElementType()
                         .ToElements()
-                        .Where(x => x.LookupParameter("Family Name").AsString() == "E_DI_Feeder-Line Based")
-                        .ToList())
-                        .First()
-                        as FamilySymbol;
+                        .Where(x => x.LookupParameter("Family").AsValueString() == "E_DI_Feeder-Line Based" && x.LookupParameter("EqConId").AsString() == detItemInfo.EqConId)
+                        .ToList();
 
-                    //create feeder lines
-                    List<FamilyInstance> feederLines = new OLCreateFeeder().CreateFeeder(
-                        sourceDetailItem as FamilyInstance,
-                        fedToDetailItem as FamilyInstance,
-                        (fedToDetailItem.Location as LocationPoint).Point,
-                        activeView,
-                        doc,
-                        feederLine);
+                    if (!createdFeederLines.Any())
+                    {
+                        //collect E_DI_Feeder-Line Based Detail Item
+                        FamilySymbol feederLine = (new FilteredElementCollector(doc)
+                            .OfCategory(BuiltInCategory.OST_DetailComponents)
+                            .WhereElementIsElementType()
+                            .ToElements()
+                            .Where(x => x.LookupParameter("Family Name").AsString() == "E_DI_Feeder-Line Based")
+                            .ToList())
+                            .First()
+                            as FamilySymbol;
 
-                    //delete old feeder connections?
+                        //create feeder lines
+                        List<FamilyInstance> feederLines = new OLCreateFeeder().CreateFeeder(
+                            sourceDetailItem as FamilyInstance,
+                            fedToDetailItem as FamilyInstance,
+                            (fedToDetailItem.Location as LocationPoint).Point,
+                            activeView,
+                            doc,
+                            feederLine);
+
+                        foreach (FamilyInstance feeder in feederLines)
+                        {
+                            feeder.LookupParameter("EqConId").Set(detItemInfo.EqConId);
+                        }
+                    }
 
                     //create ElectricalSystem of selected DetailItems
                     ElectricalSystem createdCircuit = 
@@ -109,10 +127,15 @@ namespace OneLineConnect
                             sourceDetailItem as FamilyInstance, 
                             fedToDetailItem as FamilyInstance);
 
+                    trac.Commit();
+
                     return Result.Succeeded;
                 }
                 catch (Exception ex)
                 {
+                    TaskDialog.Show("An error occurred",
+                    "An error occurred that has prevented the tool from running. Contact the BIM team for assistance.");
+
                     return Result.Failed;
                 }
             }

@@ -146,7 +146,7 @@ namespace OneLineCopy
                     //result if canceled by user
                     if (copyForm.DialogResult == System.Windows.Forms.DialogResult.Cancel)
                     {
-                        TaskDialog.Show("User canceled assignment", "The selected elemnts have been copied, but not assigned to any Electrical Equipment.");
+                        TaskDialog.Show("User canceled assignment", "The selected elements have been copied, but not assigned to any Electrical Equipment.");
                         
                         trac.Commit();
                         return Result.Succeeded;

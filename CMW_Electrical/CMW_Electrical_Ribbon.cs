@@ -300,18 +300,18 @@ namespace CMW_Electrical
                 "pack://application:,,,/CMW_Electrical;component/Resources/CorrectLightFixtures16x16.png"));
 
 
-            //------------create push button for oneLineConnectAndPlace------------
-            PushButtonData oneLineConnectAndPlaceData = 
-                new PushButtonData(
-                    "cmdOneLineConnectAndPlace", 
-                    "Power/" + System.Environment.NewLine + " Create ", //"Connect and Place Component"
-                    thisAssemblyPath, 
-                    "OneLineConnectAndPlace.OneLineConnectAndPlace")
-            {
-                    LargeImage = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/OLConnectAndPlace32x32.png")),
-                    Image = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/OLConnectAndPlace16x16.png")),
-                    ToolTip = "Select an existing One-Line item to connect to, and place the down-stream equipment."
-            };
+            ////------------create push button for oneLineConnectAndPlace------------
+            //PushButtonData oneLineConnectAndPlaceData = 
+            //    new PushButtonData(
+            //        "cmdOneLineConnectAndPlace", 
+            //        "Power/" + System.Environment.NewLine + " Create ", //"Connect and Place Component"
+            //        thisAssemblyPath, 
+            //        "OneLineConnectAndPlace.OneLineConnectAndPlace")
+            //{
+            //        LargeImage = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/OLConnectAndPlace32x32.png")),
+            //        Image = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/OLConnectAndPlace16x16.png")),
+            //        ToolTip = "Select an existing One-Line item to connect to, and place the down-stream equipment."
+            //};
 
 
             //------------create push button for oneLineConnect------------
@@ -324,7 +324,11 @@ namespace CMW_Electrical
             {
                 LargeImage = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/OLConnect32x32.png")),
                 Image = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/OLConnect16x16.png")),
-                ToolTip = "Select existing One-Line items to be connected together."
+                ToolTip = "Select One-Line Detail Items to be connected together.",
+                LongDescription = "This tool will create feeder lines " +
+                "and a circuit breaker (if applicable) on the Active One-Line Schematic. " +
+                "If the selected Detail Items are associated to Electrical Equipment families in the model, " +
+                "then an Electrical Circuit will be created between the associated Electrical Equipment families."
             };
 
 
@@ -420,7 +424,7 @@ namespace CMW_Electrical
 
             PushButton oneLineAssociateBtn = oneLinePanel.AddItem(oneLineAssociateData) as PushButton;
             PushButton oneLinePlaceEquipBtn = oneLinePanel.AddItem(oneLinePlaceEquipData) as PushButton;
-            PushButton oneLineConnectAndPlaceBtn = oneLinePanel.AddItem(oneLineConnectAndPlaceData) as PushButton;
+            //PushButton oneLineConnectAndPlaceBtn = oneLinePanel.AddItem(oneLineConnectAndPlaceData) as PushButton;
             PushButton oneLineConnectBtn = oneLinePanel.AddItem(oneLineConnectData) as PushButton;
 
             oneLinePanel.AddSeparator();
@@ -436,10 +440,6 @@ namespace CMW_Electrical
             oneLinePanel.AddSeparator();
 
             PushButton oneLineHalftoneExistingBtn = oneLinePanel.AddItem(oneLineHalftoneExistingData) as PushButton;
-
-            //oneLinePanel.AddStackedItems(oneLineConnectAndPlaceData, oneLineConnectData);
-            //oneLinePanel.AddStackedItems(oneLineUpdateDesignationsData, oneLineAssociateData, oneLinePlaceEquipData);
-            //oneLinePanel.AddStackedItems(oneLineDrawData, oneLineCopyData, oneLineSelectData);
 
 
             //------------create push button for <button name>------------
