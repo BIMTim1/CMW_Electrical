@@ -27,18 +27,13 @@ namespace OneLine_Associate
             Application app = uiapp.Application;
             UIDocument uidoc = uiapp.ActiveUIDocument;
 
-            //collect all Electrical Equipment families in document
-            List<Element> allElecEquip = new FilteredElementCollector(doc)
-                .OfCategory(BuiltInCategory.OST_ElectricalEquipment)
-                .OfClass(typeof(FamilyInstance))
-                .ToElements()
-                .Where(x=>x.LookupParameter("EqConId").AsString() == null)
-                .ToList();
+            View activeView = doc.ActiveView;
 
             //check for EqConId Current Value parameter
             EqConIdCheck eqConIdCheck = new EqConIdCheck();
             bool eqConIdExists = eqConIdCheck.EqConIdCurrentValueExists(doc);
 
+            //cancel tool if EqConId Current Value parameter does not exist in project
             if (!eqConIdExists)
             {
                 TaskDialog.Show("Parameter Does not Exist",
@@ -47,17 +42,64 @@ namespace OneLine_Associate
             }
 
             //collect names in array to add to selection form
-            List<string> eqInfo = new List<string>();
+            List<string> formInfo = new List<string>();
+            List<Element> allRefElements = null;
 
-            foreach (FamilyInstance eq in allElecEquip)
+            if (activeView.ViewType != ViewType.FloorPlan || activeView.ViewType != ViewType.DraftingView) //cancel tool if activeView = incorrect ViewType
             {
-                string input = eq.LookupParameter("Panel Name").AsString() 
-                    + ", " 
-                    + eq.Symbol.LookupParameter("Family Name").AsString() 
-                    + ", " 
-                    + eq.Symbol.LookupParameter("Type Name").AsString();
+                TaskDialog.Show("Incorrect view type", "Change the active view to a Floor Plan or Drafting View then rerun the tool.");
+                return Result.Cancelled;
+            }
+            else if (activeView.ViewType == ViewType.FloorPlan)
+            {
+                //collect all Electrical Equipment families in document
+                allRefElements = new FilteredElementCollector(doc)
+                    .OfCategory(BuiltInCategory.OST_ElectricalEquipment)
+                    .OfClass(typeof(FamilyInstance))
+                    .ToElements()
+                    .Where(x => x.LookupParameter("EqConId").AsString() == null)
+                    .ToList();
 
-                eqInfo.Add(input);
+                foreach (FamilyInstance eq in allRefElements)
+                {
+                    string input = eq.LookupParameter("Panel Name").AsString()
+                        + ", "
+                        + eq.Symbol.LookupParameter("Family Name").AsString()
+                        + ": "
+                        + eq.Symbol.LookupParameter("Type Name").AsString();
+
+                    formInfo.Add(input);
+                }
+            }
+            else if(activeView.ViewType == ViewType.DraftingView)
+            {
+                //collect all Detail Item families in document
+                allRefElements = new FilteredElementCollector(doc)
+                    .OfCategory(BuiltInCategory.OST_DetailComponents)
+                    .OfClass(typeof(FamilyInstance))
+                    .ToElements()
+                    .Where(x => x.LookupParameter("EqConId") == null && x.LookupParameter("Panel Name - Detail") != null)
+                    .ToList();
+
+                foreach (FamilyInstance di in allRefElements)
+                {
+                    string input = di.LookupParameter("Panel Name - Detail").AsString() 
+                        + ", " 
+                        + di.LookupParameter("Family Name").AsString() 
+                        + ": " 
+                        + di.LookupParameter("Type Name").AsString();
+
+                    formInfo.Add(input);
+                }
+            }
+
+            //cancel tool if not items can be found
+            if (allRefElements == null || !allRefElements.Any())
+            {
+                TaskDialog.Show("No selectable elements", 
+                    "There are no elements in the model that can be referenced to. The tool will now cancel.");
+
+                return Result.Cancelled;
             }
 
             Reference userSelection;
@@ -65,9 +107,9 @@ namespace OneLine_Associate
             try
             {
                 //prompt user to select DetailComponent to use for association
-                ISelectionFilter selFilter = new DetailItemSelectionFilter();
-                userSelection = uidoc.Selection.PickObject(ObjectType.Element, selFilter, "Select a Schematic Detail Item to Reference.");
-                //userSelection = uidoc.Selection.PickObject(ObjectType.Element, "Select a Schematic Detail Item to Reference."); //debug only
+                //ISelectionFilter selFilter = new DetailItemSelectionFilter();
+                //userSelection = uidoc.Selection.PickObject(ObjectType.Element, selFilter, "Select a Schematic Detail Item to Reference.");
+                userSelection = uidoc.Selection.PickObject(ObjectType.Element, "Select a Schematic Detail Item to Reference."); //debug only
             }
             catch (Autodesk.Revit.Exceptions.OperationCanceledException ex)
             {
@@ -76,7 +118,7 @@ namespace OneLine_Associate
             }
 
             //launch form to select Equipment Family
-            OneLineAssociateForm form = new OneLineAssociateForm(eqInfo);
+            OneLineAssociateForm form = new OneLineAssociateForm(formInfo);
             form.ShowDialog();
 
             if (form.DialogResult == System.Windows.Forms.DialogResult.Cancel)
@@ -85,7 +127,7 @@ namespace OneLine_Associate
             }
 
             //collect Electrical Equipment selected by user
-            ElecEquipInfo elecEquip = 
+            ElecEquipInfo elecEquipInfo = 
                 new ElecEquipInfo( 
                     (from eq 
                      in allElecEquip 
@@ -93,7 +135,7 @@ namespace OneLine_Associate
                      select eq)
                      .First());
 
-            DetailItemInfo detailItem = new DetailItemInfo(doc.GetElement(userSelection));
+            DetailItemInfo detItemInfo = new DetailItemInfo(doc.GetElement(userSelection));
 
             using (Transaction trac = new Transaction(doc))
             {
@@ -102,7 +144,9 @@ namespace OneLine_Associate
                     trac.Start("Associate Electrical Equipment and Schematic Component");
 
                     OLEqConIdUpdateClass updateEqConId = new OLEqConIdUpdateClass();
-                    updateEqConId.OneLineEqConIdValueUpdate(elecEquip, detailItem, doc);
+                    updateEqConId.OneLineEqConIdValueUpdate(elecEquipInfo, detItemInfo, doc);
+
+                    detItemInfo.Name = elecEquipInfo.Name;
 
                     trac.Commit();
 

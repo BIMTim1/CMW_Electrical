@@ -185,6 +185,25 @@ namespace OneLineCopy
                         }
                     }
 
+                    //create circuit from selected Detail Items
+                    try
+                    {
+                        //Reference selSourceDetItem = uidoc.Selection.PickObject(ObjectType.Element, selFilter, "Select a Source Detail Item");
+                        Reference selSourceDetItem = uidoc.Selection.PickObject(ObjectType.Element, "Select a Source Detail Item"); //debug only
+
+                        FamilyInstance sourceDetItem = doc.GetElement(selSourceDetItem) as FamilyInstance;
+
+                        ElectricalSystem createdCircuit = new CreateEquipmentCircuit()
+                            .CreateEquipCircuit(
+                            doc, 
+                            sourceDetItem, 
+                            mainDetItem as FamilyInstance);
+                    }
+                    catch (Autodesk.Revit.Exceptions.OperationCanceledException ex)
+                    {
+                        TaskDialog.Show("User canceled", "User canceled operation. Elements have been copied, but an Electrical Circuit has not been created.");
+                    }
+
                     trac.Commit();
                     return Result.Succeeded;
                 }
