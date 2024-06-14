@@ -42,54 +42,120 @@ namespace OneLinePlaceEquip
                 return Result.Cancelled;
             }
 
-            //cancel tool if not a FloorPlan
-            if (activeView.ViewType != ViewType.FloorPlan)
+            string refCategory = "";
+            List<Element> filteredRefElements = new List<Element>();
+            List<string> formNameInfo = new List<string>();
+            List<string> formTypeInfo = new List<string>();
+
+            if (activeView.ViewType == ViewType.FloorPlan)
+            {
+                refCategory = "Detail Item";
+
+                //check active Workset for E_Panels
+                Workset panelWorkset = new FilteredWorksetCollector(doc)
+                    .OfKind(WorksetKind.UserWorkset)
+                    .Where(x => x.Name == "E_Panels")
+                    .ToList()
+                    .First();
+
+                WorksetTable worksetTable = doc.GetWorksetTable();
+
+                if (worksetTable.GetActiveWorksetId() != panelWorkset.Id)
+                {
+                    worksetTable.SetActiveWorksetId(panelWorkset.Id);
+                }
+
+                filteredRefElements = new FilteredElementCollector(doc)
+                    .OfCategory(BuiltInCategory.OST_DetailComponents)
+                    .WhereElementIsNotElementType()
+                    .ToElements()
+                    .Where(x => x.LookupParameter("Family").AsValueString().Contains("E_DI_OL_") && x.LookupParameter("EqConId").AsString() == null && x.LookupParameter("Panel Name - Detail") != null)// || x.LookupParameter("EqConId").AsString() == "")
+                    .ToList();
+
+                if (!filteredRefElements.Any())
+                {
+                    TaskDialog.Show("No Detail Items to Reference",
+                        "There are no available Detail Items to assign to any equipment. The tool will now cancel.");
+
+                    return Result.Cancelled;
+                }
+
+                foreach (Element di in filteredRefElements)
+                {
+                    string input = di.LookupParameter("Panel Name - Detail").AsString() 
+                        + ", " 
+                        + di.LookupParameter("Family").AsValueString() 
+                        + ": " 
+                        + di.LookupParameter("Type").AsValueString();
+
+                    formNameInfo.Add(input);
+                }
+
+                List<string> detailItemTypes = new List<string>()
+                {
+                    "Branch Panelboard",
+                    "Transformer-Dry Type",
+                    "Utility Transformer",
+                    "Automatic Transfer Switch",
+                    "Distribution Panelboard",
+                    "Switchboard"
+                };
+
+                foreach (string item in detailItemTypes)
+                {
+                    formTypeInfo.Add(item);
+                }
+            }
+            else if (activeView.ViewType == ViewType.DraftingView)
+            {
+                refCategory = "Electrical Equipment";
+
+                filteredRefElements = new FilteredElementCollector(doc)
+                    .OfCategory(BuiltInCategory.OST_ElectricalEquipment)
+                    .WhereElementIsNotElementType()
+                    .ToElements()
+                    .Where(x => x.LookupParameter("Panel Name").AsString() != "DO NOT USE" && x.LookupParameter("EqConId").AsString() == null || x.LookupParameter("EqConId").AsString() == "")
+                    .ToList();
+
+                if (!filteredRefElements.Any())
+                {
+                    TaskDialog.Show("No Equipment Families to Reference", 
+                        "There are no available Electrical Equipment families to assign to any Detail Item. The tool will now cancel.");
+
+                    return Result.Cancelled;
+                }
+
+                foreach (Element eq in filteredRefElements)
+                {
+                    string input = eq.LookupParameter("Panel Name").AsString() 
+                        + ", " 
+                        + eq.LookupParameter("Family").AsValueString() 
+                        + ": " 
+                        + eq.LookupParameter("Type").AsValueString();
+
+                    formNameInfo.Add(input);
+                }
+
+                List<string> equipTypes = new List<string>()
+                {
+                    "Panelboard",
+                    "XFMR",
+                    "Bus",
+                    "ATS"
+                };
+
+                foreach (string item in equipTypes)
+                {
+                    formTypeInfo.Add(item);
+                }
+            }
+            else
             {
                 TaskDialog.Show("Incorrect Active View", "Change your active view to a Floor Plan and then rerun the tool.");
                 return Result.Cancelled;
             }
 
-            //check active Workset for E_Panels
-            Workset panelWorkset = new FilteredWorksetCollector(doc)
-                .OfKind(WorksetKind.UserWorkset)
-                .Where(x => x.Name == "E_Panels")
-                .ToList()
-                .First();
-
-            WorksetTable worksetTable = doc.GetWorksetTable();
-
-            if (worksetTable.GetActiveWorksetId() != panelWorkset.Id)
-            {
-                worksetTable.SetActiveWorksetId(panelWorkset.Id);
-            }
-
-            List<Element> filteredDetItems = new FilteredElementCollector(doc)
-                .OfCategory(BuiltInCategory.OST_DetailComponents)
-                .WhereElementIsNotElementType()
-                .ToElements()
-                .Where(x => x.LookupParameter("Family").AsValueString().Contains("E_DI_OL_") && x.LookupParameter("EqConId").AsString() == null && x.LookupParameter("Panel Name - Detail") != null)// || x.LookupParameter("EqConId").AsString() == "")
-                .ToList();
-
-            if (!filteredDetItems.Any())
-            {
-                TaskDialog.Show("No Detail Items to Reference",
-                    "There are no available Detail Items to assign to any equipment. The tool will now cancel.");
-
-                return Result.Cancelled;
-            }
-
-            List<string> detInfo = new List<string>();
-
-            foreach (Element detItem in filteredDetItems)
-            {
-                string detName = detItem.LookupParameter("Panel Name - Detail").AsString();
-                string famName = detItem.LookupParameter("Family").AsValueString();
-                string output = detName + ",  " + famName;
-
-                detInfo.Add(output);
-            }
-
-            OLSelectDetItemForm form = new OLSelectDetItemForm(detInfo);
+            OLSelectDetItemForm form = new OLSelectDetItemForm(formNameInfo, formTypeInfo);
             form.ShowDialog();
 
             //cancel tool if user canceled form
@@ -98,56 +164,70 @@ namespace OneLinePlaceEquip
                 return Result.Cancelled;
             }
 
+            //determine FamilySymbol placement settings based on activeView
             string compName = form.cboxDetailItemList.SelectedItem.ToString().Split(',')[0];
-            //string compType = form.cboxDetailItemList.SelectedItem.ToString().Split(' ')[1];
+            List<FamilySymbol> famSymbols = null;
 
-            Element selectedDetailItem = (new FilteredElementCollector(doc)
+            PromptForFamilyInstancePlacementOptions famInstOptions = new PromptForFamilyInstancePlacementOptions();
+            DetailItemInfo detItemInfo;
+            ElecEquipInfo equipInfo;
+
+            if (refCategory == "Detail Item")
+            {
+                Element selectedDetailItem = (new FilteredElementCollector(doc)
                 .OfCategory(BuiltInCategory.OST_DetailComponents)
                 .WhereElementIsNotElementType()
                 .ToElements()
                 .Where(x => x.LookupParameter("Panel Name - Detail") != null && x.LookupParameter("Panel Name - Detail").AsString() == compName))
                 .First();
 
-            DetailItemInfo detailItemInfo = new DetailItemInfo(selectedDetailItem);
+                detItemInfo = new DetailItemInfo(selectedDetailItem);
 
-            PromptForFamilyInstancePlacementOptions famInstOptions = new PromptForFamilyInstancePlacementOptions();
+                //compare family name to available Revit family types
+                string compType = form.cboxFamilyTypeSelection.SelectedItem.ToString();
 
-            List<FamilySymbol> famSymbols = null;
+                BuiltInCategory bicEq = BuiltInCategory.OST_ElectricalEquipment;
 
-            //compare family name to available Revit family types
-            string compType = form.cboxFamilyTypeSelection.SelectedItem.ToString();
-
-            BuiltInCategory bicEq = BuiltInCategory.OST_ElectricalEquipment;
-
-            if (compType == "Branch Panelboard" || compType == "Distribution Panelboard" || compType == "Switchboard")
-            {
-                string compVolt = (detailItemInfo.Voltage / 10.763910416709711538461538461538).ToString();
-
-                if (compVolt == "0")
+                if (compType == "Branch Panelboard" || compType == "Distribution Panelboard" || compType == "Switchboard")
                 {
-                    compVolt = "208";
+                    string compVolt = (detItemInfo.Voltage / 10.763910416709711538461538461538).ToString();
+
+                    if (compVolt == "0")
+                    {
+                        compVolt = "208";
+                    }
+
+                    famSymbols = new FilteredElementCollector(doc)
+                        .OfCategory(bicEq)
+                        .WhereElementIsElementType()
+                        .Cast<FamilySymbol>()
+                        .Where(x => x.FamilyName != null && x.FamilyName.Contains($"{compType}_{compVolt}"))
+                        .ToList();
+
+                    if (compType != "Switchboard")
+                    {
+                        famInstOptions.FaceBasedPlacementType = FaceBasedPlacementType.PlaceOnVerticalFace;
+                    }
                 }
-
-                famSymbols = new FilteredElementCollector(doc)
-                    .OfCategory(bicEq)
-                    .WhereElementIsElementType()
-                    .Cast<FamilySymbol>()
-                    .Where(x => x.FamilyName != null && x.FamilyName.Contains($"{compType}_{compVolt}"))
-                    .ToList();
-
-                if (compType != "Switchboard")
+                else
                 {
-                    famInstOptions.FaceBasedPlacementType = FaceBasedPlacementType.PlaceOnVerticalFace;
+                    famSymbols = new FilteredElementCollector(doc)
+                        .OfCategory(bicEq)
+                        .WhereElementIsElementType()
+                        .Cast<FamilySymbol>()
+                        .Where(x => x.FamilyName != null && x.FamilyName.Contains(compType))
+                        .ToList();
                 }
             }
             else
             {
-                famSymbols = new FilteredElementCollector(doc)
-                    .OfCategory(bicEq)
-                    .WhereElementIsElementType()
-                    .Cast<FamilySymbol>()
-                    .Where(x => x.FamilyName != null && x.FamilyName.Contains(compType))
-                    .ToList();
+                Element selectedElecEquip = new FilteredElementCollector(doc)
+                    .OfCategory(BuiltInCategory.OST_ElectricalEquipment)
+                    .WhereElementIsNotElementType()
+                    .ToElements().Where(x => x.LookupParameter("Panel Name") != null && x.LookupParameter("Panel Name").AsString() == compName)
+                    .First();
+
+                famInstOptions.FaceBasedPlacementType = FaceBasedPlacementType.Default;
             }
 
             //cancel if no FamilySymbol can be found
@@ -206,13 +286,12 @@ namespace OneLinePlaceEquip
 
                     //TaskDialog.Show("Debug Message", $"Element Ids created:\n{outputString}Element in use:\n{placedEquip.Id}");
                     
-                    ElecEquipInfo equipInfo = new ElecEquipInfo(placedEquip);
-                    equipInfo.Name = detailItemInfo.Name;
+                    equipInfo.Name = detItemInfo.Name;
                     //circuit?
 
                     //update EqConId values of selected elements
                     OLEqConIdUpdateClass updateId = new OLEqConIdUpdateClass();
-                    updateId.OneLineEqConIdValueUpdate(equipInfo, detailItemInfo, doc);
+                    updateId.OneLineEqConIdValueUpdate(equipInfo, detItemInfo, doc);
 
                     //remove extra families created by user duing PromptForFamilyInstancePlacement
                     if (_added_element_ids.Count() > 2)

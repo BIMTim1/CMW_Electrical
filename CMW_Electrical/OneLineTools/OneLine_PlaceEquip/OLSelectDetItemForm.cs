@@ -24,26 +24,15 @@ namespace CMW_Electrical.OneLineTools.OneLine_PlaceEquip
             int nWidthEllipse, 
             int nHeightEllipse
             );
-        public OLSelectDetItemForm(List<string> detailItemNames)
+        public OLSelectDetItemForm(List<string> itemNames, List<string> typeNames)
         {
             InitializeComponent();
 
             Region = System.Drawing.Region.FromHrgn(CreateRoundRectRgn(0, 0, Width, Height, 20, 20));
 
-            cboxDetailItemList.Items.AddRange(detailItemNames.ToArray());
+            cboxDetailItemList.Items.AddRange(itemNames.ToArray());
 
-            //create objects for cbox
-            List<string> equipTypeNames = new List<string>()
-            {
-                "Branch Panelboard",
-                "Transformer-Dry Type",
-                "Utility Transformer",
-                "Automatic Transfer Switch",
-                "Distribution Panelboard",
-                "Switchboard"
-            };
-
-            cboxFamilyTypeSelection.Items.AddRange(equipTypeNames.ToArray());
+            cboxFamilyTypeSelection.Items.AddRange(typeNames.ToArray());
             cboxFamilyTypeSelection.SelectedIndex = 0;
         }
 
@@ -58,25 +47,51 @@ namespace CMW_Electrical.OneLineTools.OneLine_PlaceEquip
 
             string compStr = cboxDetailItemList.SelectedItem.ToString();//.Split(' ')[1];
 
-            if (compStr.Contains("Panelboard"))
+            if (compStr.Contains("E_DI_OL_"))
             {
-                cboxFamilyTypeSelection.SelectedIndex = 0;
-                cboxFamilyTypeSelection.Enabled = false;
-            }
-            else if (compStr.Contains("Bus"))
-            {
-                cboxFamilyTypeSelection.SelectedIndex = 4;
-                cboxFamilyTypeSelection.Enabled = true;
-            }
-            else if (compStr.Contains("XFMR"))
-            {
-                cboxFamilyTypeSelection.SelectedIndex = 1;
-                cboxFamilyTypeSelection.Enabled = true;
+                if (compStr.Contains("Panelboard"))
+                {
+                    cboxFamilyTypeSelection.SelectedIndex = 0;
+                    cboxFamilyTypeSelection.Enabled = false;
+                }
+                else if (compStr.Contains("Bus"))
+                {
+                    cboxFamilyTypeSelection.SelectedIndex = 4;
+                    cboxFamilyTypeSelection.Enabled = true;
+                }
+                else if (compStr.Contains("XFMR"))
+                {
+                    cboxFamilyTypeSelection.SelectedIndex = 1;
+                    cboxFamilyTypeSelection.Enabled = true;
+                }
+                else
+                {
+                    cboxFamilyTypeSelection.SelectedIndex = 3;
+                    cboxFamilyTypeSelection.Enabled = false;
+                }
             }
             else
             {
-                cboxFamilyTypeSelection.SelectedIndex = 3;
-                cboxFamilyTypeSelection.Enabled = false;
+                if (compStr.Contains("Branch"))
+                {
+                    cboxFamilyTypeSelection.SelectedIndex = 0;
+                    cboxFamilyTypeSelection.Enabled = false;
+                }
+                else if (compStr.Contains("Transformer"))
+                {
+                    cboxFamilyTypeSelection.SelectedIndex = 1;
+                    cboxFamilyTypeSelection.Enabled = true;
+                }
+                else if (compStr.Contains("Automatic"))
+                {
+                    cboxFamilyTypeSelection.SelectedIndex = 3;
+                    cboxFamilyTypeSelection.Enabled = false;
+                }
+                else
+                {
+                    cboxFamilyTypeSelection.SelectedIndex = 2;
+                    cboxFamilyTypeSelection.Enabled = false;
+                }
             }
         }
     }
