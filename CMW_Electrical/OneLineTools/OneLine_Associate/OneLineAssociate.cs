@@ -13,6 +13,7 @@ using System.Windows.Input;
 using Autodesk.Revit.UI.Selection;
 using CMW_Electrical;
 using OneLineTools;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.ListView;
 
 namespace OneLine_Associate
 {
@@ -44,17 +45,46 @@ namespace OneLine_Associate
             //collect names in array to add to selection form
             List<string> formInfo = new List<string>();
             List<Element> allRefElements = null;
+            BuiltInCategory selBic;
+            string paramRef = "";
 
-            if (activeView.ViewType != ViewType.FloorPlan || activeView.ViewType != ViewType.DraftingView) //cancel tool if activeView = incorrect ViewType
+            ISelectionFilter selFilter;
+            string selectionStatus = "";
+
+            if (activeView.ViewType == ViewType.FloorPlan)
             {
-                TaskDialog.Show("Incorrect view type", "Change the active view to a Floor Plan or Drafting View then rerun the tool.");
-                return Result.Cancelled;
-            }
-            else if (activeView.ViewType == ViewType.FloorPlan)
-            {
+                selBic = BuiltInCategory.OST_DetailComponents;
+
                 //collect all Electrical Equipment families in document
                 allRefElements = new FilteredElementCollector(doc)
-                    .OfCategory(BuiltInCategory.OST_ElectricalEquipment)
+                    .OfCategory(selBic)
+                    .OfClass(typeof(FamilyInstance))
+                    .ToElements()
+                    .Where(x => x.LookupParameter("EqConId").AsString() == null && x.LookupParameter("Panel Name - Detail") != null)
+                    .ToList();
+
+                foreach (FamilyInstance di in allRefElements)
+                {
+                    string input = di.LookupParameter("Panel Name - Detail").AsString()
+                        + ", "
+                        + di.LookupParameter("Family").AsValueString()
+                        + ": "
+                        + di.LookupParameter("Type").AsValueString();
+
+                    formInfo.Add(input);
+                }
+
+                paramRef = "Panel Name - Detail";
+                selFilter = new ElecEquipSelectionFilter();
+                selectionStatus = "Select a Schematic Detail Item to reference.";
+            }
+            else if(activeView.ViewType == ViewType.DraftingView)
+            {
+                selBic = BuiltInCategory.OST_ElectricalEquipment;
+
+                //collect all Detail Item families in document
+                allRefElements = new FilteredElementCollector(doc)
+                    .OfCategory(selBic)
                     .OfClass(typeof(FamilyInstance))
                     .ToElements()
                     .Where(x => x.LookupParameter("EqConId").AsString() == null)
@@ -70,27 +100,17 @@ namespace OneLine_Associate
 
                     formInfo.Add(input);
                 }
+
+                paramRef = "Panel Name";
+                selFilter = new DetailItemSelectionFilter();
+                selectionStatus = "Select an Electrical Equipment instance to reference";
             }
-            else if(activeView.ViewType == ViewType.DraftingView)
+            else //cancel tool if activeView is not a FloorPlan or DraftingView
             {
-                //collect all Detail Item families in document
-                allRefElements = new FilteredElementCollector(doc)
-                    .OfCategory(BuiltInCategory.OST_DetailComponents)
-                    .OfClass(typeof(FamilyInstance))
-                    .ToElements()
-                    .Where(x => x.LookupParameter("EqConId") == null && x.LookupParameter("Panel Name - Detail") != null)
-                    .ToList();
+                TaskDialog.Show("Incorrect view type", 
+                    "Change the active view to a Floor Plan or Drafting View then rerun the tool.");
 
-                foreach (FamilyInstance di in allRefElements)
-                {
-                    string input = di.LookupParameter("Panel Name - Detail").AsString() 
-                        + ", " 
-                        + di.LookupParameter("Family Name").AsString() 
-                        + ": " 
-                        + di.LookupParameter("Type Name").AsString();
-
-                    formInfo.Add(input);
-                }
+                return Result.Cancelled;
             }
 
             //cancel tool if not items can be found
@@ -107,9 +127,8 @@ namespace OneLine_Associate
             try
             {
                 //prompt user to select DetailComponent to use for association
-                //ISelectionFilter selFilter = new DetailItemSelectionFilter();
-                //userSelection = uidoc.Selection.PickObject(ObjectType.Element, selFilter, "Select a Schematic Detail Item to Reference.");
-                userSelection = uidoc.Selection.PickObject(ObjectType.Element, "Select a Schematic Detail Item to Reference."); //debug only
+                userSelection = uidoc.Selection.PickObject(ObjectType.Element, selFilter, selectionStatus);
+                //userSelection = uidoc.Selection.PickObject(ObjectType.Element, selectionStatus); //debug only
             }
             catch (Autodesk.Revit.Exceptions.OperationCanceledException ex)
             {
@@ -126,27 +145,47 @@ namespace OneLine_Associate
                 return Result.Cancelled;
             }
 
-            //collect Electrical Equipment selected by user
-            ElecEquipInfo elecEquipInfo = 
-                new ElecEquipInfo( 
-                    (from eq 
-                     in allElecEquip 
-                     where form.cBoxEquipSelection.SelectedItem.ToString().Contains(eq.LookupParameter("Panel Name").AsString()) 
-                     select eq)
-                     .First());
-
-            DetailItemInfo detItemInfo = new DetailItemInfo(doc.GetElement(userSelection));
-
             using (Transaction trac = new Transaction(doc))
             {
                 try
                 {
                     trac.Start("Associate Electrical Equipment and Schematic Component");
 
+                    ElecEquipInfo elecEquipInfo;
+                    DetailItemInfo detItemInfo;
+
+                    if (paramRef == "Panel Name")
+                    {
+                        //collect Electrical Equipment selected by user
+                        elecEquipInfo =
+                            new ElecEquipInfo(
+                                (from eq
+                                 in allRefElements
+                                 where form.cBoxEquipSelection.SelectedItem.ToString().Contains(eq.LookupParameter(paramRef).AsString())
+                                 select eq)
+                                 .First());
+
+                        detItemInfo = new DetailItemInfo(doc.GetElement(userSelection));
+
+                        detItemInfo.Name = elecEquipInfo.Name;
+                    }
+                    else
+                    {
+                        //collect Detail Item selected by user
+                        detItemInfo = new DetailItemInfo(
+                            (from di 
+                             in allRefElements 
+                             where form.cBoxEquipSelection.SelectedItem.ToString().Contains(di.LookupParameter(paramRef).AsString()) 
+                             select di)
+                             .First());
+
+                        elecEquipInfo = new ElecEquipInfo(doc.GetElement(userSelection));
+
+                        elecEquipInfo.Name = detItemInfo.Name;
+                    }
+
                     OLEqConIdUpdateClass updateEqConId = new OLEqConIdUpdateClass();
                     updateEqConId.OneLineEqConIdValueUpdate(elecEquipInfo, detItemInfo, doc);
-
-                    detItemInfo.Name = elecEquipInfo.Name;
 
                     trac.Commit();
 
@@ -166,6 +205,22 @@ namespace OneLine_Associate
             public bool AllowElement(Element element)
             {
                 if (element.Category.Name == "Detail Items")
+                {
+                    return true;
+                }
+                return false;
+            }
+
+            public bool AllowReference(Reference refer, XYZ point)
+            {
+                return false;
+            }
+        }
+        public class ElecEquipSelectionFilter : ISelectionFilter
+        {
+            public bool AllowElement(Element element)
+            {
+                if (element.Category.Name == "Electrical Equipment")
                 {
                     return true;
                 }
