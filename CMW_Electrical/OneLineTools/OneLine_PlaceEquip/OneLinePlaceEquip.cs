@@ -21,6 +21,10 @@ namespace OneLinePlaceEquip
     public class OneLinePlaceEquip : IExternalCommand
     {
         List<ElementId> _added_element_ids = new List<ElementId>();
+
+        readonly BuiltInParameter bipFamily = BuiltInParameter.ELEM_FAMILY_PARAM;
+        readonly BuiltInParameter bipType = BuiltInParameter.ELEM_TYPE_PARAM;
+        readonly BuiltInParameter bipEquipName = BuiltInParameter.RBS_ELEC_PANEL_NAME;
         public Result Execute(ExternalCommandData commandData, ref string errorReport, ElementSet elementSet)
         {
             //define background Revit information to reference
@@ -69,7 +73,7 @@ namespace OneLinePlaceEquip
                     .OfCategory(BuiltInCategory.OST_DetailComponents)
                     .WhereElementIsNotElementType()
                     .ToElements()
-                    .Where(x => x.LookupParameter("Family").AsValueString().Contains("E_DI_OL_") && x.LookupParameter("EqConId").AsString() == null && x.LookupParameter("Panel Name - Detail") != null)// || x.LookupParameter("EqConId").AsString() == "")
+                    .Where(x => x.get_Parameter(bipFamily).AsValueString().Contains("E_DI_OL_") && x.LookupParameter("EqConId").AsString() == null && x.LookupParameter("Panel Name - Detail") != null)// || x.LookupParameter("EqConId").AsString() == "")
                     .ToList();
 
                 if (!filteredRefElements.Any())
@@ -84,9 +88,9 @@ namespace OneLinePlaceEquip
                 {
                     string input = di.LookupParameter("Panel Name - Detail").AsString() 
                         + ", " 
-                        + di.LookupParameter("Family").AsValueString() 
+                        + di.get_Parameter(bipFamily).AsValueString() 
                         + ": " 
-                        + di.LookupParameter("Type").AsValueString();
+                        + di.get_Parameter(bipType).AsValueString();
 
                     formNameInfo.Add(input);
                 }
@@ -114,7 +118,7 @@ namespace OneLinePlaceEquip
                     .OfCategory(BuiltInCategory.OST_ElectricalEquipment)
                     .WhereElementIsNotElementType()
                     .ToElements()
-                    .Where(x => x.LookupParameter("Panel Name").AsString() != "DO NOT USE" && x.LookupParameter("EqConId").AsString() == null || x.LookupParameter("EqConId").AsString() == "")
+                    .Where(x => x.get_Parameter(BuiltInParameter.RBS_ELEC_PANEL_NAME).AsString() != "DO NOT USE" && x.LookupParameter("EqConId").AsString() == null || x.LookupParameter("EqConId").AsString() == "")
                     .ToList();
 
                 if (!filteredRefElements.Any())
@@ -127,21 +131,22 @@ namespace OneLinePlaceEquip
 
                 foreach (Element eq in filteredRefElements)
                 {
-                    string input = eq.LookupParameter("Panel Name").AsString() 
+                    string input = eq.get_Parameter(bipEquipName).AsString() 
                         + ", " 
-                        + eq.LookupParameter("Family").AsValueString() 
+                        + eq.get_Parameter(bipFamily).AsValueString() 
                         + ": " 
-                        + eq.LookupParameter("Type").AsValueString();
+                        + eq.get_Parameter(bipType).AsValueString();
 
                     formNameInfo.Add(input);
                 }
 
                 List<string> equipTypes = new List<string>()
                 {
+                    "ATS",
+                    "Bus",
                     "Panelboard",
                     "XFMR",
-                    "Bus",
-                    "ATS"
+                    "Utility XFMR"
                 };
 
                 foreach (string item in equipTypes)
@@ -164,27 +169,20 @@ namespace OneLinePlaceEquip
                 return Result.Cancelled;
             }
 
-            //determine FamilySymbol placement settings based on activeView
+            //determine FamilySymbol and placement settings based on activeView
             string compName = form.cboxDetailItemList.SelectedItem.ToString().Split(',')[0];
+            string compType = form.cboxFamilyTypeSelection.SelectedItem.ToString();
             List<FamilySymbol> famSymbols = null;
 
             PromptForFamilyInstancePlacementOptions famInstOptions = new PromptForFamilyInstancePlacementOptions();
-            DetailItemInfo detItemInfo;
-            ElecEquipInfo equipInfo;
+            DetailItemInfo detItemInfo = null;
+            ElecEquipInfo equipInfo = null;
 
-            if (refCategory == "Detail Item")
+            if (refCategory == "Detail Item") //settings for placing Electrical Equipment
             {
-                Element selectedDetailItem = (new FilteredElementCollector(doc)
-                .OfCategory(BuiltInCategory.OST_DetailComponents)
-                .WhereElementIsNotElementType()
-                .ToElements()
-                .Where(x => x.LookupParameter("Panel Name - Detail") != null && x.LookupParameter("Panel Name - Detail").AsString() == compName))
-                .First();
+                Element selectedDetailItem = filteredRefElements[form.cboxDetailItemList.SelectedIndex];
 
                 detItemInfo = new DetailItemInfo(selectedDetailItem);
-
-                //compare family name to available Revit family types
-                string compType = form.cboxFamilyTypeSelection.SelectedItem.ToString();
 
                 BuiltInCategory bicEq = BuiltInCategory.OST_ElectricalEquipment;
 
@@ -219,15 +217,22 @@ namespace OneLinePlaceEquip
                         .ToList();
                 }
             }
-            else
+            else //settings for placing a Detail Item
             {
-                Element selectedElecEquip = new FilteredElementCollector(doc)
-                    .OfCategory(BuiltInCategory.OST_ElectricalEquipment)
-                    .WhereElementIsNotElementType()
-                    .ToElements().Where(x => x.LookupParameter("Panel Name") != null && x.LookupParameter("Panel Name").AsString() == compName)
-                    .First();
+                Element selectedElecEquip = filteredRefElements[form.cboxDetailItemList.SelectedIndex];
+
+                equipInfo = new ElecEquipInfo(selectedElecEquip);
 
                 famInstOptions.FaceBasedPlacementType = FaceBasedPlacementType.Default;
+
+                BuiltInCategory bicDI = BuiltInCategory.OST_DetailComponents;
+
+                famSymbols = new FilteredElementCollector(doc)
+                        .OfCategory(bicDI).OfClass(typeof(FamilySymbol))
+                        .WhereElementIsElementType()
+                        .Cast<FamilySymbol>()
+                        .Where(x => x.FamilyName != null && x.FamilyName.Contains(compType))
+                        .ToList();
             }
 
             //cancel if no FamilySymbol can be found
@@ -259,12 +264,8 @@ namespace OneLinePlaceEquip
                     
                     return Result.Cancelled;
                 }
-                //else
-                //{
-                //    TaskDialog.Show("User canceled with elements placed", 
-                //        $"{_added_element_ids.Count()} elements have been added to the active document.");
-                //}
             }
+
             //important to unsubscribe from events as quickly as possible
             app.DocumentChanged -= new EventHandler<DocumentChangedEventArgs>(
                 OnDocumentChanged);
@@ -275,19 +276,20 @@ namespace OneLinePlaceEquip
                 {
                     trac.Start("CMWElec_Update Equipment from Detail Item");
 
-                    Element placedEquip = doc.GetElement(_added_element_ids.First());
-                    string outputString = "";
-
-                    //debug string
-                    //foreach (ElementId id in _added_element_ids)
-                    //{
-                    //    outputString = outputString + id.ToString() + "\n";
-                    //}
-
-                    //TaskDialog.Show("Debug Message", $"Element Ids created:\n{outputString}Element in use:\n{placedEquip.Id}");
+                    Element placedItem = doc.GetElement(_added_element_ids.First());
                     
-                    equipInfo.Name = detItemInfo.Name;
-                    //circuit?
+                    if (refCategory == "Detail Item")
+                    {
+                        equipInfo = new ElecEquipInfo(placedItem);
+
+                        equipInfo.Name = detItemInfo.Name;
+                    }
+                    else
+                    {
+                        detItemInfo = new DetailItemInfo(placedItem);
+
+                        detItemInfo.Name = equipInfo.Name;
+                    }
 
                     //update EqConId values of selected elements
                     OLEqConIdUpdateClass updateId = new OLEqConIdUpdateClass();
@@ -296,11 +298,13 @@ namespace OneLinePlaceEquip
                     //remove extra families created by user duing PromptForFamilyInstancePlacement
                     if (_added_element_ids.Count() > 2)
                     {
-                        foreach (ElementId eid in _added_element_ids)
+                        for (int i = 2; i < _added_element_ids.Count(); i++)
                         {
-                            if (eid.ToString() != _added_element_ids[0].ToString() && eid.ToString() != _added_element_ids[1].ToString())
+                            Element elem = doc.GetElement(_added_element_ids[i]);
+
+                            if (elem != null)
                             {
-                                doc.Delete(eid);
+                                doc.Delete(_added_element_ids[i]);
                             }
                         }
                     }

@@ -24,9 +24,11 @@ namespace CMW_Electrical
         public ElecEquipInfo(Element elecEquip)
         {
             EEFamInst = elecEquip as FamilyInstance;
-            EEName = EEFamInst.LookupParameter("Panel Name");
+            //EEName = EEFamInst.LookupParameter("Panel Name");
+            EEName = EEFamInst.get_Parameter(BuiltInParameter.RBS_ELEC_PANEL_NAME);
             EEEqConId = EEFamInst.LookupParameter("EqConId");
-            EEDistributionSystem = EEFamInst.LookupParameter("Distribution System");
+            //EEDistributionSystem = EEFamInst.LookupParameter("Distribution System");
+            EEDistributionSystem = EEFamInst.get_Parameter(BuiltInParameter.RBS_FAMILY_CONTENT_DISTRIBUTION_SYSTEM);
 
             Document document = elecEquip.Document;
 

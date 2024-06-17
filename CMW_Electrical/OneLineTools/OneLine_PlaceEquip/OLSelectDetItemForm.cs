@@ -74,22 +74,22 @@ namespace CMW_Electrical.OneLineTools.OneLine_PlaceEquip
             {
                 if (compStr.Contains("Branch"))
                 {
-                    cboxFamilyTypeSelection.SelectedIndex = 0;
+                    cboxFamilyTypeSelection.SelectedIndex = 2;
                     cboxFamilyTypeSelection.Enabled = false;
                 }
                 else if (compStr.Contains("Transformer"))
                 {
-                    cboxFamilyTypeSelection.SelectedIndex = 1;
-                    cboxFamilyTypeSelection.Enabled = true;
+                    cboxFamilyTypeSelection.SelectedIndex = 3;
+                    cboxFamilyTypeSelection.Enabled = false;
                 }
                 else if (compStr.Contains("Automatic"))
                 {
-                    cboxFamilyTypeSelection.SelectedIndex = 3;
+                    cboxFamilyTypeSelection.SelectedIndex = 0;
                     cboxFamilyTypeSelection.Enabled = false;
                 }
                 else
                 {
-                    cboxFamilyTypeSelection.SelectedIndex = 2;
+                    cboxFamilyTypeSelection.SelectedIndex = 1;
                     cboxFamilyTypeSelection.Enabled = false;
                 }
             }
