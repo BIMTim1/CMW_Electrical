@@ -22,8 +22,6 @@ namespace CreatePanelSchedules
             UIApplication uiapp = commandData.Application;
             Document doc = uiapp.ActiveUIDocument.Document;
 
-            int count = 0;
-
             //BuiltInCategory value for Electrical Equipment
             BuiltInCategory bic = BuiltInCategory.OST_ElectricalEquipment;
 
@@ -38,6 +36,8 @@ namespace CreatePanelSchedules
                 try
                 {
                     trac.Start("Create Panelboard Schedules");
+
+                    string output = "Panel Schedules have been created for the following Electrical Equipment instances:\n";
                     ///define failure handling options of Transaction
                     FailureHandlingOptions options = trac.GetFailureHandlingOptions();
                     options.SetFailuresPreprocessor(new CMWElec_FailureHandlers.CircuitBreakerWarningSwallower());
@@ -53,8 +53,8 @@ namespace CreatePanelSchedules
                             int cbNum = GetCircuitBreakersNum(eq, revNum);
 
                             //collect parameters of Electrical Equipment family to compare
-                            string famName = eq.LookupParameter("Family").AsValueString();
-                            string panName = eq.LookupParameter("Panel Name").AsString();
+                            string famName = eq.get_Parameter(BuiltInParameter.ELEM_FAMILY_PARAM).AsValueString();
+                            string panName = eq.get_Parameter(BuiltInParameter.RBS_ELEC_PANEL_NAME).AsString();
                             string panPhDemo = eq.LookupParameter("Phase Demolished").AsValueString();
                             string elecData = eq.LookupParameter("Electrical Data").AsString();
 
@@ -66,14 +66,13 @@ namespace CreatePanelSchedules
                             {
                                 //add IFailuresPreprocessor Interface to address issues with 2022 and earlier Distribution Equipment schedule creation
                                 PanelScheduleView.CreateInstanceView(doc, tempId, eq.Id);
-                                count += 1;
+                                output += panName + "\n";
                             }
                         }
                     }
 
                     trac.Commit();
-                    TaskDialog.Show("Created Panelboard Schedules",
-                        $"The tool has run successfully. {count} Panelboard Schedules were created");
+                    TaskDialog.Show("Created Panelboard Schedules", output);
                     return Result.Succeeded;
                 }
                 catch (Exception ex)
