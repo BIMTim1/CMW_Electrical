@@ -200,7 +200,10 @@ namespace OneLineConnectAndPlace
                             OLEqConIdUpdateClass updateEqConId = new OLEqConIdUpdateClass();
 
                             ElecEquipInfo elecEquip = new ElecEquipInfo(selectedEquip);
-                            DetailItemInfo detailItem = new DetailItemInfo(newFamInstance);
+                            DetailItemInfo detailItem = new DetailItemInfo(newFamInstance)
+                            {
+                                EqConIdConnectedSource = connectEquip.LookupParameter("EqConId").AsString() //set EqConId Connected Source
+                            };
 
                             updateEqConId.OneLineEqConIdValueUpdate(elecEquip, detailItem, doc);
 

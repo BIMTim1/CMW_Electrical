@@ -41,7 +41,7 @@ namespace OneLineUpdateDesignations
                 .OfCategory(BuiltInCategory.OST_DetailComponents)
                 .OfClass(typeof(FamilyInstance))
                 .ToElements()
-                .Where(x => x.LookupParameter("EqConId").AsString() != null)
+                .Where(x => x.LookupParameter("EqConId").AsString() != null && x.Name.Contains("E_DI_OL_"))
                 .ToList();
 
             List<Element> allElectricalEquip = new FilteredElementCollector(doc)
@@ -88,9 +88,9 @@ namespace OneLineUpdateDesignations
                         {
                             ElecEquipInfo equipInst = new ElecEquipInfo(equip);
 
-                            Element detailItem = (from di 
-                                                  in allDetailItems 
-                                                  where di.LookupParameter("EqConId").AsString() == equipInst.EqConId 
+                            Element detailItem = (from di
+                                                  in allDetailItems
+                                                  where di.LookupParameter("EqConId").AsString() == equipInst.EqConId
                                                   select di)
                                                   .First();
 
@@ -99,10 +99,6 @@ namespace OneLineUpdateDesignations
                                 DetailItemInfo detailItemInst = new DetailItemInfo(detailItem);
 
                                 //collect voltage information from equipment distribution system
-                                //int lineToLineVolt = Int32
-                                //    .Parse(doc.GetElement(equipInst.DistributionSystem)
-                                //    .LookupParameter("Line to Line Voltage")
-                                //    .AsValueString());
                                 ElecDistributionSystem elecDisSys = new ElecDistributionSystem(doc, equipInst.DistributionSystem);
 
                                 //double voltCalc = 10.763910416709711538461538461538;
@@ -133,22 +129,20 @@ namespace OneLineUpdateDesignations
                         {
                             DetailItemInfo detItemInst = new DetailItemInfo(detItem);
 
-                            Element eqElem = (from eq 
-                                              in allElectricalEquip 
-                                              where eq.LookupParameter("EqConId").AsString() == detItemInst.EqConId 
+                            Element eqElem = (from eq
+                                              in allElectricalEquip
+                                              where eq.LookupParameter("EqConId").AsString() == detItemInst.EqConId
                                               select eq)
                                               .First();
 
                             if (detItem != null)
                             {
-                                ElecEquipInfo equipInst = new ElecEquipInfo(eqElem);
-
-                                equipInst.Name = detItemInst.Name;
-
-                                if (equipInst.GetScheduleView != null)
+                                ElecEquipInfo equipInst = new ElecEquipInfo(eqElem)
                                 {
-                                    equipInst.GetScheduleView.LookupParameter("Panel Schedule Name").Set(detItemInst.Name);
-                                }
+                                    Name = detItemInst.Name
+                                };
+
+                                equipInst.GetScheduleView?.LookupParameter("Panel Schedule Name").Set(detItemInst.Name);
 
                                 updateCount++;
                             }

@@ -175,7 +175,10 @@ namespace OneLineDraw
                         deleteFirst = true;
                     }
 
-                    DetailItemInfo selItem = new DetailItemInfo(doc.GetElement(fedToDetailItem));
+                    DetailItemInfo selItem = new DetailItemInfo(doc.GetElement(fedToDetailItem))
+                    {
+                        EqConIdConnectedSource = sourceDetailItem.LookupParameter("EqConId").AsString()
+                    };
 
                     //set EqConId value of created Feeder Lines
                     foreach (FamilyInstance fam in newFamInstances)

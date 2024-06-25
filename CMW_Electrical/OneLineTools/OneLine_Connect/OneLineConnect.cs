@@ -83,7 +83,10 @@ namespace OneLineConnect
                 {
                     trac.Start("CMWElec-Power");
 
-                    DetailItemInfo detItemInfo = new DetailItemInfo(fedToDetailItem);
+                    DetailItemInfo detItemInfo = new DetailItemInfo(fedToDetailItem)
+                    {
+                        EqConIdConnectedSource = sourceDetailItem.LookupParameter("EqConId").AsString() //set value of EqConIdConnectedSource
+                    };
 
                     //verify if feeder lines already exist
                     List<Element> createdFeederLines = new FilteredElementCollector(doc)

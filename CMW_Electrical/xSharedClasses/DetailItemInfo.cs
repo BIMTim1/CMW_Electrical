@@ -18,6 +18,7 @@ namespace CMW_Electrical
         private readonly Parameter DIVoltage;
         private readonly Parameter DINumberOfPhases;
         private readonly Parameter DIPhasing;
+        private readonly Parameter DIEqConIdConnSource;
 
         public DetailItemInfo(Element detailItem)
         {
@@ -27,6 +28,7 @@ namespace CMW_Electrical
             DIVoltage = DIFamInst.LookupParameter("E_Voltage");
             DINumberOfPhases = DIFamInst.LookupParameter("Number of Phases - Detail");
             DIPhasing = DIFamInst.LookupParameter("New, Existing, Demo (1,2,3)");
+            DIEqConIdConnSource = DIFamInst.LookupParameter("EqConId Connection Source");
         }
 
         /// <summary>
@@ -56,6 +58,16 @@ namespace CMW_Electrical
         {
             get { return DIEqConId.AsString(); }
             set { DIEqConId.Set(value); }
+        }
+
+        /// <summary>
+        /// Get or set the EqConId Connected Source parameter of this DetailItem.
+        /// </summary>
+        /// <value>Return the EqConId Connected Source value of this DetailItem.</value>
+        public string EqConIdConnectedSource
+        {
+            get { return DIEqConIdConnSource.AsString(); }
+            set { DIEqConIdConnSource.Set(value); }
         }
 
         /// <summary>
