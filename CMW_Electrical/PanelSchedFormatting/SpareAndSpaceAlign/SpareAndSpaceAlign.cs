@@ -69,27 +69,33 @@ namespace PanelSchedFormatting
                                 //collect TableCellStyle information to update with FontHorizontalAlignment determined by Spare or Space
                                 TableCellStyle cellStyle = sectionData.GetTableCellStyle(rowNum, colNum);
 
-                                string loadName = panSchedView.GetCircuitByCell(rowNum, colNum).LookupParameter("Load Name").AsString();
+                                ElectricalSystem cellCircuit = panSchedView.GetCircuitByCell(rowNum, colNum);
 
-                                HorizontalAlignmentStyle horizAlignment = new HorizontalAlignmentStyle();
-
-                                if (isSpare && loadName == "SPARE")
+                                if (cellCircuit != null) //skip cells in schedule that are blank
                                 {
-                                    horizAlignment = HorizontalAlignmentStyle.Right;
-                                }
-                                else if (isSpace && loadName == "SPACE")
-                                {
-                                    horizAlignment = HorizontalAlignmentStyle.Center;
-                                }
-                                else
-                                {
-                                    horizAlignment = HorizontalAlignmentStyle.Left;
-                                }
+                                    string loadName = panSchedView.GetCircuitByCell(rowNum, colNum).LookupParameter("Load Name").AsString();
 
-                                cellStyle.FontHorizontalAlignment = horizAlignment;
+                                    //create HorizontalAlignmentStyle object
+                                    HorizontalAlignmentStyle horizAlignment = new HorizontalAlignmentStyle();
 
-                                sectionData.SetCellStyle(rowNum, colNum, cellStyle);
+                                    //compare load name of Spares and Spaces to skip customized options (e.g. existing circuits)
+                                    if (isSpare && loadName == "SPARE")
+                                    {
+                                        horizAlignment = HorizontalAlignmentStyle.Right;
+                                    }
+                                    else if (isSpace && loadName == "SPACE")
+                                    {
+                                        horizAlignment = HorizontalAlignmentStyle.Center;
+                                    }
+                                    else
+                                    {
+                                        horizAlignment = HorizontalAlignmentStyle.Left;
+                                    }
 
+                                    cellStyle.FontHorizontalAlignment = horizAlignment;
+
+                                    sectionData.SetCellStyle(rowNum, colNum, cellStyle);
+                                }
                             }
                         }
                     }

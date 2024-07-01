@@ -156,7 +156,7 @@ namespace CMW_Electrical
             PushButton equipUpdateBtn = equipPanel.AddItem(equipUpdateData) as PushButton;
             //equipUpdateBtn ToolTip Information
             equipUpdateBtn.ToolTip = "Update ALL Electrical Equipment Name Information";
-            equipUpdateBtn.LongDescription = "";
+            equipUpdateBtn.LongDescription = "This tool will update the associated Electrical Circuit Load Name and Panel Schedule Name parameter values from the Panel Name parameter.";
             //equipUpdateBtn.ToolTipImage = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/ToolTipImages/"));
             //equipUpdateBtn ContextualHelp Information
             //ContextualHelp equipUpdateHelp = new ContextualHelp(ContextualHelpType.URL, ""pack://application:,,,/CMW_Electrical;component/Resources/ToolTipImages/");
@@ -443,7 +443,7 @@ namespace CMW_Electrical
             {
                 LargeImage = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/PanelSchedFormat32x32.png")),
                 Image = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/PanelSchedFormat16x16.png")),
-                ToolTip = "Moves all circuits breakers up to be aligned to the top of the Panelboard Schedule and adds Spares to all remaining circuit breakers. NOTE: Per NEC, 20% of panelboards circuit breakers shall be Spares."
+                ToolTip = "Moves all circuit breakers up to be aligned to the top of the active Panelboard Schedule and adds Spares to all remaining circuit breakers. NOTE: Per NEC, 20% of panelboards circuit breakers shall be Spares."
             };
 
 
