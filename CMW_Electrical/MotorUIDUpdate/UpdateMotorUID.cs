@@ -104,11 +104,15 @@ namespace MotorUIDUpdate
                         UpdateMotorInfo(motor);
                     }
 
-                    trac.Commit();
+                    ///regenerate the model so that the updated UID appears in form
+                    doc.Regenerate();
 
                     //create form instance to display which elements were updated
                     MotorsUpdatedForm form = new MotorsUpdatedForm(motors);
                     form.ShowDialog();
+
+                    ///verify if Transaction needs to be committed after form
+                    trac.Commit();
 
                     return Result.Succeeded;
                 }

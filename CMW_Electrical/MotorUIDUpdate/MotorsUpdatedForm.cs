@@ -20,7 +20,14 @@ namespace CMW_Electrical.MotorUIDUpdate
             //set column information for ListView
             listViewMotors.View = System.Windows.Forms.View.Details;
             listViewMotors.OwnerDraw = true;
+            listViewMotors.HeaderStyle = ColumnHeaderStyle.Nonclickable;
 
+            //ColumnHeader columnHeaderID = new ColumnHeader()
+            //{
+            //    Text = "Element Id",
+            //    TextAlign = HorizontalAlignment.Left,
+            //    Width = -2
+            //};
             listViewMotors.Columns.Add("Element Id", -2, HorizontalAlignment.Left);
             listViewMotors.Columns.Add("UID", -2, HorizontalAlignment.Left);
             listViewMotors.Columns.Add("Type", -2, HorizontalAlignment.Center);
@@ -30,7 +37,8 @@ namespace CMW_Electrical.MotorUIDUpdate
             foreach (FamilyInstance motor in motors)
             {
                 var colItem = new ListViewItem(new[]
-                { motor.Id.ToString(), motor.LookupParameter("UID").AsString(),
+                { motor.Id.ToString(), 
+                    motor.LookupParameter("UID").AsString(),
                     motor.Name,
                     motor.LookupParameter("Level").AsValueString() }); ;
 
@@ -55,7 +63,15 @@ namespace CMW_Electrical.MotorUIDUpdate
 
         private void listView_DrawColumnHeader(object sender, DrawListViewColumnHeaderEventArgs e)
         {
-            e.DrawDefault = true;
+            StringFormat align = new StringFormat();
+            align.Alignment = StringAlignment.Center;
+            align.LineAlignment = StringAlignment.Center;
+
+            e.Graphics.FillRectangle(Brushes.LightBlue, e.Bounds);
+
+            System.Drawing.Rectangle rect = e.Bounds; rect.X += 2;
+            e.Graphics.DrawString(e.Header.Text, e.Font, Brushes.Black, rect, align);
+            //e.DrawDefault = true;
         }
     }
 }
