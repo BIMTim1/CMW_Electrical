@@ -236,7 +236,10 @@ namespace CMW_Electrical
             {
                 LargeImage = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/UpdateMotorUID32x32.png")),
                 Image = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/UpdateMotorUID16x16.png")),
-                ToolTip = "Update Motor UID values based on hosted Mechanical Equipment."
+                ToolTip = "Select Motors to update UID and associated Electrical Circuit Load Name from host Mechanical Equipment.",
+                LongDescription = "The tool will prompt the user to select E_EF_Motor elements in the active view to update the UID parameter " +
+                "and associated Electrical Circuit Load Name parameter of any E_EF_Motor family selected that is hosted to a Mechanical Equipment family. " +
+                "The tool will update E_EF_Motor values based on the Identity Mark parameter of the host Mechanical Equipment family."
             };
 
             //create motorPulldownButton
