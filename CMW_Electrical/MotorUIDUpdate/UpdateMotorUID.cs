@@ -8,6 +8,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Autodesk.Revit.DB.Electrical;
+using Autodesk.Revit.UI.Selection;
+using CMW_Electrical;
+using CMW_Electrical.MotorUIDUpdate;
 
 namespace MotorUIDUpdate
 {
@@ -24,43 +27,96 @@ namespace MotorUIDUpdate
             UIDocument uidoc = uiapp.ActiveUIDocument;
 
             BuiltInCategory bic = BuiltInCategory.OST_ElectricalFixtures;
+            View activeView = doc.ActiveView;
 
-            //collect E_EF_Motor FamilyInstances that are hosted to a same model MechanicalEquipment family
-            List<FamilyInstance> allMotors = 
-                new FilteredElementCollector(doc)
-                .OfCategory(bic)
-                .WhereElementIsNotElementType()
-                .Cast<FamilyInstance>()
-                .Where(x => x.Host.Category.Name == "Mechanical Equipment")
-                .ToList();
-
-            //cancel tool if no motors to update
-            if (allMotors.Count() == 0)
+            //cancel tool if incorrect ViewType
+            if (activeView.ViewType != ViewType.FloorPlan)
             {
-                TaskDialog.Show("No Motor Elements to Update", "The tool could not find any Motor elements to update.");
-                return Result.Failed;
+                TaskDialog.Show("Incorrect View Type", 
+                    "The current View must be a Floor Plan. Change your active view to a Floor Plan and then rerun the tool.");
+
+                return Result.Cancelled;
             }
 
+            //check for already selected elements
+            ICollection<ElementId> selectedIds = uidoc.Selection.GetElementIds();
+
+            //user selection if no elements preselected
+            if (selectedIds.Count() == 0)
+            {
+                try
+                {
+                    //ISelectionFilter selFilter = new CMWElecSelectionFilter.ElecFixtureSelectionFilter();
+                    ISelectionFilter selFilter = new MotorSelectionFilter();
+                    IList<Element> selectedElems = uidoc.Selection.PickElementsByRectangle(selFilter, "Select Motors by Rectangle to Update");
+
+                    //test if list is empty
+                    if (selectedElems.Count() == 0)
+                    {
+                        return Result.Cancelled;
+                        throw new NoElementSelectionException("No elements selected");
+                    }
+
+                    foreach (Element elem in selectedElems)
+                    {
+                        selectedIds.Add(elem.Id);
+                    }
+                }
+                catch (Autodesk.Revit.Exceptions.OperationCanceledException ex)
+                {
+                    return Result.Cancelled;
+                }
+                catch (Exception ex)
+                {
+                    TaskDialog.Show("An Error Occurred", 
+                        "An error occurred that has prevented the tool from running. Contact the BIM team for assistance.");
+
+                    return Result.Failed;
+                }
+            }
+
+            //wrap rest of code in Transaction
             using (Transaction trac = new Transaction(doc))
             {
                 try
                 {
                     trac.Start("Update Motor UIDs and Circuit Load Names");
 
-                    foreach (FamilyInstance motor in allMotors)
+                    //filter selected ElementIds
+                    List<FamilyInstance> motors = new FilteredElementCollector(doc, selectedIds)
+                        .OfCategory(bic)
+                        .ToElements()
+                        .Cast<FamilyInstance>()
+                        .Where(x => x.Host.Category.Name == "Mechanical Equipment")
+                        .ToList();
+
+                    //check if selected elements can be modified
+                    if (motors.Count() == 0)
+                    {
+                        TaskDialog.Show("No Motors to Update", 
+                            "The selected elements do not meet the update criteria. The tool will now cancel.");
+
+                        return Result.Cancelled;
+                    }
+
+                    foreach (FamilyInstance motor in motors)
                     {
                         UpdateMotorInfo(motor);
                     }
 
                     trac.Commit();
 
-                    TaskDialog.Show("Motors Updated", $"{allMotors.Count} Motors have been updated based on their hosted equipment Identity Mark value.");
+                    //create form instance to display which elements were updated
+                    MotorsUpdatedForm form = new MotorsUpdatedForm(motors);
+                    form.ShowDialog();
 
                     return Result.Succeeded;
                 }
                 catch (Exception ex)
                 {
-                    TaskDialog.Show("Operation Cancelled", "An error occurred. Contact the BIM Team for assistance.");
+                    TaskDialog.Show("An Error Occurred",
+                        "An error occurred that has prevented the tool from running. Contact the BIM team for assistance.");
+                    
                     return Result.Failed;
                 }
             }
@@ -102,6 +158,30 @@ namespace MotorUIDUpdate
 
             //update Motor UID parameter value
             mUID.Set(equipMark);
+        }
+
+        public class MotorSelectionFilter : ISelectionFilter
+        {
+            public bool AllowElement(Element element)
+            {
+                if (element.Category.Name == "Electrical Fixtures" && element.LookupParameter("Family").AsValueString() == "E_EF_Motor")
+                {
+                    return true;
+                }
+                return false;
+            }
+
+            public bool AllowReference(Reference refer, XYZ point)
+            {
+                return false;
+            }
+        }
+
+        public class NoElementSelectionException : Exception
+        {
+            public NoElementSelectionException(string message) : base(message)
+            {
+            }
         }
     }
 }

@@ -81,6 +81,12 @@
     <Compile Include="FailureHandlers\DisconnectCircuitFailure.cs" />
     <Compile Include="FlipFacingOrientation\FlipFacingOrientationBySelection.cs" />
     <Compile Include="MotorMOCPUpdate\UpdateMotorMOCP.cs" />
+    <Compile Include="MotorUIDUpdate\MotorsUpdatedForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="MotorUIDUpdate\MotorsUpdatedForm.Designer.cs">
+      <DependentUpon>MotorsUpdatedForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="MotorUIDUpdate\UpdateMotorUID.cs" />
     <Compile Include="MultiLegSwitchIdUpdate\MultiLegSwitchIdUpdate.cs" />
     <Compile Include="OneLineTools\OLEqConIdUpdate.cs" />
@@ -189,6 +195,9 @@
   <ItemGroup>
     <EmbeddedResource Include="AddinInformation\AddinInfoForm.resx">
       <DependentUpon>AddinInfoForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MotorUIDUpdate\MotorsUpdatedForm.resx">
+      <DependentUpon>MotorsUpdatedForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="OneLineTools\OneLine_ConnectAndPlace\SelectEquipmentToReferenceForm.resx">
       <DependentUpon>SelectEquipmentToReferenceForm.cs</DependentUpon>
