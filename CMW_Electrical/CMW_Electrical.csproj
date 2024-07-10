@@ -82,6 +82,12 @@
     </Compile>
     <Compile Include="DeviceSymbolsRotate\DeviceSymbolsRotate.cs" />
     <Compile Include="EquipNameUpdate\EquipNameUpdate.cs" />
+    <Compile Include="EquipNameUpdate\EquipNameUpdateForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="EquipNameUpdate\EquipNameUpdateForm.Designer.cs">
+      <DependentUpon>EquipNameUpdateForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="FailureHandlers\CircuitBreakerWarningSwallower.cs" />
     <Compile Include="FailureHandlers\CreateFailureAdvancedHandler.cs" />
     <Compile Include="FailureHandlers\DisconnectCircuitFailure.cs" />
@@ -241,6 +247,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="CreatePanelSchedules\PanelSchedCreatedForm.resx">
       <DependentUpon>PanelSchedCreatedForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="EquipNameUpdate\EquipNameUpdateForm.resx">
+      <DependentUpon>EquipNameUpdateForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="MotorUIDUpdate\MotorsUpdatedForm.resx">
       <DependentUpon>MotorsUpdatedForm.cs</DependentUpon>

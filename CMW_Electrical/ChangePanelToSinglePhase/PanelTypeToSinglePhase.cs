@@ -77,7 +77,6 @@ namespace ChangePanelTypeToSinglePhase
                 catch (OperationCanceledException ex)
                 {
                     errorReport = ex.Message;
-                    TaskDialog.Show("User Canceled Operation", "Tool operation canceled.");
                     return Result.Cancelled;
                 }
                 catch (Exception ex)

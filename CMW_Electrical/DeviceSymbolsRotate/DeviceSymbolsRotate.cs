@@ -56,18 +56,11 @@ namespace RotateDeviceSymbols
 
                     trac.Commit();
 
-                    SimpleDialog("Element Symbols Rotated", 
-                        "All Electrical Device Symbols have been rotated.");
-
                     return Result.Succeeded;
                 }
                 catch (Exception ex)
                 {
-                    trac.RollBack();
                     errorReport = ex.Message;
-
-                    SimpleDialog("Element Symbols Failed to Rotate",
-                        "An error occured while attempting to rotate Electrical Device Symbols. Contact the BIM Team for support.");
 
                     return Result.Failed;
                 }
@@ -90,17 +83,6 @@ namespace RotateDeviceSymbols
                 .ToList();
 
             return elems;
-        }
-
-        internal static void SimpleDialog(string header, string content)
-        {
-            TaskDialog mainDialog = new TaskDialog("CMW Elec Dialog")
-            {
-                TitleAutoPrefix = false,
-                MainInstruction = header,
-                MainContent = content
-            };
-            mainDialog.Show();
         }
     }
 }
