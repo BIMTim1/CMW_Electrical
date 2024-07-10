@@ -280,39 +280,43 @@ namespace CMW_Electrical
             //    "pack://application:,,,/CMW_Electrical;component/Resources/CorrectLightFixtures16x16.png"));
 
 
-            //------------create push button for oneLineConnectAndPlace------------
-            PushButtonData oneLineConnectAndPlaceData = 
-                new PushButtonData(
-                    "cmdOneLineConnectAndPlace", 
-                    "Connect and Place Component", 
-                    thisAssemblyPath, 
-                    "OneLineConnectAndPlace.OneLineConnectAndPlace")
-            {
-                    LargeImage = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/OLConnectAndPlace32x32.png")),
-                    Image = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/OLConnectAndPlace16x16.png")),
-                    ToolTip = "Select an existing One-Line item to connect to, and place the down-stream equipment."
-            };
+            ////------------create push button for oneLineConnectAndPlace------------
+            //PushButtonData oneLineConnectAndPlaceData = 
+            //    new PushButtonData(
+            //        "cmdOneLineConnectAndPlace", 
+            //        "Power/" + System.Environment.NewLine + " Create ", //"Connect and Place Component"
+            //        thisAssemblyPath, 
+            //        "OneLineConnectAndPlace.OneLineConnectAndPlace")
+            //{
+            //        LargeImage = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/OLConnectAndPlace32x32.png")),
+            //        Image = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/OLConnectAndPlace16x16.png")),
+            //        ToolTip = "Select an existing One-Line item to connect to, and place the down-stream equipment."
+            //};
 
 
             //------------create push button for oneLineConnect------------
             PushButtonData oneLineConnectData = 
                 new PushButtonData(
                     "cmdOneLineConnect", 
-                    "Connect Component", 
+                    "Power", //"Connect Component"
                     thisAssemblyPath, 
                     "OneLineConnect.OneLineConnect")
             {
                 LargeImage = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/OLConnect32x32.png")),
                 Image = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/OLConnect16x16.png")),
-                ToolTip = "Select existing One-Line items to be connected together."
+                ToolTip = "Select One-Line Detail Items to be connected together.",
+                LongDescription = "This tool will create feeder lines " +
+                "and a circuit breaker (if applicable) on the Active One-Line Schematic. " +
+                "If the selected Detail Items are associated to Electrical Equipment families in the model, " +
+                "then an Electrical Circuit will be created between the associated Electrical Equipment families."
             };
 
 
             //------------create push button for oneLineUpdatePanelInfo------------
-            PushButtonData oneLineUpdateDesignations = 
+            PushButtonData oneLineUpdateDesignationsData = 
                 new PushButtonData(
                     "cmdOneLineUpdateDesignations", 
-                    "Update Component or Panel Designation", 
+                    "Update", //"Update Component or Panel Designation"
                     thisAssemblyPath,
                     "OneLineUpdateDesignations.OneLineUpdateDesignations")
             {
@@ -326,7 +330,7 @@ namespace CMW_Electrical
             PushButtonData oneLinePlaceEquipData =
                 new PushButtonData(
                     "cmdOneLinePlaceEquip",
-                    "Place Equipment from One-Line",
+                    "Create", //"Place Equipment from One-Line"
                     thisAssemblyPath,
                     "OneLinePlaceEquip.OneLinePlaceEquip")
                 {
@@ -334,8 +338,89 @@ namespace CMW_Electrical
                     Image = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/OLPlaceEquip16x16.png")),
                     ToolTip = "Select a Detail Item from your One-Line and Place the Corresponding Equipment in the model from a selected Level view."
             };
-            oneLinePanel.AddStackedItems(oneLineConnectAndPlaceData, oneLineConnectData);
-            oneLinePanel.AddStackedItems(oneLineUpdateDesignations, oneLinePlaceEquipData);
+
+
+            PushButtonData oneLineAssociateData = 
+                new PushButtonData(
+                    "cmdOneLineAssociate", 
+                    "Associate", //"Associate Equipment + Detail Item"
+                    thisAssemblyPath, 
+                    "OneLine_Associate.OneLineAssociate")
+            {
+                LargeImage = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/OLAssociate32x32.png")),
+                Image = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/OLAssociate16x16.png")),
+                ToolTip = "Select an Electrical Equipment family from a list of Panel Names and associate to a selected Detail Item family in One-Line."
+            };
+
+
+            PushButtonData oneLineDrawData = new PushButtonData(
+                "cmdOneLineDraw", 
+                "Draw", //"Draw Feeder"
+                thisAssemblyPath, 
+                "OneLineDraw.OneLineDraw")
+            {
+                LargeImage = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/OLDraw32x32.png")),
+                Image = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/OLDraw16x16.png")),
+                ToolTip = "Create Detail Item Lines for Feeder Representation in OneLine Schematic views."
+            };
+
+
+            PushButtonData oneLineCopy = new PushButtonData(
+                "cmdOneLineCopy", 
+                "Copy", //"Copy Components"
+                thisAssemblyPath, 
+                "OneLineCopy.OneLineCopy")
+            {
+                LargeImage = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/OLCopy32x32.png")),
+                Image = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/OLCopy16x16.png")),
+                ToolTip = "Copy One Line Detail Components and assign Model Building Elements."
+            };
+
+
+            PushButtonData oneLineSelectData = new PushButtonData(
+                "cmdOneLineSelect", 
+                "Select", 
+                thisAssemblyPath, 
+                "OneLineSelect.OneLineSelect")
+            {
+                LargeImage = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/OLSelect32x32.png")),
+                Image = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/OLSelect16x16.png")),
+                ToolTip = "Select an Detail Item or Electrical Equipment family and select the associated component in a Floor Plan View or Drafting View."
+            };
+
+
+            PushButtonData oneLineHalftoneExistingData = 
+                new PushButtonData(
+                    "cmdOneLineHalftoneExisting", 
+                    "Halftone" + System.Environment.NewLine + " Existing ", 
+                    thisAssemblyPath,
+                    "OneLine_HalftoneExisting.OneLineHalftoneExisting")
+            {
+                LargeImage = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/OLHalftoneExisting32x32.png")),
+                Image = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/OlHalftoneExisting16x16.png")),
+                ToolTip = "Sets the Graphic Override for all Existing phased content in active Schematic Drafting View to be Halftone."
+            };
+            
+
+            PushButton oneLineAssociateBtn = oneLinePanel.AddItem(oneLineAssociateData) as PushButton;
+            PushButton oneLinePlaceEquipBtn = oneLinePanel.AddItem(oneLinePlaceEquipData) as PushButton;
+            //PushButton oneLineConnectAndPlaceBtn = oneLinePanel.AddItem(oneLineConnectAndPlaceData) as PushButton;
+            PushButton oneLineConnectBtn = oneLinePanel.AddItem(oneLineConnectData) as PushButton;
+
+            oneLinePanel.AddSeparator();
+
+            PushButton oneLineUpdateDesignationsBtn = oneLinePanel.AddItem(oneLineUpdateDesignationsData) as PushButton;
+
+            oneLinePanel.AddSeparator();
+
+            PushButton oneLineCopyBtn = oneLinePanel.AddItem(oneLineCopy) as PushButton;
+            PushButton oneLineDrawBtn = oneLinePanel.AddItem(oneLineDrawData) as PushButton;
+            PushButton oneLineSelectBtn = oneLinePanel.AddItem(oneLineSelectData) as PushButton;
+
+            oneLinePanel.AddSeparator();
+
+            PushButton oneLineHalftoneExistingBtn = oneLinePanel.AddItem(oneLineHalftoneExistingData) as PushButton;
+
 
 
             ////create pushbuttons for AlignTagTools

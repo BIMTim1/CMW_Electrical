@@ -16,8 +16,9 @@ namespace CMW_Electrical
         private readonly Parameter DIName;
         private readonly Parameter DIEqConId;
         private readonly Parameter DIVoltage;
-        private readonly Parameter DINumberOfPoles;
+        private readonly Parameter DINumberOfPhases;
         private readonly Parameter DIPhasing;
+        private readonly Parameter DIEqConIdConnSource;
 
         public DetailItemInfo(Element detailItem)
         {
@@ -25,8 +26,9 @@ namespace CMW_Electrical
             DIName = DIFamInst.LookupParameter("Panel Name - Detail");
             DIEqConId = DIFamInst.LookupParameter("EqConId");
             DIVoltage = DIFamInst.LookupParameter("E_Voltage");
-            DINumberOfPoles = DIFamInst.LookupParameter("E_Number of Poles");
+            DINumberOfPhases = DIFamInst.LookupParameter("Number of Phases - Detail");
             DIPhasing = DIFamInst.LookupParameter("New, Existing, Demo (1,2,3)");
+            DIEqConIdConnSource = DIFamInst.LookupParameter("EqConId Connection Source");
         }
 
         /// <summary>
@@ -59,6 +61,16 @@ namespace CMW_Electrical
         }
 
         /// <summary>
+        /// Get or set the EqConId Connected Source parameter of this DetailItem.
+        /// </summary>
+        /// <value>Return the EqConId Connected Source value of this DetailItem.</value>
+        public string EqConIdConnectedSource
+        {
+            get { return DIEqConIdConnSource.AsString(); }
+            set { DIEqConIdConnSource.Set(value); }
+        }
+
+        /// <summary>
         /// Get or set the E_Voltage parameter of this DetailItem.
         /// </summary>
         /// <value>Return the double value of the E_Voltage parameter of this DetailItem.</value>
@@ -74,10 +86,10 @@ namespace CMW_Electrical
         /// Get or set the E_Number of Poles parameter of this DetailItem.
         /// </summary>
         /// <value>Return the integer value of the E_Number of Poles parameter of this DetailItem.</value>
-        public int Poles
+        public int PhaseNum
         {
-            get { return DINumberOfPoles.AsInteger(); }
-            set { DINumberOfPoles.Set(value); }
+            get { return DINumberOfPhases.AsInteger(); }
+            set { DINumberOfPhases.Set(value); }
         }
 
         /// <summary>

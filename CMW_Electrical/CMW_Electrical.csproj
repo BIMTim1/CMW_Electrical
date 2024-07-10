@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -89,9 +89,35 @@
     </Compile>
     <Compile Include="MotorUIDUpdate\UpdateMotorUID.cs" />
     <Compile Include="MultiLegSwitchIdUpdate\MultiLegSwitchIdUpdate.cs" />
+    <Compile Include="OneLineTools\EqConIdCheck.cs" />
+    <Compile Include="OneLineTools\ExentsionMethods.cs" />
+    <Compile Include="OneLineTools\OneLine_PlaceEquip\OLSelectDetItemForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="OneLineTools\OneLine_PlaceEquip\OLSelectDetItemForm.Designer.cs">
+      <DependentUpon>OLSelectDetItemForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="OneLineTools\OneLine_Select\OneLineSelect.cs" />
+    <Compile Include="OneLineTools\OLCreateFeeder.cs" />
     <Compile Include="OneLineTools\OLEqConIdUpdate.cs" />
     <Compile Include="OneLineTools\OLUpdateInfo.cs" />
     <Compile Include="OneLineTools\JtWindowHandler.cs" />
+    <Compile Include="OneLineTools\OneLine_Associate\OneLineAssociateForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="OneLineTools\OneLine_Associate\OneLineAssociateForm.Designer.cs">
+      <DependentUpon>OneLineAssociateForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="OneLineTools\OneLine_Associate\OneLineAssociate.cs" />
+    <Compile Include="OneLineTools\OneLine_Copy\CopySelectionReferenceForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="OneLineTools\OneLine_Copy\CopySelectionReferenceForm.Designer.cs">
+      <DependentUpon>CopySelectionReferenceForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="OneLineTools\OneLine_Copy\OneLineCopy.cs" />
+    <Compile Include="OneLineTools\OneLine_Draw\OneLineDraw.cs" />
+    <Compile Include="OneLineTools\OneLine_HalftoneExisting\OneLineHalftoneExisting.cs" />
     <Compile Include="OneLineTools\OneLine_UpdateDesignations\dialogSelectUpdateMethod.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -121,6 +147,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="xSharedClasses\CreateEquipmentCircuit.cs" />
     <Compile Include="xSharedClasses\ElecDistributionSystem.cs" />
     <Compile Include="xSharedClasses\ElecEquipInfo.cs" />
     <Compile Include="xSharedClasses\DetailItemInfo.cs" />
@@ -165,6 +192,16 @@
     <Resource Include="Resources\OLUpdatePanelName32x32.png" />
     <Resource Include="Resources\OLPlaceEquip16x16.png" />
     <Resource Include="Resources\OLPlaceEquip32x32.png" />
+    <Resource Include="Resources\OLAssociate16x16.png" />
+    <Resource Include="Resources\OLAssociate32x32.png" />
+    <Resource Include="Resources\OLHalftoneExisting16x16.png" />
+    <Resource Include="Resources\OLHalftoneExisting32x32.png" />
+    <Resource Include="Resources\OLDraw16x16.png" />
+    <Resource Include="Resources\OLDraw32x32.png" />
+    <Resource Include="Resources\OLCopy16x16.png" />
+    <Resource Include="Resources\OLCopy32x32.png" />
+    <Resource Include="Resources\OLSelect16x16.png" />
+    <Resource Include="Resources\OLSelect32x32.png" />
     <Resource Include="Resources\tagAlignBottom16x16.png" />
     <Resource Include="Resources\tagAlignBottom32x32.png" />
     <Resource Include="Resources\tagAlignBottomCenter16x16.png" />
@@ -196,11 +233,20 @@
     <EmbeddedResource Include="AddinInformation\AddinInfoForm.resx">
       <DependentUpon>AddinInfoForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="MotorUIDUpdate\MotorsUpdatedForm.resx">
-      <DependentUpon>MotorsUpdatedForm.cs</DependentUpon>
-    </EmbeddedResource>
+	<EmbeddedResource Include="MotorUIDUpdate\MotorsUpdatedForm.resx">
+		<DependentUpon>MotorsUpdatedForm.cs</DependentUpon>
+	</EmbeddedResource>
+	<EmbeddedResource Include="OneLineTools\OneLine_Associate\OneLineAssociateForm.resx">
+		<DependentUpon>OneLineAssociateForm.cs</DependentUpon>
+	</EmbeddedResource>
     <EmbeddedResource Include="OneLineTools\OneLine_ConnectAndPlace\SelectEquipmentToReferenceForm.resx">
       <DependentUpon>SelectEquipmentToReferenceForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="OneLineTools\OneLine_Copy\CopySelectionReferenceForm.resx">
+      <DependentUpon>CopySelectionReferenceForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="OneLineTools\OneLine_PlaceEquip\OLSelectDetItemForm.resx">
+      <DependentUpon>OLSelectDetItemForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="OneLineTools\OneLine_UpdateDesignations\dialogSelectUpdateMethod.resx">
       <DependentUpon>dialogSelectUpdateMethod.cs</DependentUpon>

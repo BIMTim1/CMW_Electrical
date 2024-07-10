@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -66,12 +66,14 @@ namespace CreatePanelSchedules
                             {
                                 //add IFailuresPreprocessor Interface to address issues with 2022 and earlier Distribution Equipment schedule creation
                                 PanelScheduleView.CreateInstanceView(doc, tempId, eq.Id);
+
                                 output += panName + "\n";
                             }
                         }
                     }
 
                     trac.Commit();
+
                     TaskDialog.Show("Created Panelboard Schedules", output);
                     return Result.Succeeded;
                 }
