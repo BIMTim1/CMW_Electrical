@@ -1,15 +1,16 @@
 ﻿using Autodesk.Revit.DB;
+using CMW_Electrical;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace OLEqConIdUpdate
+namespace OneLineTools
 {
-    public class OLEqConIdUpdateClass
+    internal class OLEqConIdUpdateClass
     {
-        public void OneLineEqConIdValueUpdate(FamilyInstance detailItem, FamilyInstance panel, Document document)
+        public void OneLineEqConIdValueUpdate(ElecEquipInfo elecEquipClass, DetailItemInfo detailItemClass, Document document)
         {
             //collect Project Information parameter to evaluate number of already connected OneLine stuff
             Parameter EqConIdParam = document.ProjectInformation.LookupParameter("EqConId Current Value");
@@ -22,9 +23,42 @@ namespace OLEqConIdUpdate
             //update DetailItem and Electrical Equipment FamilyInstances
             string famInstVal = "EqId" + nextEqConIdVal.ToString();
 
-            detailItem.LookupParameter("EqConId").Set(famInstVal);
+            elecEquipClass.EqConId = famInstVal;
 
-            panel.LookupParameter("EqConId").Set(famInstVal);
+            detailItemClass.EqConId = famInstVal;
+
+            //update Project Information parameter
+            EqConIdParam.Set(nextEqConIdVal);
+        }
+
+        public void OneLineEqConIdValueUpdateTemporary(ElecEquipInfo elecEquipClass, Document document)
+        {
+            Parameter EqConIdParam = document.ProjectInformation.LookupParameter("EqConId Temp Current Value");
+
+            int nextEqConIdValue = EqConIdParam.AsInteger() + 1;
+
+            //update Project Information parameter
+            EqConIdParam.Set(nextEqConIdValue);
+
+            //update ElecEquipInfo item
+            string famInstVal = "EqIdTemp" + nextEqConIdValue.ToString();
+
+            elecEquipClass.EqConId = famInstVal;
+        }
+
+        public void OneLineEqConIdValueUpdateTemporary(DetailItemInfo detailItemClass, Document document)
+        {
+            Parameter EqConIdParam = document.ProjectInformation.LookupParameter("EqConId Temp Current Value");
+
+            int nextEqConIdValue = EqConIdParam.AsInteger() + 1;
+
+            //update Project Information parameter
+            EqConIdParam.Set(nextEqConIdValue);
+
+            //update ElecEquipInfo item
+            string famInstVal = "EqIdTemp" + nextEqConIdValue.ToString();
+
+            detailItemClass.EqConId = famInstVal;
         }
     }
 }
