@@ -17,7 +17,7 @@ namespace CMW_Electrical
     public class CMW_Electrical_Ribbon : IExternalApplication
     {
         public const string versionNumber = "1.0";
-        public const string releaseDate = "March 2024";
+        public const string releaseDate = "August 2024";
 
         static void AddRibbonPanel(UIControlledApplication application)
         {
@@ -67,48 +67,38 @@ namespace CMW_Electrical
 
 
             //------------create push button for PanelScheduleReset------------
-            PushButtonData schedResetData = new PushButtonData(
-                "cmdPanelScheduleReset",
-                "Reset" + System.Environment.NewLine + " Templates ",
-                thisAssemblyPath, "ResetPanelScheduleTemplate.PanelScheduleReset");
-
+            PushButtonData schedResetData = 
+                new PushButtonData(
+                    "cmdPanelScheduleReset", 
+                    "Reset" + System.Environment.NewLine + " Templates ", 
+                    thisAssemblyPath, 
+                    "ResetPanelScheduleTemplate.PanelScheduleReset")
+            {
+                LargeImage = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/ResetPanelTemplate_32x32.png")),
+                Image = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/ResetPanelTemplate_16x16.png")),
+                ToolTip = "Reset All Panel Schedule Views.",
+                LongDescription = "This tool will 'refresh' all Panel Schedule Views in a project. Any change made to a Panel Schedule Template will now be applied to all Panel Schedule Views. Any change made to Electrical Equipment families will now be correctly shown in the associated Panel Schedule View.",
+                ToolTipImage = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/ToolTipImages/ResetPanelSchedTTImage.png"))
+            };
             PushButton schedResetBtn = schedulePanel.AddItem(schedResetData) as PushButton;
-            //schedResetBtn ToolTip Information
-            schedResetBtn.ToolTip = "Reset All Panel Schedule Views.";
-            schedResetBtn.LongDescription = "This tool will 'refresh' all Panel Schedule Views in a project. Any change made to a Panel Schedule Template will now be applied to all Panel Schedule Views. Any change made to Electrical Equipment families will now be correctly shown in the associated Panel Schedule View.";
-            schedResetBtn.ToolTipImage = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/ToolTipImages/ResetPanelSchedTTImage.png"));
-            //schedResetBtn ContextualHelp Information
-            //ContextualHelp schedResetHelp = new ContextualHelp(ContextualHelpType.Url, "");
-            //schedResetBtn.SetContextualHelp(schedResetHelp);
-            //create main image information
-            BitmapImage schedResetImage = new BitmapImage(new Uri(
-                "pack://application:,,,/CMW_Electrical;component/Resources/ResetPanelTemplate_32x32.png"));
-            schedResetBtn.LargeImage = schedResetImage;
-            //create secondary image for Quick Access Toolbar
-            schedResetBtn.Image = new BitmapImage(new Uri(
-                "pack://application:,,,/CMW_Electrical;component/Resources/ResetPanelTemplate_16x16.png"));
 
 
             //------------create push button for PanelTypeToSinglePhase------------
-            PushButtonData pnlTypeToSingleData = new PushButtonData("cmdPanelTypeToSinglePhase",
-                "Panel Type" + System.Environment.NewLine + " To 1-Ph ",
-                thisAssemblyPath, "ChangePanelTypeToSinglePhase.PanelTypeToSinglePhase");
-
+            PushButtonData pnlTypeToSingleData = 
+                new PushButtonData(
+                    "cmdPanelTypeToSinglePhase", 
+                    "Panel Type" + System.Environment.NewLine + " To 1-Ph ", 
+                    thisAssemblyPath, 
+                    "ChangePanelTypeToSinglePhase.PanelTypeToSinglePhase")
+            {
+                LargeImage = new BitmapImage(new Uri(
+                "pack://application:,,,/CMW_Electrical;component/Resources/PanelToSinglePhase32x32.png")),
+                Image = new BitmapImage(new Uri(
+                "pack://application:,,,/CMW_Electrical;component/Resources/PanelToSinglePhase16x16.png")),
+                ToolTip = "Change 3-Phase Panel Type to Single Phase",
+                LongDescription = "Circumvent the limitations of default Revit properties by selecting an Electrical Equipment family to update from a 3-Phase distribution system to a 1-Phase distribution system and type. This tool will also reconnect existing circuits from the selected equipment to the source as well as any branch circuits."
+            };
             PushButton pnlTypeToSingleBtn = equipPanel.AddItem(pnlTypeToSingleData) as PushButton;
-            //pnlTypeToSingleBtn ToolTip Information
-            pnlTypeToSingleBtn.ToolTip = "Change 3-Phase Panel Type to Single Phase";
-            pnlTypeToSingleBtn.LongDescription = "Circumvent the limitations of default Revit properties by selecting an Electrical Equipment family to update from a 3-Phase distribution system to a 1-Phase distribution system and type. This tool will also reconnect existing circuits from the selected equipment to the source as well as any branch circuits.";
-            //pnlTypeToSingleBtn.ToolTipImage = new BitmapImage(new Uri(""));
-            //pnlTypeToSingleBtn ContextualHelp Information
-            //ContextualHelp pnlTypeToSingleHelp = new ContextualHelp(ContextualHelpType.URL, ""pack://application:,,,/CMW_Electrical;component/Resources/ToolTipImages/");
-            //pnlTypeToSingleBtn.SetContextualHelp(pnlTypeToSingleHelp);
-            //pnlTypeToSingleBtn Image Information
-            BitmapImage pnlTypeToSingleImage = new BitmapImage(new Uri(
-                "pack://application:,,,/CMW_Electrical;component/Resources/PanelToSinglePhase32x32.png"));
-            pnlTypeToSingleBtn.LargeImage = pnlTypeToSingleImage;
-            //pnlTypeToSingleBtn QuickAccess Image
-            pnlTypeToSingleBtn.Image = new BitmapImage(new Uri(
-                "pack://application:,,,/CMW_Electrical;component/Resources/PanelToSinglePhase16x16.png"));
 
 
             ////------------create push button for MutliLegSwitchLegUpdate------------
@@ -127,91 +117,68 @@ namespace CMW_Electrical
 
 
             //------------create push button for DeviceSymbolsRotate------------
-            PushButtonData rotateSymData = new PushButtonData("cmdRotateDeviceSymbols",
-                "Rotate" + System.Environment.NewLine + " Text Symbols ",
-                thisAssemblyPath, "RotateDeviceSymbols.DeviceSymbolsRotate");
-
+            PushButtonData rotateSymData = 
+                new PushButtonData(
+                    "cmdRotateDeviceSymbols", 
+                    "Rotate" + System.Environment.NewLine + " Text Symbols ", 
+                    thisAssemblyPath, 
+                    "RotateDeviceSymbols.DeviceSymbolsRotate")
+            {
+                LargeImage = new BitmapImage(new Uri(
+                "pack://application:,,,/CMW_Electrical;component/Resources/SymbolRotate32x32.png")),
+                Image = new BitmapImage(new Uri(
+                "pack://application:,,,/CMW_Electrical;component/Resources/SymbolRotate16x16.png")),
+                ToolTip = "Rotate Electrical Device Text Symbols",
+                LongDescription = "Rotates the nested Generic Annotation family of all Electrical devices if the U_D Symbol parameter is present."
+            };
             PushButton rotateSymBtn = devicePanel.AddItem(rotateSymData) as PushButton;
-            //rotateSymBtn ToolTip Information
-            rotateSymBtn.ToolTip = "Rotate Electrical Device Text Symbols";
-            rotateSymBtn.LongDescription = "Rotates the nested Generic Annotation family of all Electrical devices if the U_D Symbol parameter is present.";
-            //rotateSymBtn.ToolTipImage = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/ToolTipImages/"));
-            //rotateSymBtn ContextualHelp Information
-            //ContextualHelp rotateSymHelp = new ContextualHelp(ContextualHelpType.URL, ""pack://application:,,,/CMW_Electrical;component/Resources/ToolTipImages/");
-            //rotateSymBtn.SetContextualHelp(rotateSymHelp);
-            //rotateSymBtn Image Information
-            BitmapImage rotateSymImage = new BitmapImage(new Uri(
-                "pack://application:,,,/CMW_Electrical;component/Resources/SymbolRotate32x32.png"));
-            rotateSymBtn.LargeImage = rotateSymImage;
-            //rotateSymBtn QuickAccess Image
-            rotateSymBtn.Image = new BitmapImage(new Uri(
-                "pack://application:,,,/CMW_Electrical;component/Resources/SymbolRotate16x16.png"));
 
 
             //------------create push button for EquipNameUpdate------------
-            PushButtonData equipUpdateData = new PushButtonData("cmdEquipNameUpdate",
-                "Panel Name" + System.Environment.NewLine + " Updater ",
-                thisAssemblyPath, "EquipNameUpdate.EquipInfoUpdate");
-
+            PushButtonData equipUpdateData = new PushButtonData("cmdEquipNameUpdate", "Panel Name" + System.Environment.NewLine + " Updater ", thisAssemblyPath, "EquipNameUpdate.EquipInfoUpdate")
+            {
+                LargeImage = new BitmapImage(new Uri(
+                "pack://application:,,,/CMW_Electrical;component/Resources/EquipNameUpdate32x32.png")),
+                Image = new BitmapImage(new Uri(
+                "pack://application:,,,/CMW_Electrical;component/Resources/EquipNameUpdate16x16.png")),
+                ToolTip = "Update ALL Electrical Equipment Name Information",
+                LongDescription = "This tool will update the associated Electrical Circuit Load Name and Panel Schedule Name parameter values from the Panel Name parameter."
+            };
             PushButton equipUpdateBtn = equipPanel.AddItem(equipUpdateData) as PushButton;
-            //equipUpdateBtn ToolTip Information
-            equipUpdateBtn.ToolTip = "Update ALL Electrical Equipment Name Information";
-            equipUpdateBtn.LongDescription = "This tool will update the associated Electrical Circuit Load Name and Panel Schedule Name parameter values from the Panel Name parameter.";
-            //equipUpdateBtn.ToolTipImage = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/ToolTipImages/"));
-            //equipUpdateBtn ContextualHelp Information
-            //ContextualHelp equipUpdateHelp = new ContextualHelp(ContextualHelpType.URL, ""pack://application:,,,/CMW_Electrical;component/Resources/ToolTipImages/");
-            //equipUpdateBtn.SetContextualHelp(equipUpdateHelp);
-            //equipUpdateBtn Image Information
-            BitmapImage equipUpdateImage = new BitmapImage(new Uri(
-                "pack://application:,,,/CMW_Electrical;component/Resources/EquipNameUpdate32x32.png"));
-            equipUpdateBtn.LargeImage = equipUpdateImage;
-            //equipUpdateBtn QuickAccess Image
-            equipUpdateBtn.Image = new BitmapImage(new Uri(
-                "pack://application:,,,/CMW_Electrical;component/Resources/EquipNameUpdate16x16.png"));
 
 
             //------------create push button for CreatePanelSchedules------------
-            PushButtonData createPanSchedData = new PushButtonData("cmdCreatePanelSchedules",
-                "Create Panel" + System.Environment.NewLine + " Schedules ",
-                thisAssemblyPath, "CreatePanelSchedules.CreatePanelSchedules");
-
+            PushButtonData createPanSchedData = 
+                new PushButtonData(
+                    "cmdCreatePanelSchedules", 
+                    "Create Panel" + System.Environment.NewLine + " Schedules ", 
+                    thisAssemblyPath, 
+                    "CreatePanelSchedules.CreatePanelSchedules")
+            {
+                    Image = new BitmapImage(new Uri(
+                "pack://application:,,,/CMW_Electrical;component/Resources/CreatePanelSchedules16x16.png")),
+                    LargeImage = new BitmapImage(new Uri(
+                "pack://application:,,,/CMW_Electrical;component/Resources/CreatePanelSchedules32x32.png")),
+                    ToolTip = "Create Panel Schedules for All Electrical Equipment"
+        };
             PushButton createPanSchedBtn = schedulePanel.AddItem(createPanSchedData) as PushButton;
-            //createPanSched ToolTip Information
-            createPanSchedBtn.ToolTip = "Create Panel Schedules for All Electrical Equipment";
-            createPanSchedBtn.LongDescription = "";
-            //createPanSchedBtn.ToolTipImage = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/ToolTipImages/"));
-            //createPanSched ContextualHelp Information
-            //ContextualHelp createPanSchedHelp = new ContextualHelp(ContextualHelpType.URL, ""pack://application:,,,/CMW_Electrical;component/Resources/ToolTipImages/");
-            //createPanSchedBtn.SetContextualHelp(createPanSchedHelp);
-            //createPanSched Image Information
-            BitmapImage createPanSchedImage = new BitmapImage(new Uri(
-                "pack://application:,,,/CMW_Electrical;component/Resources/CreatePanelSchedules32x32.png"));
-            createPanSchedBtn.LargeImage = createPanSchedImage;
-            //equipUpdateBtn QuickAccess Image
-            createPanSchedBtn.Image = new BitmapImage(new Uri(
-                "pack://application:,,,/CMW_Electrical;component/Resources/CreatePanelSchedules16x16.png"));
 
 
             //------------create push button for FlipFacingOrientation------------
-            PushButtonData flipFacingOrientData = new PushButtonData("cmdFlipFacingOrientation",
+            PushButtonData flipFacingOrientData =
+                new PushButtonData(
+                    "cmdFlipFacingOrientation",
                 "Flip Lighting" + System.Environment.NewLine + " Host Plane ",
-                thisAssemblyPath, "FlipFacingOrientation.FlipFacingOrientationBySelection");
-
+                thisAssemblyPath,
+                "FlipFacingOrientation.FlipFacingOrientationBySelection")
+            {
+                    LargeImage = new BitmapImage(new Uri(
+                        "pack://application:,,,/CMW_Electrical;component/Resources/FlipFacingOrientation32x32.png")),
+                    Image = new BitmapImage(new Uri(
+                        "pack://application:,,,/CMW_Electrical;component/Resources/FlipFacingOrientation16x16.png")),
+                    ToolTip = "Using a Selection Window, select multiple Lighting Fixtures to Flip the Facing Orientation."
+            };
             PushButton flipFacingOrientBtn = devicePanel.AddItem(flipFacingOrientData) as PushButton;
-            //flipFacingOrient ToolTip Information
-            flipFacingOrientBtn.ToolTip = "Using a Selection Window, select multiple Lighting Fixtures to Flip the Facing Orientation.";
-            flipFacingOrientBtn.LongDescription = "";
-            //flipFacingOrientBtn.ToolTipImage = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/ToolTipImages/"));
-            //flipFacingOrient ContextualHelp Information
-            //ContextualHelp flipFacingOrientHelp = new ContextualHelp(ContextualHelpType.URL, ""pack://application:,,,/CMW_Electrical;component/Resources/ToolTipImages/");
-            //flipFacingOrientBtn.SetContextualHelp(flipFacingOrientHelp);
-            //flipFacingOrient Image Information
-            BitmapImage flipFacingOrientImage = new BitmapImage(new Uri(
-                "pack://application:,,,/CMW_Electrical;component/Resources/FlipFacingOrientation32x32.png"));
-            flipFacingOrientBtn.LargeImage = flipFacingOrientImage;
-            //equipUpdateBtn QuickAccess Image
-            flipFacingOrientBtn.Image = new BitmapImage(new Uri(
-                "pack://application:,,,/CMW_Electrical;component/Resources/FlipFacingOrientation16x16.png"));
 
 
             //------------create push button for UpdateMotorMOCP------------
@@ -221,8 +188,8 @@ namespace CMW_Electrical
                     "Update Motor MOCP",
                     thisAssemblyPath, "MotorMOCPUpdate.UpdateMotorMOCP")
             {
-                Image = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/UpdateMotorMOCP16x16.png")),
                 LargeImage = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/UpdateMotorMOCP32x32.png")),
+                Image = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/UpdateMotorMOCP16x16.png")),
                 ToolTip = "Updates all Motor Electrical Circuit Ratings that have their MES_(MCA) MOCP parameter set to a non-blank value."
             };
 
