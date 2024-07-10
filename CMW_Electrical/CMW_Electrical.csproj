@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -74,6 +74,12 @@
     <Compile Include="CMW_Electrical_Ribbon.cs" />
     <Compile Include="CorrectLightFixtures\CorrectLightFixtures.cs" />
     <Compile Include="CreatePanelSchedules\CreatePanelSchedules.cs" />
+    <Compile Include="CreatePanelSchedules\PanelSchedCreatedForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="CreatePanelSchedules\PanelSchedCreatedForm.Designer.cs">
+      <DependentUpon>PanelSchedCreatedForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="DeviceSymbolsRotate\DeviceSymbolsRotate.cs" />
     <Compile Include="EquipNameUpdate\EquipNameUpdate.cs" />
     <Compile Include="FailureHandlers\CircuitBreakerWarningSwallower.cs" />
@@ -233,12 +239,15 @@
     <EmbeddedResource Include="AddinInformation\AddinInfoForm.resx">
       <DependentUpon>AddinInfoForm.cs</DependentUpon>
     </EmbeddedResource>
-	<EmbeddedResource Include="MotorUIDUpdate\MotorsUpdatedForm.resx">
-		<DependentUpon>MotorsUpdatedForm.cs</DependentUpon>
-	</EmbeddedResource>
-	<EmbeddedResource Include="OneLineTools\OneLine_Associate\OneLineAssociateForm.resx">
-		<DependentUpon>OneLineAssociateForm.cs</DependentUpon>
-	</EmbeddedResource>
+    <EmbeddedResource Include="CreatePanelSchedules\PanelSchedCreatedForm.resx">
+      <DependentUpon>PanelSchedCreatedForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MotorUIDUpdate\MotorsUpdatedForm.resx">
+      <DependentUpon>MotorsUpdatedForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="OneLineTools\OneLine_Associate\OneLineAssociateForm.resx">
+      <DependentUpon>OneLineAssociateForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="OneLineTools\OneLine_ConnectAndPlace\SelectEquipmentToReferenceForm.resx">
       <DependentUpon>SelectEquipmentToReferenceForm.cs</DependentUpon>
     </EmbeddedResource>

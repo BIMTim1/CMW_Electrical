@@ -9,6 +9,8 @@ using Autodesk.Revit.Attributes;
 using Autodesk.Revit.DB.Electrical;
 using Autodesk.Revit.UI;
 using System.Linq.Expressions;
+using CMW_Electrical.CreatePanelSchedules;
+using System.Windows.Forms;
 
 namespace CreatePanelSchedules
 {
@@ -28,6 +30,13 @@ namespace CreatePanelSchedules
             //collect all Electrical Equipment families
             List<Element> elecEquip = new FilteredElementCollector(doc).OfCategory(bic).WhereElementIsNotElementType().ToList();
 
+            //cancel tool if no applicable elements
+            if (!elecEquip.Any())
+            {
+                errorReport = "There are no Electrical Equipment families to create Panelboard Schedules from.";
+                return Result.Cancelled;
+            }
+
             //get Revit version number (default string)
             int revNum = int.Parse(uiapp.Application.VersionNumber);
 
@@ -37,11 +46,13 @@ namespace CreatePanelSchedules
                 {
                     trac.Start("Create Panelboard Schedules");
 
-                    string output = "Panel Schedules have been created for the following Electrical Equipment instances:\n";
+                    //string output = "Panel Schedules have been created for the following Electrical Equipment instances:\n";
                     ///define failure handling options of Transaction
                     FailureHandlingOptions options = trac.GetFailureHandlingOptions();
                     options.SetFailuresPreprocessor(new CMWElec_FailureHandlers.CircuitBreakerWarningSwallower());
                     trac.SetFailureHandlingOptions(options);
+
+                    List<Element> outputElemList = new List<Element>();
 
                     foreach (Element eq in elecEquip)
                     {
@@ -67,14 +78,20 @@ namespace CreatePanelSchedules
                                 //add IFailuresPreprocessor Interface to address issues with 2022 and earlier Distribution Equipment schedule creation
                                 PanelScheduleView.CreateInstanceView(doc, tempId, eq.Id);
 
-                                output += panName + "\n";
+                                //output += panName + "\n";
+                                outputElemList.Add(eq);
                             }
                         }
                     }
 
                     trac.Commit();
 
-                    TaskDialog.Show("Created Panelboard Schedules", output);
+                    //TaskDialog.Show("Created Panelboard Schedules", output);
+
+                    //create output form for UI feedback
+                    PanelSchedCreatedForm outputForm = new PanelSchedCreatedForm(outputElemList);
+                    outputForm.ShowDialog();
+
                     return Result.Succeeded;
                 }
                 catch (Exception ex)
