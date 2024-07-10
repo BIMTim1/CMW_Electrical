@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -22,8 +22,6 @@ namespace CreatePanelSchedules
             UIApplication uiapp = commandData.Application;
             Document doc = uiapp.ActiveUIDocument.Document;
 
-            int count = 0;
-
             //BuiltInCategory value for Electrical Equipment
             BuiltInCategory bic = BuiltInCategory.OST_ElectricalEquipment;
 
@@ -38,6 +36,8 @@ namespace CreatePanelSchedules
                 try
                 {
                     trac.Start("Create Panelboard Schedules");
+
+                    string output = "Panel Schedules have been created for the following Electrical Equipment instances:\n";
                     ///define failure handling options of Transaction
                     FailureHandlingOptions options = trac.GetFailureHandlingOptions();
                     options.SetFailuresPreprocessor(new CMWElec_FailureHandlers.CircuitBreakerWarningSwallower());
@@ -53,8 +53,8 @@ namespace CreatePanelSchedules
                             int cbNum = GetCircuitBreakersNum(eq, revNum);
 
                             //collect parameters of Electrical Equipment family to compare
-                            string famName = eq.LookupParameter("Family").AsValueString();
-                            string panName = eq.LookupParameter("Panel Name").AsString();
+                            string famName = eq.get_Parameter(BuiltInParameter.ELEM_FAMILY_PARAM).AsValueString();
+                            string panName = eq.get_Parameter(BuiltInParameter.RBS_ELEC_PANEL_NAME).AsString();
                             string panPhDemo = eq.LookupParameter("Phase Demolished").AsValueString();
                             string elecData = eq.LookupParameter("Electrical Data").AsString();
 
@@ -66,14 +66,15 @@ namespace CreatePanelSchedules
                             {
                                 //add IFailuresPreprocessor Interface to address issues with 2022 and earlier Distribution Equipment schedule creation
                                 PanelScheduleView.CreateInstanceView(doc, tempId, eq.Id);
-                                count += 1;
+
+                                output += panName + "\n";
                             }
                         }
                     }
 
                     trac.Commit();
-                    TaskDialog.Show("Created Panelboard Schedules",
-                        $"The tool has run successfully. {count} Panelboard Schedules were created");
+
+                    TaskDialog.Show("Created Panelboard Schedules", output);
                     return Result.Succeeded;
                 }
                 catch (Exception ex)
@@ -82,7 +83,7 @@ namespace CreatePanelSchedules
                     TaskDialog.Show("Panel Schedule Creation Failed", "Panel Schedules failed to create. Contact the BIM Team for assistance.");
                     return Result.Failed;
                 }
-            }    
+            }
         }
 
         public int GetCircuitBreakersNum(Element elem, int revVer)
@@ -111,28 +112,24 @@ namespace CreatePanelSchedules
             return circuitBreakerNum;
         }
 
-        public List<Element> BranchScheduleTemplates(Document document)
+        public List<PanelScheduleTemplate> BranchScheduleTemplates(Document document)
         {
-            List<Element> branchTemp = new FilteredElementCollector(document).OfClass(typeof(PanelScheduleTemplate)).WherePasses(
-                new ElementParameterFilter(
-                    new FilterStringRule(
-                        new ParameterValueProvider(
-                            new ElementId(BuiltInParameter.ELEM_CATEGORY_PARAM_MT)),
-                            new FilterStringEquals(),
-                            "Panel Schedule Templates - Branch Panel", true))).ToList();
+            List<PanelScheduleTemplate> branchTemp = new FilteredElementCollector(document)
+                .OfClass(typeof(PanelScheduleTemplate))
+                .Cast<PanelScheduleTemplate>()
+                .Where(x => x.GetPanelScheduleType() == PanelScheduleType.Branch)
+                .ToList();
 
             return branchTemp;
         }
 
-        public List<Element> SwbdScheduleTemplates(Document document)
+        public List<PanelScheduleTemplate> SwbdScheduleTemplates(Document document)
         {
-            List<Element> swbdTemp = new FilteredElementCollector(document).OfClass(typeof(PanelScheduleTemplate)).WherePasses(
-                new ElementParameterFilter(
-                    new FilterStringRule(
-                        new ParameterValueProvider(
-                            new ElementId(BuiltInParameter.ELEM_CATEGORY_PARAM_MT)),
-                            new FilterStringEquals(),
-                            "Panel Schedule Templates - Switchboard", true))).ToList();
+            List<PanelScheduleTemplate> swbdTemp = new FilteredElementCollector(document)
+                .OfClass(typeof(PanelScheduleTemplate))
+                .Cast<PanelScheduleTemplate>()
+                .Where(x => x.GetPanelScheduleType() == PanelScheduleType.Switchboard)
+                .ToList();
 
             return swbdTemp;
         }

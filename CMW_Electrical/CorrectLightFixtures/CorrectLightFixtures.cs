@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.IO;
+using System.CodeDom;
 
 namespace CorrectLightFixtures
 {
@@ -33,6 +34,8 @@ namespace CorrectLightFixtures
             const string PARAM_TEST = "Light Fixture Schedule_ML-Manufacturer";
 
             List<ElementId> familiesToDelete = new List<ElementId>();
+
+            ElementClassFilter elemFilter = new ElementClassFilter(typeof(FamilyInstance));
 
             //default parameters
             List<string> new_string_parameters = new List<string>()
@@ -66,7 +69,8 @@ namespace CorrectLightFixtures
                 {"E_LF_Recessed-Perimeter", "xE_LF_Perimeter"},
                 {"E_LF_Emergency Battery_Wall", "xE_LF_Emergency Battery_Wall Half Scale"},
                 {"E_LF_Exit Sign_Emergency_Wall", "xE_LF_Exit Sign_Emergency_Wall_Half Scale"},
-                {"E_LF_Exit Sign_Wall", "xE_LF_Exit Sign_Wall_Half Scale"}
+                {"E_LF_Exit Sign_Wall", "xE_LF_Exit Sign_Wall_Half Scale"},
+                {"E_LF_Exit Sign_Wall_End Mounted", "xE_LF_Exit Sign_Wall_Edge Mounted" }
             };
 
             //collect all Lighting Fixure names
@@ -89,47 +93,48 @@ namespace CorrectLightFixtures
             //test if E_LIGHT FIXTURE SCHEDULE contains Multiline Text parameters
             bool scheduleType = FindFieldByName((lightingSchedules.First() as ViewSchedule).Definition, PARAM_TEST, doc);
 
-            Transaction trac = new Transaction(doc);
-
-            try
+            using (Transaction trac = new Transaction(doc))
             {
-                string updateType;
-                string transactionName;
-
-                if (!scheduleType)
+                try
                 {
-                    updateType = "old";
-                    transactionName = "Convert New Fixtures to Old";
+                    string updateType;
+                    string transactionName;
+
+                    if (!scheduleType)
+                    {
+                        updateType = "old";
+                        transactionName = "Convert New Fixtures to Old";
+                    }
+                    else
+                    {
+                        updateType = "new";
+                        transactionName = "Convert Old Fixtures to New";
+                    }
+
+                    trac.Start(transactionName);
+
+                    UpdateFixtureInfo(
+                        updateType, LTGBIC, PARAM_TEST, allFixtureFamilyNames,
+                        familiesToDelete, new_string_parameters, old_string_parameters,
+                        sameParameters, doc, OLD_PATH, NEW_PATH, updatedNames, elemFilter);
+
+                    //delete incorrect families from project
+                    foreach (ElementId elemId in familiesToDelete)
+                    {
+                        doc.Delete(elemId);
+                    }
+
+                    trac.Commit();
+
+                    TaskDialog.Show("Lighting Fixtures Updated", "All Lighting Fixtures in the Project have been Corrected.");
+
+                    return Result.Succeeded;
                 }
-                else
+                catch (Exception ex)
                 {
-                    updateType = "new";
-                    transactionName = "Convert Old Fixtures to New";
+                    TaskDialog.Show("An error occurred", "An error has occurred. Contact the BIM team for assistance.");
+                    return Result.Failed;
                 }
-
-                trac.Start(transactionName);
-
-                UpdateFixtureInfo(
-                    updateType, LTGBIC, PARAM_TEST, allFixtureFamilyNames,
-                    familiesToDelete, new_string_parameters, old_string_parameters,
-                    sameParameters, doc, OLD_PATH, NEW_PATH, updatedNames);
-
-                //delete incorrect families from project
-                foreach (ElementId elemId in familiesToDelete)
-                {
-                    doc.Delete(elemId);
-                }
-
-                trac.Commit();
-
-                TaskDialog.Show("Lighting Fixtures Updated", "All Lighting Fixtures in the Project have been Corrected.");
-
-                return Result.Succeeded;
-            }
-            catch (Exception ex)
-            {
-                TaskDialog.Show("An error occurred", "An error has occurred. Contact the BIM team for assistance.");
-                return Result.Failed;
             }
         }
 
@@ -258,33 +263,35 @@ namespace CorrectLightFixtures
             string updateTypeString, BuiltInCategory constLtgCat, string schedParamTest, 
             List<string> allLightingFamilyNames, List<ElementId> familiesToBeDeleted, 
             List<string> newStringParameters, List<string> oldStringParameters, 
-            List<string> sameParameters, Document document, string oldPath, string newPath, Dictionary<string, string> updatedNameDict)
+            List<string> sameParameters, Document document, string oldPath, string newPath, Dictionary<string, string> updatedNameDict, ElementClassFilter elem_filter)
         {
-            //collect all instances of Lighting Fixtures in project
-            List<FamilyInstance> allLightingFamilies = 
+            //collect all Lighting Fixture FamilySymbols in project
+            List<FamilySymbol> allLightingFamilies = 
                 new FilteredElementCollector(document)
+                .OfClass(typeof(FamilySymbol))
                 .OfCategory(constLtgCat)
-                .WhereElementIsNotElementType()
-                .Cast<FamilyInstance>()
+                .Cast<FamilySymbol>()
                 .ToList();
 
             //filter list of all fixtures if they contain or do not contain the test parameter
-            List<FamilyInstance> filteredLightingFamilies = 
+            List<FamilySymbol> filteredLightingFamilies = 
                 (updateTypeString == "old" ? 
                 from lf in allLightingFamilies 
-                where lf.Symbol.LookupParameter(schedParamTest) != null 
+                where lf.LookupParameter(schedParamTest) != null 
                 select lf : 
                 from lf in allLightingFamilies 
-                where lf.Symbol.LookupParameter(schedParamTest) == null 
+                where lf.LookupParameter(schedParamTest) == null 
                 select lf)
                 .ToList();
 
-            foreach (FamilyInstance fixture in filteredLightingFamilies)
-            {
-                //collect FamilyInstance information of current Lighting Fixture
-                FamilySymbol fixtureType = fixture.Symbol;
-                string fixtureInfo = fixture.LookupParameter("Family and Type").AsValueString();
+            //further update filteredLightingFamilies for FamilySymbols in project that have instances
+            filteredLightingFamilies = (from lf in filteredLightingFamilies 
+                                        where lf.GetDependentElements(elem_filter).Count() > 0 
+                                        select lf)
+                                        .ToList();
 
+            foreach (FamilySymbol fixtureType in filteredLightingFamilies)
+            {
                 //create variables to be used throughout function
                 string familyNameTest = fixtureType.Family.Name;
                 string filePath = "";
@@ -371,13 +378,35 @@ namespace CorrectLightFixtures
                 //FamilySymbol Family DIName should match familyNameTest variable,
                 //and Type DIName should contain "Standard"
                 //to duplicate from 'clean slate'.
-                FamilySymbol modifyFamilySymbol =
+                List<FamilySymbol> modifyFamilySymbols = 
                     new FilteredElementCollector(document)
-                    .OfClass(typeof(FamilySymbol)).ToElements()
+                    .OfClass(typeof(FamilySymbol))
+                    .ToElements()
+                    .Where(x => x.LookupParameter("Family Name").AsString() == familyNameTest)
                     .Cast<FamilySymbol>()
-                    .Where(x=>x.LookupParameter("Family Name").AsString() == familyNameTest 
-                    && x.LookupParameter("Type Name").AsString().Contains("Standard"))
-                    .First();
+                    .ToList();
+
+                List<string> modifySymbolNames = (from x in modifyFamilySymbols 
+                                                  select x.LookupParameter("Type Name").AsString())
+                                                  .ToList();
+
+                string typeName = fixtureType.LookupParameter("Type Name").AsString();
+                FamilySymbol new_fixture_symbol = null;
+
+
+                //if typeName already exists use that FamilySymbol
+                //otherwise duplicate and use typeName
+                if (modifySymbolNames.Contains(typeName))
+                {
+                    new_fixture_symbol = (from x in modifyFamilySymbols 
+                                          where x.LookupParameter("Type Name").AsString() == typeName 
+                                          select x)
+                                          .First();
+                }
+                else
+                {
+                    new_fixture_symbol = modifyFamilySymbols.First().Duplicate(typeName) as FamilySymbol;
+                }
 
                 //collect id of collected FamilySymbol
                 ElementId incorrectFamily = fixtureType.Family.Id;
@@ -387,28 +416,25 @@ namespace CorrectLightFixtures
                     familiesToBeDeleted.Add(incorrectFamily);
                 }
 
-                //duplicate FamilySymbol from incorrect FamilySymbol
-                FamilySymbol newFixtureSymbol = modifyFamilySymbol.Duplicate(fixtureType.LookupParameter("Type Name").AsString()) as FamilySymbol;
-
                 //Update all parameter information of duplicated FamilySymbol
-                UpdateParameterInfo(updateTypeString, fixtureType, newFixtureSymbol, newStringParameters, oldStringParameters, sameParameters);
+                UpdateParameterInfo(updateTypeString, fixtureType, new_fixture_symbol, newStringParameters, oldStringParameters, sameParameters);
 
-                UpdateDimensionParameters(fixtureType, newFixtureSymbol);
+                UpdateDimensionParameters(fixtureType, new_fixture_symbol);
 
-                //collect all FamilyInstances of the current Family and Type
-                List<FamilyInstance> replaceAllTypesOf = 
-                    new FilteredElementCollector(document)
-                    .OfCategory(constLtgCat)
-                    .WhereElementIsNotElementType()
-                    .Cast<FamilyInstance>()
-                    .Where(x => x.LookupParameter("Family and Type").AsValueString() == fixtureInfo)
-                    .ToList();
+                //replace all FamilyInstances of old FamilySymbol
+                List<FamilyInstance> famInstances = (from fam in fixtureType.GetDependentElements(elem_filter) 
+                                              select document.GetElement(fam) as FamilyInstance)
+                                              .ToList();
 
-                //replace all fixtures of same Family and Type to same FamilySymbol
-                foreach (FamilyInstance famInst in replaceAllTypesOf)
+                if (famInstances.Count() > 0)
                 {
-                    famInst.LookupParameter("Type").Set(newFixtureSymbol.Id);
+                    foreach (FamilyInstance famInst in famInstances)
+                    {
+                        famInst.LookupParameter("Type").Set(new_fixture_symbol.Id);
+                    }
                 }
+
+                document.Regenerate();
             }
         }
     }

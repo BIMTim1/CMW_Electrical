@@ -40,25 +40,26 @@ namespace ResetPanelScheduleTemplate
             List<Element> allSchedules = new FilteredElementCollector(doc).OfClass(typeof(PanelScheduleView)).ToElements().ToList();
 
             //create transaction to modify active document
-            Transaction trans = new Transaction(doc, "Reset all Panel Schedule Templates");
-
-            try
+            using (Transaction trans = new Transaction(doc))
             {
-                //do thing
-                trans.Start();
+                try
+                {
+                    //do thing
+                    trans.Start("Reset all Panel Schedule Templates");
 
-                UpdatePanelSchedules(allSchedules, allBranchTemp, allSwitchTemp);
+                    UpdatePanelSchedules(allSchedules, allBranchTemp, allSwitchTemp);
 
-                trans.Commit();
-                return Result.Succeeded;
-            }
-            catch (Exception ex)
-            {
-                //failed thing
-                trans.RollBack();
-                errorReport = ex.Message;
-                return Result.Failed;
-            }
+                    trans.Commit();
+                    return Result.Succeeded;
+                }
+                catch (Exception ex)
+                {
+                    //failed thing
+                    trans.RollBack();
+                    errorReport = ex.Message;
+                    return Result.Failed;
+                }
+            }  
         }
 
         public void UpdatePanelSchedules(List<Element> panelSchedules, List<Element> branchTemps, List<Element> switchTemps)

@@ -8,7 +8,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Autodesk.Revit.DB.Electrical;
-using System.Security.Cryptography;
 
 namespace MotorUIDUpdate
 {
@@ -42,27 +41,28 @@ namespace MotorUIDUpdate
                 return Result.Failed;
             }
 
-            Transaction trac = new Transaction(doc);
-
-            try
+            using (Transaction trac = new Transaction(doc))
             {
-                trac.Start("Update Motor UIDs and Circuit Load Names");
-
-                foreach (FamilyInstance motor in allMotors)
+                try
                 {
-                    UpdateMotorInfo(motor);
+                    trac.Start("Update Motor UIDs and Circuit Load Names");
+
+                    foreach (FamilyInstance motor in allMotors)
+                    {
+                        UpdateMotorInfo(motor);
+                    }
+
+                    trac.Commit();
+
+                    TaskDialog.Show("Motors Updated", $"{allMotors.Count} Motors have been updated based on their hosted equipment Identity Mark value.");
+
+                    return Result.Succeeded;
                 }
-
-                trac.Commit();
-
-                TaskDialog.Show("Motors Updated", $"{allMotors.Count} Motors have been updated based on their hosted equipment Identity Mark value.");
-
-                return Result.Succeeded;
-            }
-            catch (Exception ex)
-            {
-                TaskDialog.Show("Operation Cancelled", "An error occurred. Contact the BIM Team for assistance.");
-                return Result.Failed;
+                catch (Exception ex)
+                {
+                    TaskDialog.Show("Operation Cancelled", "An error occurred. Contact the BIM Team for assistance.");
+                    return Result.Failed;
+                }
             }
         }
 

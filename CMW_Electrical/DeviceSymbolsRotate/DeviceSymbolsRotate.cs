@@ -24,52 +24,52 @@ namespace RotateDeviceSymbols
             UIApplication uiapp = commandData.Application;
             Document doc = uiapp.ActiveUIDocument.Document;
 
-            //create new Transaction
-            Transaction trac = new Transaction(doc);
-
-            try
+            using (Transaction trac = new Transaction(doc))
             {
-                //start and name Transaction
-                trac.Start("Rotate Electrical Device Symbols");
-
-                foreach (Element elem in DeviceCollection(doc))
+                try
                 {
-                    if (elem.LookupParameter("Symbol U_D") != null)
-                    {
-                        double locrot = (elem.Location as LocationPoint).Rotation;
-                        locrot *= (180 / 3.14);
+                    //start and name Transaction
+                    trac.Start("Rotate Electrical Device Symbols");
 
-                        if (locrot >= 45 & locrot <= 89)
+                    foreach (Element elem in DeviceCollection(doc))
+                    {
+                        if (elem.LookupParameter("Symbol U_D") != null)
                         {
-                            elem.LookupParameter("Symbol U_D").Set(0);
-                        }
-                        else if (locrot >= 91 & locrot <= 179)
-                        {
-                            elem.LookupParameter("Symbol U_D").Set(0);
-                        }
-                        else if (locrot >= 225 & locrot <= 314)
-                        {
-                            elem.LookupParameter("Symbol U_D").Set(0);
-                        }
-                        else
-                        {
-                            elem.LookupParameter("Symbol U_D").Set(1);
+                            double locrot = (elem.Location as LocationPoint).Rotation;
+                            locrot *= (180 / 3.14);
+
+                            if (locrot >= 45 & locrot <= 89)
+                            {
+                                elem.LookupParameter("Symbol U_D").Set(0);
+                            }
+                            else if (locrot >= 91 & locrot <= 179)
+                            {
+                                elem.LookupParameter("Symbol U_D").Set(0);
+                            }
+                            else if (locrot >= 225 & locrot <= 314)
+                            {
+                                elem.LookupParameter("Symbol U_D").Set(0);
+                            }
+                            else
+                            {
+                                elem.LookupParameter("Symbol U_D").Set(1);
+                            }
                         }
                     }
-                }
 
-                trac.Commit();
-                TaskDialog.Show("Element Symbols Rotated",
-                    "All Electrical Device Symbols have been rotated.");
-                return Result.Succeeded;
-            }
-            catch (Exception ex)
-            {
-                trac.RollBack();
-                errorReport = ex.Message;
-                TaskDialog.Show("Element Symbols Failed to Rotate",
-                    "An error occured while attempting to rotate Electrical Device Symbols. Contact the BIM Team for support.");
-                return Result.Failed;
+                    trac.Commit();
+                    TaskDialog.Show("Element Symbols Rotated",
+                        "All Electrical Device Symbols have been rotated.");
+                    return Result.Succeeded;
+                }
+                catch (Exception ex)
+                {
+                    trac.RollBack();
+                    errorReport = ex.Message;
+                    TaskDialog.Show("Element Symbols Failed to Rotate",
+                        "An error occured while attempting to rotate Electrical Device Symbols. Contact the BIM Team for support.");
+                    return Result.Failed;
+                }
             }
         }
 
