@@ -90,7 +90,14 @@ namespace MotorMOCPUpdate
                 }
                 catch (Exception ex)
                 {
-                    TaskDialog.Show("An Error Occurred", "Contact the BIM Team for Assistance.");
+                    //TaskDialog.Show("An Error Occurred", "Contact the BIM Team for Assistance.");
+                    errorReport = ex.Message;
+
+                    foreach (Element motor in all_motors)
+                    {
+                        elementSet.Insert(motor);
+                    }
+
                     return Result.Failed;
                 }
             }

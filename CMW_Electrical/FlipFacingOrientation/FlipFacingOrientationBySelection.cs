@@ -25,7 +25,6 @@ namespace FlipFacingOrientation
             //define background Revit information to reference
             UIApplication uiapp = commandData.Application;
             Document doc = uiapp.ActiveUIDocument.Document;
-            Application app = uiapp.Application;
             UIDocument uidoc = uiapp.ActiveUIDocument;
 
             List<Element> user_selection;
@@ -42,10 +41,16 @@ namespace FlipFacingOrientation
             catch (OperationCanceledException ex)
             {
                 TaskDialog.Show("User Canceled Operation", "The tool has been canceled. Rerun the tool to start the process again.");
-                
+
+                return Result.Cancelled;
+            }
+            catch (Exception ex)
+            {
+                errorReport = ex.Message;
+                elementSet.Insert(doc.ActiveView);
+
                 return Result.Failed;
             }
-
             using (Transaction trac = new Transaction(doc))
             {
                 try
@@ -71,7 +76,12 @@ namespace FlipFacingOrientation
                 }
                 catch (Exception ex)
                 {
-                    TaskDialog.Show("An error occurred", "An error occurred that has caused the tool to stop. Contact the BIM team for assistance.");
+                    errorReport = ex.Message;
+
+                    foreach (Element lf in user_selection)
+                    {
+                        elementSet.Insert(lf);
+                    }
 
                     return Result.Failed;
                 }

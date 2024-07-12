@@ -64,12 +64,15 @@ namespace MotorUIDUpdate
                 }
                 catch (Autodesk.Revit.Exceptions.OperationCanceledException ex)
                 {
+                    errorReport = "User canceled the selection operation.";
+
                     return Result.Cancelled;
                 }
                 catch (Exception ex)
                 {
-                    TaskDialog.Show("An Error Occurred", 
-                        "An error occurred that has prevented the tool from running. Contact the BIM team for assistance.");
+                    //TaskDialog.Show("An Error Occurred", 
+                    //    "An error occurred that has prevented the tool from running. Contact the BIM team for assistance.");
+                    errorReport = ex.Message;
 
                     return Result.Failed;
                 }
@@ -110,7 +113,6 @@ namespace MotorUIDUpdate
                     //create form instance to display which elements were updated
                     MotorsUpdatedForm form = new MotorsUpdatedForm(motors);
                     form.ShowDialog();
-
                     ///verify if Transaction needs to be committed after form
                     trac.Commit();
 
@@ -118,8 +120,9 @@ namespace MotorUIDUpdate
                 }
                 catch (Exception ex)
                 {
-                    TaskDialog.Show("An Error Occurred",
-                        "An error occurred that has prevented the tool from running. Contact the BIM team for assistance.");
+                    //TaskDialog.Show("An Error Occurred",
+                    //    "An error occurred that has prevented the tool from running. Contact the BIM team for assistance.");
+                    errorReport = "The tool could not continue. Contact the BIM team for assistance";
                     
                     return Result.Failed;
                 }

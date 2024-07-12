@@ -37,8 +37,11 @@ namespace OneLine_Associate
             //cancel tool if EqConId Current Value parameter does not exist in project
             if (!eqConIdExists)
             {
-                TaskDialog.Show("Parameter Does not Exist",
-                    "The EqConId Current Value parameter does not exist in the current Document. Contact the BIM team for assistance.");
+                //TaskDialog.Show("Parameter Does not Exist",
+                //    "The EqConId Current Value parameter does not exist in the current Document. Contact the BIM team for assistance.");
+                errorReport = "The EqConId Current Value parameter does not exist in the current Document. Contact the BIM team for assistance.";
+                elementSet.Insert(activeView);
+
                 return Result.Cancelled;
             }
 
@@ -107,8 +110,10 @@ namespace OneLine_Associate
             }
             else //cancel tool if activeView is not a FloorPlan or DraftingView
             {
-                TaskDialog.Show("Incorrect view type", 
-                    "Change the active view to a Floor Plan or Drafting View then rerun the tool.");
+                //TaskDialog.Show("Incorrect view type", 
+                //    "Change the active view to a Floor Plan or Drafting View then rerun the tool.");
+                errorReport = "Change the active view to a Floor Plan or Drafting View then rerun the tool.";
+                elementSet.Insert(activeView);
 
                 return Result.Cancelled;
             }
@@ -116,8 +121,9 @@ namespace OneLine_Associate
             //cancel tool if not items can be found
             if (allRefElements == null || !allRefElements.Any())
             {
-                TaskDialog.Show("No selectable elements", 
-                    "There are no elements in the model that can be referenced to. The tool will now cancel.");
+                //TaskDialog.Show("No selectable elements", 
+                //    "There are no elements in the model that can be referenced to. The tool will now cancel.");
+                errorReport = "There are no elements in the model that can be referenced to. The tool will now cancel.";
 
                 return Result.Cancelled;
             }
@@ -133,6 +139,8 @@ namespace OneLine_Associate
             catch (Autodesk.Revit.Exceptions.OperationCanceledException ex)
             {
                 //user canceled
+                errorReport = "User canceled tool.";
+
                 return Result.Cancelled;
             }
 
@@ -194,7 +202,8 @@ namespace OneLine_Associate
                 }
                 catch (Exception ex)
                 {
-                    TaskDialog.Show("An error occurred", "An error occurred. Contact the BIM team for assistance.");
+                    errorReport = "An error occurred. Contact the BIM team for assistance.";
+
                     return Result.Failed;
                 }
             }
