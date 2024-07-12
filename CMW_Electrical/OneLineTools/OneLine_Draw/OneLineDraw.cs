@@ -36,15 +36,15 @@ namespace OneLineDraw
 
             if (!eqConIdExists)
             {
-                TaskDialog.Show("Parameter Does not Exist",
-                    "The EqConId Current Value parameter does not exist in the current Document. Contact the BIM team for assistance.");
-                return Result.Cancelled;
+                errorReport = "The EqConId Current Value parameter does not exist in the current Document. Contact the BIM team for assistance.";
+
+                return Result.Failed;
             }
 
             if (activeView.ViewType != ViewType.DraftingView)
             {
-                TaskDialog.Show("Incorrect View Type", 
-                    "This tool can only be run in a Drafting View. Change the current view to a Drafting View and rerun the tool.");
+                errorReport = "This tool can only be run in a Drafting View. Change the current view to a Drafting View and rerun the tool.";
+                elementSet.Insert(activeView);
 
                 return Result.Cancelled;
             }
@@ -117,10 +117,18 @@ namespace OneLineDraw
                     catch (Autodesk.Revit.Exceptions.OperationCanceledException ex)
                     {
                         run = false;
+
+                        if (points.Count() == 0)
+                        {
+                            errorReport = "User canceled operation.";
+
+                            return Result.Cancelled;
+                        }
                     }
                     catch (Exception ex)
                     {
-                        TaskDialog.Show("Error occurred", "An error occurred that has prevented the tool from running. Contact the BIM team for assistance.");
+                        errorReport = ex.Message;
+
                         return Result.Failed;
                     }
                 }
@@ -195,13 +203,14 @@ namespace OneLineDraw
                 }
                 catch (Autodesk.Revit.Exceptions.OperationCanceledException ex)
                 {
-                    TaskDialog.Show("User canceled", 
-                        "User canceled the selection operation. Feeder lines were created but not assigned to an Equipment reference.");
+                    //TaskDialog.Show("User canceled", 
+                    //    "User canceled the selection operation. Feeder lines were created but not assigned to an Equipment reference.");
+                    errorReport = "User canceled the selection operation. Feeder lines were created but not assigned to an Equipment reference.";
                 }
                 catch (Exception ex)
                 {
                     //error occurred
-                    TaskDialog.Show("Error occurred", "An error occurred that has prevented the tool from running. Contact the BIM team for assistance.");
+                    errorReport = ex.Message;
                     return Result.Failed;
                 }
 

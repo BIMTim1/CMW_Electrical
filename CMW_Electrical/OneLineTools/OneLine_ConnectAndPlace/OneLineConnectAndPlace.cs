@@ -46,15 +46,18 @@ namespace OneLineConnectAndPlace
 
             if (!eqConIdExists)
             {
-                TaskDialog.Show("Parameter Does not Exist",
-                    "The EqConId Current Value parameter does not exist in the current Document. Contact the BIM team for assistance.");
-                return Result.Cancelled;
+                errorReport = "The EqConId Current Value parameter does not exist in the current Document. Contact the BIM team for assistance.";
+                elementSet.Insert(activeView);
+
+                return Result.Failed;
             }
 
             //stop tool if activeView is not a Drafting View
             if (activeView.ViewType != ViewType.DraftingView)
             {
-                TaskDialog.Show("Incorrect View Type", "Open a Drafting View that contains your One-Line Diagram and rerun the tool.");
+                errorReport = "Open a Drafting View that contains your One-Line Diagram and rerun the tool.";
+                elementSet.Insert(activeView);
+
                 return Result.Failed;
             }
 
@@ -136,12 +139,12 @@ namespace OneLineConnectAndPlace
             try
             {
                 //prompt user to select source equipment Detail Item
-                //Reference connectEquipRef = uidoc.Selection.PickObject(
-                //    Autodesk.Revit.UI.Selection.ObjectType.Element, 
-                //    selFilter, 
-                //    "Select a Detail Item to be the Source Equipment.");
+                Reference connectEquipRef = uidoc.Selection.PickObject(
+                    Autodesk.Revit.UI.Selection.ObjectType.Element,
+                    selFilter,
+                    "Select a Detail Item to be the Source Equipment.");
 
-                Reference connectEquipRef = uidoc.Selection.PickObject(ObjectType.Element, "Select a Detail Item to be the Source Equipment"); //debug only
+                //Reference connectEquipRef = uidoc.Selection.PickObject(ObjectType.Element, "Select a Detail Item to be the Source Equipment"); //debug only
 
                 connectEquip = doc.GetElement(connectEquipRef) as FamilyInstance;
 
@@ -151,7 +154,9 @@ namespace OneLineConnectAndPlace
 
             catch (Autodesk.Revit.Exceptions.OperationCanceledException e)
             {
-                TaskDialog.Show("User canceled operation", "The tool was canceled.");
+                errorReport = "User canceled operation.";
+                elementSet.Insert(activeView);
+
                 return Result.Cancelled;
             }
 
@@ -266,7 +271,8 @@ namespace OneLineConnectAndPlace
                     }
                     catch (Exception ex)
                     {
-                        TaskDialog.Show("An error occurred", "An error has occurred. Contact the BIM team for assistance.");
+                        errorReport = ex.Message;
+                        elementSet.Insert(connectEquip);
 
                         return Result.Failed;
                     }

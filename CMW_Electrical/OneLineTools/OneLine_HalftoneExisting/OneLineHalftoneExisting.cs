@@ -26,10 +26,12 @@ namespace OneLine_HalftoneExisting
 
             View activeView = doc.ActiveView;
 
+            //cancel tool if incorrect ViewType
             if (activeView.ViewType != ViewType.DraftingView)
             {
                 return Result.Cancelled;
             }
+
             using (Transaction trac = new Transaction(doc))
             {
                 try
@@ -49,9 +51,9 @@ namespace OneLine_HalftoneExisting
 
                     if (!detailItems.Any() && !thinLines.Any())
                     {
-                        TaskDialog.Show("Tool Canceled", "No Elements are created in the active view to be overridden. The tool will now cancel.");
+                        errorReport = "No Elements are created in the active view to be overridden.";
 
-                        return Result.Failed;
+                        return Result.Cancelled;
                     }
                     else
                     {

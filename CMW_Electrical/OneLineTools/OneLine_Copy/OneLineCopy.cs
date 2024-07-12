@@ -37,16 +37,16 @@ namespace OneLineCopy
 
             if (!eqConIdExists)
             {
-                TaskDialog.Show("Parameter Does not Exist",
-                    "The EqConId Current Value parameter does not exist in the current Document. Contact the BIM team for assistance.");
-                return Result.Cancelled;
+                errorReport = "The EqConId Current Value parameter does not exist in the current Document. Contact the BIM team for assistance.";
+                return Result.Failed;
             }
 
             //cancel tool if Current View is not a DraftingView
             if (activeView.ViewType != ViewType.DraftingView)
             {
-                TaskDialog.Show("Incorrect View Type",
-                    "This tool can only be run in a Drafting View. Change the current view to a Drafting View and rerun the tool.");
+                errorReport = "This tool can only be run in a Drafting View. Change the current view to a Drafting View and rerun the tool.";
+                elementSet.Insert(activeView);
+
                 return Result.Cancelled;
             }
 
@@ -58,9 +58,9 @@ namespace OneLineCopy
             {
                 try
                 {
-                    //ISelectionFilter selFilter = new DetailItemSelectionFilter();
-                    //selectedElems = uidoc.Selection.PickElementsByRectangle(selFilter, "Select One Line elements to copy.");
-                    selectedElems = uidoc.Selection.PickElementsByRectangle("Select One Line elements to copy."); //debug only
+                    ISelectionFilter selFilter = new DetailItemSelectionFilter();
+                    selectedElems = uidoc.Selection.PickElementsByRectangle(selFilter, "Select One Line elements to copy.");
+                    //selectedElems = uidoc.Selection.PickElementsByRectangle("Select One Line elements to copy."); //debug only
                 }
                 catch (Autodesk.Revit.Exceptions.OperationCanceledException ex)
                 {
@@ -201,7 +201,7 @@ namespace OneLineCopy
                     }
                     catch (Autodesk.Revit.Exceptions.OperationCanceledException ex)
                     {
-                        TaskDialog.Show("User canceled", "User canceled operation. Elements have been copied, but an Electrical Circuit has not been created.");
+                        errorReport = "User canceled operation. Elements have been copied, but an Electrical Circuit has not been created.";
                     }
 
                     trac.Commit();
@@ -209,7 +209,8 @@ namespace OneLineCopy
                 }
                 catch (Exception ex)
                 {
-                    TaskDialog.Show("Error occurred", "An error occurred that has prevented the tool from running. Contact the BIM team for assistance.");
+                    errorReport = ex.Message;
+                    
                     return Result.Failed;
                 }
             }

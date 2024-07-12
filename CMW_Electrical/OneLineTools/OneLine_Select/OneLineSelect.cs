@@ -46,9 +46,9 @@ namespace OneLineSelect
 
             if (!eqConIdExists)
             {
-                TaskDialog.Show("Parameter Does not Exist",
-                    "The EqConId Current Value parameter does not exist in the current Document. Contact the BIM team for assistance.");
-                return Result.Cancelled;
+                errorReport = "The EqConId Current Value parameter does not exist in the current Document. Contact the BIM team for assistance.";
+
+                return Result.Failed;
             }
 
             if (activeView.ViewType == ViewType.DraftingView)
@@ -107,18 +107,17 @@ namespace OneLineSelect
                 }
                 catch (Autodesk.Revit.Exceptions.OperationCanceledException ex)
                 {
+                    errorReport = "User canceled operation.";
                     return Result.Cancelled;
                 }
                 catch (Exception ex)
                 {
+                    errorReport = ex.Message;
                     return Result.Failed;
                 }
 
                 selElem = doc.GetElement(selItem);
             }
-
-            //!test for EqConId parameter in project
-            //
 
             BuiltInCategory bic;
             string compId;

@@ -41,8 +41,8 @@ namespace OneLinePlaceEquip
 
             if (!eqConIdExists)
             {
-                TaskDialog.Show("Parameter Does not Exist",
-                    "The EqConId Current Value parameter does not exist in the current Document. Contact the BIM team for assistance.");
+                errorReport = "The EqConId Current Value parameter does not exist in the current Document. Contact the BIM team for assistance.";
+
                 return Result.Cancelled;
             }
 
@@ -78,8 +78,9 @@ namespace OneLinePlaceEquip
 
                 if (!filteredRefElements.Any())
                 {
-                    TaskDialog.Show("No Detail Items to Reference",
-                        "There are no available Detail Items to assign to any equipment. The tool will now cancel.");
+                    //TaskDialog.Show("No Detail Items to Reference",
+                    //    "There are no available Detail Items to assign to any equipment. The tool will now cancel.");
+                    errorReport = "There are no available Detail Items to assign to any equipment.";
 
                     return Result.Cancelled;
                 }
@@ -123,8 +124,9 @@ namespace OneLinePlaceEquip
 
                 if (!filteredRefElements.Any())
                 {
-                    TaskDialog.Show("No Equipment Families to Reference", 
-                        "There are no available Electrical Equipment families to assign to any Detail Item. The tool will now cancel.");
+                    //TaskDialog.Show("No Equipment Families to Reference", 
+                    //    "There are no available Electrical Equipment families to assign to any Detail Item. The tool will now cancel.");
+                    errorReport = "There are no available Electrical Equipment families to assign to any Detail Item.";
 
                     return Result.Cancelled;
                 }
@@ -156,7 +158,10 @@ namespace OneLinePlaceEquip
             }
             else
             {
-                TaskDialog.Show("Incorrect Active View", "Change your active view to a Floor Plan and then rerun the tool.");
+                //TaskDialog.Show("Incorrect Active View", "Change your active view to a Floor Plan and then rerun the tool.");
+                errorReport = "Change your active view to a Floor Plan and then rerun the tool.";
+                elementSet.Insert(activeView);
+
                 return Result.Cancelled;
             }
 
@@ -166,6 +171,8 @@ namespace OneLinePlaceEquip
             //cancel tool if user canceled form
             if (form.DialogResult == System.Windows.Forms.DialogResult.Cancel)
             {
+                errorReport = "User canceled operation.";
+
                 return Result.Cancelled;
             }
 
@@ -238,10 +245,11 @@ namespace OneLinePlaceEquip
             //cancel if no FamilySymbol can be found
             if (!famSymbols.Any())
             {
-                TaskDialog.Show("No Family Symbol Found",
-                    "An Electrical Equipment Family Type could not be found to match the Detail Item selected. Load an applicable family from HIVE, then rerun the tool.");
+                //TaskDialog.Show("No Family Symbol Found",
+                //    "An Electrical Equipment Family Type could not be found to match the Detail Item selected. Load an applicable family from HIVE, then rerun the tool.");
+                errorReport = "An Electrical Equipment Family Type could not be found to match the Detail Item selected. Load an applicable family from HIVE, then rerun the tool.";
 
-                return Result.Cancelled;
+                return Result.Failed;
             }
 
             FamilySymbol famSymbol = famSymbols.First();
@@ -259,9 +267,11 @@ namespace OneLinePlaceEquip
                 //user has to cancel out of operation
                 if (!_added_element_ids.Any())
                 {
-                    TaskDialog.Show("User canceled", 
-                        "Element placement canceled by user. The tool will now close.");
-                    
+                    //TaskDialog.Show("User canceled", 
+                    //    "Element placement canceled by user. The tool will now close.");
+                    errorReport = "Element placement canceled by user. The tool will now close.";
+
+
                     return Result.Cancelled;
                 }
             }
@@ -315,8 +325,9 @@ namespace OneLinePlaceEquip
                 }
                 catch (Exception ex)
                 {
-                    TaskDialog.Show("Error occurred", 
-                        "An error has occurred that has prevented the tool from running. Contact the BIM team for assistance");
+                    //TaskDialog.Show("Error occurred", 
+                    //    "An error has occurred that has prevented the tool from running. Contact the BIM team for assistance");
+                    errorReport = ex.Message;
 
                     return Result.Failed;
                 }

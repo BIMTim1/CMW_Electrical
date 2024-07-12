@@ -36,8 +36,9 @@ namespace OneLineConnect
 
             if (!eqConIdExists)
             {
-                TaskDialog.Show("Parameter Does not Exist",
-                    "The EqConId Current Value parameter does not exist in the current Document. Contact the BIM team for assistance.");
+                errorReport = "The EqConId Current Value parameter does not exist in the current Document. Contact the BIM team for assistance.";
+                elementSet.Insert(activeView);
+
                 return Result.Cancelled;
             }
 
@@ -66,12 +67,13 @@ namespace OneLineConnect
             }
             catch (OperationCanceledException ex)
             {
+                errorReport = "User canceled operation.";
                 return Result.Cancelled;
             }
             catch (Exception ex)
             {
-                TaskDialog.Show("An error occurred", 
-                    "An error occurred that has prevented the tool from running. Contact the BIM team for assistance.");
+                errorReport = ex.Message;
+                elementSet.Insert(activeView);
                 
                 return Result.Failed;
             }
@@ -136,8 +138,8 @@ namespace OneLineConnect
                 }
                 catch (Exception ex)
                 {
-                    TaskDialog.Show("An error occurred",
-                    "An error occurred that has prevented the tool from running. Contact the BIM team for assistance.");
+                    errorReport = "An error occurred that has prevented the tool from running. Contact the BIM team for assistance.";
+                    elementSet.Insert(sourceDetailItem);
 
                     return Result.Failed;
                 }

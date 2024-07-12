@@ -31,8 +31,10 @@ namespace OneLineUpdateDesignations
 
             if (!eqConIdExists)
             {
-                TaskDialog.Show("Parameter Does not Exist",
-                    "The EqConId Current Value parameter does not exist in the current Document. Contact the BIM team for assistance.");
+                //TaskDialog.Show("Parameter Does not Exist",
+                //    "The EqConId Current Value parameter does not exist in the current Document. Contact the BIM team for assistance.");
+                errorReport = "The EqConId Current Value parameter does not exist in the current Document. Contact the BIM team for assistance.";
+
                 return Result.Cancelled;
             }
 
@@ -54,7 +56,8 @@ namespace OneLineUpdateDesignations
             //cancel tool if no items in list
             if (!allDetailItems.Any())
             {
-                TaskDialog.Show("Tool Canceled", "No Electrical Equipment families or Schematic Detail Items have a EqConId value.");
+                //TaskDialog.Show("Tool Canceled", "No Electrical Equipment families or Schematic Detail Items have a EqConId value.");
+                errorReport = "No Electrical Equipment families or Schematic Detail Items have a EqConId value.";
                 return Result.Cancelled;
             }
 
@@ -65,7 +68,8 @@ namespace OneLineUpdateDesignations
             //if user canceled out of WindowsForm, close tool
             if (dialogSelectUpdateMethod.DialogResult == System.Windows.Forms.DialogResult.Cancel)
             {
-                TaskDialog.Show("User Canceled", "The tool was canceled.");
+                //TaskDialog.Show("User Canceled", "The tool was canceled.");\
+                errorReport = "User canceled operation.";
                 return Result.Cancelled;
             }
 
@@ -161,7 +165,8 @@ namespace OneLineUpdateDesignations
 
                 catch (Exception ex)
                 {
-                    TaskDialog.Show("An error occurred", "An error occurred, contact the BIM team for assistance.");
+                    //TaskDialog.Show("An error occurred", "An error occurred, contact the BIM team for assistance.");\
+                    errorReport = ex.Message;
                     return Result.Failed;
                 }
             }
