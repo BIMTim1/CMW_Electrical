@@ -53,14 +53,14 @@ namespace OneLineSelect
 
             if (activeView.ViewType == ViewType.DraftingView)
             {
-                selFilter = new DetailItemSelectionFilter();
+                selFilter = new CMWElecSelectionFilter.DetailItemSelectionFilter();
                 selectBic = BuiltInCategory.OST_DetailComponents;
                 statusPrompt = "Select a Detail Item reference.";
                 selType = "Detail Item";
             }
             else
             {
-                selFilter = new ElectricalEquipmnentSelectionFilter();
+                selFilter = new CMWElecSelectionFilter.EquipmentSelectionFilter();
                 selectBic = BuiltInCategory.OST_ElectricalEquipment;
                 statusPrompt = "Select an Electrical Equipment family reference.";
                 selType = "Electrical Equipment";
@@ -169,38 +169,6 @@ namespace OneLineSelect
             uidoc.Selection.SetElementIds(connectedElemList);
 
             return Result.Succeeded;
-        }
-
-        public class DetailItemSelectionFilter : ISelectionFilter
-        {
-            public bool AllowElement(Element element)
-            {
-                if (element.Category.Name == "Detail Items")
-                {
-                    return true;
-                }
-                return false;
-            }
-            public bool AllowReference(Reference refer, XYZ point)
-            {
-                return false;
-            }
-        }
-
-        public class ElectricalEquipmnentSelectionFilter : ISelectionFilter
-        {
-            public bool AllowElement(Element element)
-            {
-                if (element.Category.Name == "Electrical Equipment")
-                {
-                    return true;
-                }
-                return false;
-            }
-            public bool AllowReference(Reference refer, XYZ point)
-            {
-                return false;
-            }
         }
     }
 }

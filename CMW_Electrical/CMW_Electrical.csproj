@@ -103,6 +103,7 @@
     <Compile Include="MultiLegSwitchIdUpdate\MultiLegSwitchIdUpdate.cs" />
     <Compile Include="OneLineTools\EqConIdCheck.cs" />
     <Compile Include="OneLineTools\ExentsionMethods.cs" />
+    <Compile Include="OneLineTools\OneLine_Find\OneLineFind.cs" />
     <Compile Include="OneLineTools\OneLine_PlaceEquip\OLSelectDetItemForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -163,6 +164,7 @@
     <Compile Include="xSharedClasses\ElecDistributionSystem.cs" />
     <Compile Include="xSharedClasses\ElecEquipInfo.cs" />
     <Compile Include="xSharedClasses\DetailItemInfo.cs" />
+    <Compile Include="xSharedClasses\ModelessForms\CMWElecWindowHandle.cs" />
     <Compile Include="xSharedClasses\SelectionFilters\CMWElecSelectionFilter.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -234,6 +236,8 @@
     <Resource Include="Resources\PanelSchedSpareAlign32x32.png" />
     <Resource Include="Resources\PanelLegendAutofill16x16.png" />
     <Resource Include="Resources\PanelLegendAutofill32x32.png" />
+    <Resource Include="Resources\OLFind16x16.png" />
+    <Resource Include="Resources\OLFind32x32.png" />
     <Content Include="_Addin\CMW_Electrical.addin">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

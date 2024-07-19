@@ -44,6 +44,7 @@ namespace OneLineDraw
             if (activeView.ViewType != ViewType.DraftingView)
             {
                 errorReport = "This tool can only be run in a Drafting View. Change the current view to a Drafting View and rerun the tool.";
+
                 elementSet.Insert(activeView);
 
                 return Result.Cancelled;
@@ -141,13 +142,13 @@ namespace OneLineDraw
                 //prompt user to select downstream equipment reference
                 try
                 {
-                    //ISelectionFilter selFilter = new DetailItemSelectionFilter();
+                    ISelectionFilter selFilter = new CMWElecSelectionFilter.DetailItemSelectionFilter();
 
-                    //Reference sourceDetailItem = uidoc.Selection.PickObject(ObjectType.Element, selFilter, "Select source equipment for feeder reference.");
-                    Reference sourceDetailItemRef = uidoc.Selection.PickObject(ObjectType.Element, "Select source equipment for feeder reference.");
+                    Reference sourceDetailItemRef = uidoc.Selection.PickObject(ObjectType.Element, selFilter, "Select source equipment for feeder reference.");
+                    //Reference sourceDetailItemRef = uidoc.Selection.PickObject(ObjectType.Element, "Select source equipment for feeder reference."); //debug only
 
-                    //Reference fedToDetailItem = uidoc.Selection.PickObject(ObjectType.Element, selFilter, "Select downstream equipment for feeder reference.");
-                    Reference fedToDetailItem = uidoc.Selection.PickObject(ObjectType.Element, "Select downstream equipment for feeder reference."); //debug only
+                    Reference fedToDetailItem = uidoc.Selection.PickObject(ObjectType.Element, selFilter, "Select downstream equipment for feeder reference.");
+                    //Reference fedToDetailItem = uidoc.Selection.PickObject(ObjectType.Element, "Select downstream equipment for feeder reference."); //debug only
 
                     FamilyInstance sourceDetailItem = doc.GetElement(sourceDetailItemRef) as FamilyInstance;
 
@@ -216,21 +217,6 @@ namespace OneLineDraw
 
                 trac.Commit();
                 return Result.Succeeded;
-            }
-        }
-        public class DetailItemSelectionFilter : ISelectionFilter
-        {
-            public bool AllowElement(Element element)
-            {
-                if (element.Category.Name == "Detail Items")
-                {
-                    return true;
-                }
-                return false;
-            }
-            public bool AllowReference(Reference refer, XYZ point)
-            {
-                return false;
             }
         }
     }

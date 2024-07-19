@@ -33,30 +33,16 @@ namespace OneLineTools
 
         public void OneLineEqConIdValueUpdateTemporary(ElecEquipInfo elecEquipClass, Document document)
         {
-            Parameter EqConIdParam = document.ProjectInformation.LookupParameter("EqConId Temp Current Value");
-
-            int nextEqConIdValue = EqConIdParam.AsInteger() + 1;
-
-            //update Project Information parameter
-            EqConIdParam.Set(nextEqConIdValue);
-
             //update ElecEquipInfo item
-            string famInstVal = "EqIdTemp" + nextEqConIdValue.ToString();
+            string famInstVal = "not assigned";
 
             elecEquipClass.EqConId = famInstVal;
         }
 
         public void OneLineEqConIdValueUpdateTemporary(DetailItemInfo detailItemClass, Document document)
         {
-            Parameter EqConIdParam = document.ProjectInformation.LookupParameter("EqConId Temp Current Value");
-
-            int nextEqConIdValue = EqConIdParam.AsInteger() + 1;
-
-            //update Project Information parameter
-            EqConIdParam.Set(nextEqConIdValue);
-
-            //update ElecEquipInfo item
-            string famInstVal = "EqIdTemp" + nextEqConIdValue.ToString();
+            //update DetailItemInfo item
+            string famInstVal = "not assigned";
 
             detailItemClass.EqConId = famInstVal;
         }

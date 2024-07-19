@@ -355,6 +355,19 @@ namespace CMW_Electrical
                 ToolTip = "Select an Detail Item or Electrical Equipment family and select the associated component in a Floor Plan View or Drafting View."
             };
 
+            PushButtonData oneLineFindData = new PushButtonData(
+                "cmdLineLineFind", 
+                "Find", 
+                thisAssemblyPath, 
+                "OneLineFind.OneLineFind")
+            {
+                LargeImage = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/OLFind32x32.png")),
+                Image = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/OLFind16x16.png")),
+                ToolTip = "Opens the E_Working_Unassociated Electrical Schematic Elements schedule for users to find unassociated elements.",
+                LongDescription = "Applies a custom value to the Comments parameter of Electrical Equipment and Detail Items that are " +
+                "not assigned to other items in the model from the other CMW Electrical tools. The tool will activate the working " +
+                "schedule needed to find these elements in the model."
+            };
 
             PushButtonData oneLineHalftoneExistingData = 
                 new PushButtonData(
@@ -383,6 +396,7 @@ namespace CMW_Electrical
             PushButton oneLineCopyBtn = oneLinePanel.AddItem(oneLineCopy) as PushButton;
             PushButton oneLineDrawBtn = oneLinePanel.AddItem(oneLineDrawData) as PushButton;
             PushButton oneLineSelectBtn = oneLinePanel.AddItem(oneLineSelectData) as PushButton;
+            PushButton oneLineFindBtn = oneLinePanel.AddItem(oneLineFindData) as PushButton;
 
             oneLinePanel.AddSeparator();
 
@@ -548,6 +562,8 @@ namespace CMW_Electrical
 
         public Result OnShutdown(UIControlledApplication application)
         {
+            //add shutdown for Modeless forms
+
             //return result succeeded
             return Result.Succeeded;
         }

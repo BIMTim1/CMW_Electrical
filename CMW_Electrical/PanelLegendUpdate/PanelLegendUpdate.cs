@@ -33,7 +33,9 @@ namespace ScheduleLegendUpdate
             //cancel tool if activeView is not a SheetView
             if (activeView.ViewType != ViewType.DrawingSheet)
             {
-                TaskDialog.Show("Tool canceled", "Change the Active View to a Sheet View then rerun the tool.");
+                errorReport = "Change the Active View to a Sheet View then rerun the tool.";
+                elementSet.Insert(activeView);
+
                 return Result.Cancelled;
             }
 
@@ -68,6 +70,9 @@ namespace ScheduleLegendUpdate
                 }
                 catch (Autodesk.Revit.Exceptions.OperationCanceledException ex)
                 {
+                    errorReport = "User canceled operation.";
+                    elementSet.Insert(activeView);
+
                     return Result.Cancelled;
                 }
             }
@@ -144,8 +149,8 @@ namespace ScheduleLegendUpdate
                 }
                 catch (Exception ex)
                 {
-                    TaskDialog.Show("An error occurred", 
-                        "An error has occurred that has prevented the tool from operating. Contact the BIM team for assistance.");
+                    errorReport = ex.Message;
+
                     return Result.Failed;
                 }
             }

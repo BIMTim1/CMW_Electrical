@@ -32,7 +32,7 @@ namespace PanelSchedFormatting
 
             if (!allPanelSchedules.Any())
             {
-                TaskDialog.Show("No Panelboard Schedules", "There are no Panelboard schedules created in this project. The tool will now cancel.");
+                errorReport = "There are no Panelboard schedules created in the active model. The tool will now cancel.";
 
                 return Result.Cancelled;
             }
@@ -106,7 +106,7 @@ namespace PanelSchedFormatting
                 }
                 catch (Exception ex)
                 {
-                    TaskDialog.Show("An error occurred", "An error occurred that has stopped the tool. Contact the BIM team for assistance.");
+                    errorReport = ex.Message;
 
                     return Result.Failed;
                 }

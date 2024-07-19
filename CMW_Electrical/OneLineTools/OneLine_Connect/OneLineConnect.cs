@@ -54,14 +54,14 @@ namespace OneLineConnect
             //prompt user to select (2) DetailComponents
             try
             {
-                //ISelectionFilter selFilter = new DetailItemSelectionFilter();
-                //sourceDetailItemSelection = uidoc.Selection.PickObject(ObjectType.Element, selFilter, "Select the Source Detail Item.");
-                Reference sourceDetailItemSelection = uidoc.Selection.PickObject(ObjectType.Element, "Select the Source Detail Item."); //debug only
+                ISelectionFilter selFilter = new CMWElecSelectionFilter.DetailItemSelectionFilter();
+                Reference sourceDetailItemSelection = uidoc.Selection.PickObject(ObjectType.Element, selFilter, "Select the Source Detail Item.");
+                //Reference sourceDetailItemSelection = uidoc.Selection.PickObject(ObjectType.Element, "Select the Source Detail Item."); //debug only
 
                 sourceDetailItem = doc.GetElement(sourceDetailItemSelection);
 
-                //fedToDetailItemSelection = uidoc.Selection.PickObject(ObjectType.Element, selFilter, "Select the Fed To Detail Item.");
-                Reference fedToDetailItemSelection = uidoc.Selection.PickObject(ObjectType.Element, "Select the Fed To Detail Item."); //debug only
+                Reference fedToDetailItemSelection = uidoc.Selection.PickObject(ObjectType.Element, selFilter, "Select the Fed To Detail Item.");
+                //Reference fedToDetailItemSelection = uidoc.Selection.PickObject(ObjectType.Element, "Select the Fed To Detail Item."); //debug only
 
                 fedToDetailItem = doc.GetElement(fedToDetailItemSelection);
             }
@@ -143,23 +143,6 @@ namespace OneLineConnect
 
                     return Result.Failed;
                 }
-            }
-        }
-
-        public class DetailItemSelectionFilter : ISelectionFilter
-        {
-            public bool AllowElement(Element element)
-            {
-                if (element.Category.Name == "Detail Items")
-                {
-                    return true;
-                }
-                return false;
-            }
-
-            public bool AllowReference(Reference refer, XYZ point)
-            {
-                return false;
             }
         }
     }

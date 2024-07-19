@@ -131,7 +131,7 @@ namespace OneLineConnectAndPlace
             //select Detail Item FamilySymbol from list using detailItemRef
             FamilySymbol selectedDetailItem = (from famSym in detailItemTypes where famSym.Name.Contains(detailItemRef) select famSym).First();
 
-            ISelectionFilter selFilter = new DetailItemSelectionFilter();
+            ISelectionFilter selFilter = new CMWElecSelectionFilter.DetailItemSelectionFilter();
 
             FamilyInstance connectEquip;
             XYZ pickedPoint;
@@ -277,23 +277,6 @@ namespace OneLineConnectAndPlace
                         return Result.Failed;
                     }
                 }
-            }
-        }
-
-        public class DetailItemSelectionFilter : ISelectionFilter
-        {
-            public bool AllowElement(Element element)
-            {
-                if (element.Category.Name == "Detail Items")
-                {
-                    return true;
-                }
-                return false;
-            }
-
-            public bool AllowReference(Reference refer, XYZ point)
-            {
-                return false;
             }
         }
 

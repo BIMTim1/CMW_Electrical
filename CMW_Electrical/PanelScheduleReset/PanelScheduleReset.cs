@@ -50,13 +50,13 @@ namespace ResetPanelScheduleTemplate
                     UpdatePanelSchedules(allSchedules, allBranchTemp, allSwitchTemp);
 
                     trans.Commit();
+
                     return Result.Succeeded;
                 }
                 catch (Exception ex)
                 {
-                    //failed thing
-                    trans.RollBack();
                     errorReport = ex.Message;
+
                     return Result.Failed;
                 }
             }  

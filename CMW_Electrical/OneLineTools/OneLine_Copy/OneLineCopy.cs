@@ -53,12 +53,13 @@ namespace OneLineCopy
             ICollection<ElementId> selectedIds = uidoc.Selection.GetElementIds();
             ICollection<Element> selectedElems = new List<Element>();
 
+            ISelectionFilter selFilter = new CMWElecSelectionFilter.DetailItemSelectionFilter();
+
             //prompt user to select multiple objects in a rectangular selection if no objects already selected
             if (selectedIds.Count() == 0)
             {
                 try
                 {
-                    ISelectionFilter selFilter = new DetailItemSelectionFilter();
                     selectedElems = uidoc.Selection.PickElementsByRectangle(selFilter, "Select One Line elements to copy.");
                     //selectedElems = uidoc.Selection.PickElementsByRectangle("Select One Line elements to copy."); //debug only
                 }
@@ -68,7 +69,7 @@ namespace OneLineCopy
                 }
                 catch (Exception ex)
                 {
-                    TaskDialog.Show("Error occurred", "An error occurred that has prevented the tool from running. Contact the BIM team for assistance.");
+                    errorReport = ex.Message;
                     return Result.Failed;
                 }
             }
@@ -188,8 +189,8 @@ namespace OneLineCopy
                     //create circuit from selected Detail Items
                     try
                     {
-                        //Reference selSourceDetItem = uidoc.Selection.PickObject(ObjectType.Element, selFilter, "Select a Source Detail Item");
-                        Reference selSourceDetItem = uidoc.Selection.PickObject(ObjectType.Element, "Select a Source Detail Item"); //debug only
+                        Reference selSourceDetItem = uidoc.Selection.PickObject(ObjectType.Element, selFilter, "Select a Source Detail Item");
+                        //Reference selSourceDetItem = uidoc.Selection.PickObject(ObjectType.Element, "Select a Source Detail Item"); //debug only
 
                         FamilyInstance sourceDetItem = doc.GetElement(selSourceDetItem) as FamilyInstance;
 
@@ -213,22 +214,6 @@ namespace OneLineCopy
                     
                     return Result.Failed;
                 }
-            }
-        }
-
-        public class DetailItemSelectionFilter : ISelectionFilter
-        {
-            public bool AllowElement(Element element)
-            {
-                if (element.Category.Name == "Detail Items")
-                {
-                    return true;
-                }
-                return false;
-            }
-            public bool AllowReference(Reference refer, XYZ point)
-            {
-                return false;
             }
         }
 

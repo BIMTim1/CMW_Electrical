@@ -29,8 +29,8 @@ namespace PanelSchedFormatting
             //check if ActiveView is a PanelScheduleView, cancel if not
             if (activeView.ViewType != ViewType.PanelSchedule)
             {
-                TaskDialog.Show("Incorrect Active View", 
-                    "Active View must be a Panelboard Schedule. Change the Active View then rerun the tool.");
+                errorReport = "Active View must be a Panelboard Schedule. Change the Active View then rerun the tool.";
+                elementSet.Insert(activeView);
 
                 return Result.Cancelled;
             }
@@ -122,8 +122,7 @@ namespace PanelSchedFormatting
                 }
                 catch (Exception ex)
                 {
-                    TaskDialog.Show("An error occurred", 
-                        "An error occurred that has stopped the tool. Contact the BIM team for assistance.");
+                    errorReport = ex.Message;
 
                     return Result.Failed;
                 }

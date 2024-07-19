@@ -76,7 +76,7 @@ namespace OneLine_Associate
                 }
 
                 paramRef = "Panel Name - Detail";
-                selFilter = new ElecEquipSelectionFilter();
+                selFilter = new CMWElecSelectionFilter.EquipmentSelectionFilter();
                 selectionStatus = "Select a Schematic Detail Item to reference.";
             }
             else if(activeView.ViewType == ViewType.DraftingView)
@@ -103,7 +103,7 @@ namespace OneLine_Associate
                 }
 
                 paramRef = "Panel Name";
-                selFilter = new DetailItemSelectionFilter();
+                selFilter = new CMWElecSelectionFilter.DetailItemSelectionFilter();
                 selectionStatus = "Select an Electrical Equipment instance to reference";
             }
             else //cancel tool if activeView is not a FloorPlan or DraftingView
@@ -200,39 +200,6 @@ namespace OneLine_Associate
 
                     return Result.Failed;
                 }
-            }
-        }
-
-        public class DetailItemSelectionFilter : ISelectionFilter
-        {
-            public bool AllowElement(Element element)
-            {
-                if (element.Category.Name == "Detail Items")
-                {
-                    return true;
-                }
-                return false;
-            }
-
-            public bool AllowReference(Reference refer, XYZ point)
-            {
-                return false;
-            }
-        }
-        public class ElecEquipSelectionFilter : ISelectionFilter
-        {
-            public bool AllowElement(Element element)
-            {
-                if (element.Category.Name == "Electrical Equipment")
-                {
-                    return true;
-                }
-                return false;
-            }
-
-            public bool AllowReference(Reference refer, XYZ point)
-            {
-                return false;
             }
         }
     }
