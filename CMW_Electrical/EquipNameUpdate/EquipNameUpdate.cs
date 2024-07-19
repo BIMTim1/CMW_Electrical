@@ -58,7 +58,7 @@ namespace EquipNameUpdate
             {
                 try
                 {
-                    trac.Start("Update Electrical Equipment Information");
+                    trac.Start("CMWElec-Update Electrical Equipment Information");
 
                     foreach (FamilyInstance eq in all_equip)
                     {

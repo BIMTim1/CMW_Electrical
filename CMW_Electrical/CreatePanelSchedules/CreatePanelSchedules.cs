@@ -44,7 +44,7 @@ namespace CreatePanelSchedules
             {
                 try
                 {
-                    trac.Start("Create Panelboard Schedules");
+                    trac.Start("CMWElec-Create Panelboard Schedules");
 
                     //string output = "Panel Schedules have been created for the following Electrical Equipment instances:\n";
                     ///define failure handling options of Transaction

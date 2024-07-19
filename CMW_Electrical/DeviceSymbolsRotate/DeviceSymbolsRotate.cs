@@ -29,7 +29,7 @@ namespace RotateDeviceSymbols
                 try
                 {
                     //start and name Transaction
-                    trac.Start("Rotate Electrical Device Symbols");
+                    trac.Start("CMWElec-Rotate Electrical Device Symbols");
 
                     foreach (Element elem in DeviceCollection(doc))
                     {

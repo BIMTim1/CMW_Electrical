@@ -162,7 +162,7 @@ namespace OneLineConnectAndPlace
 
             using (TransactionGroup tracGroup = new TransactionGroup(doc))
             {
-                tracGroup.Start("Connect and Place Component");
+                tracGroup.Start("CMWElec-Connect and Place Component");
 
                 using (Transaction trac = new Transaction(doc))
                 {

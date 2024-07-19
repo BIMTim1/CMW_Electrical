@@ -55,7 +55,7 @@ namespace FlipFacingOrientation
             {
                 try
                 {
-                    trac.Start("Flip Work Plane of Selected Lighting Fixtures");
+                    trac.Start("CMWElec-Flip Work Plane of Selected Lighting Fixtures");
 
                     int count = 0;
 

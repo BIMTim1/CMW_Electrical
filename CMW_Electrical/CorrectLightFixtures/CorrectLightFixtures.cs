@@ -103,12 +103,12 @@ namespace CorrectLightFixtures
                     if (!scheduleType)
                     {
                         updateType = "old";
-                        transactionName = "Convert New Fixtures to Old";
+                        transactionName = "CMWElec-Convert New Fixtures to Old";
                     }
                     else
                     {
                         updateType = "new";
-                        transactionName = "Convert Old Fixtures to New";
+                        transactionName = "CMWElec-Convert Old Fixtures to New";
                     }
 
                     trac.Start(transactionName);

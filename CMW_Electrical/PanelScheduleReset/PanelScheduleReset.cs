@@ -45,7 +45,7 @@ namespace ResetPanelScheduleTemplate
                 try
                 {
                     //do thing
-                    trans.Start("Reset all Panel Schedule Templates");
+                    trans.Start("CMWElec-Reset all Panel Schedule Templates");
 
                     UpdatePanelSchedules(allSchedules, allBranchTemp, allSwitchTemp);
 

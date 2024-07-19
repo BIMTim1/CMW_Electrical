@@ -57,7 +57,7 @@ namespace OneLine_HalftoneExisting
                     }
                     else
                     {
-                        trac.Start("Update Existing OneLine Elements to be Halftoned");
+                        trac.Start("CMWElec-Update Existing OneLine Elements to be Halftoned");
 
                         OverrideGraphicSettings overrideSettings = new OverrideGraphicSettings();
                         overrideSettings.SetHalftone(true);

@@ -81,7 +81,7 @@ namespace ScheduleLegendUpdate
             {
                 try
                 {
-                    trac.Start("Schedule Legend Update");
+                    trac.Start("CMWElec-Schedule Legend Update");
 
                     FamilyInstance schedLegendInst = null;
 

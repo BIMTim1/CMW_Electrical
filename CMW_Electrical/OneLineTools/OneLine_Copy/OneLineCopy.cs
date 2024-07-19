@@ -119,7 +119,7 @@ namespace OneLineCopy
             {
                 try
                 {
-                    trac.Start("Copy One Line Elements");
+                    trac.Start("CMWElec-Copy One Line Elements");
 
                     ICollection<ElementId> elementsToCopy = (from elem in selectedElems select elem.Id).ToList();
 

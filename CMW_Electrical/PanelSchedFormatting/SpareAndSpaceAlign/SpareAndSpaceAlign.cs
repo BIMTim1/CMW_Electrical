@@ -41,7 +41,7 @@ namespace PanelSchedFormatting
             {
                 try
                 {
-                    trac.Start("Spare and Space Alignment");
+                    trac.Start("CMWElec-Spare and Space Alignment");
 
                     foreach (PanelScheduleView panSchedView in allPanelSchedules)
                     {

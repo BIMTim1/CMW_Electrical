@@ -37,7 +37,7 @@ namespace UpdateMultiLegSwitchIds
                 try
                 {
                     //start and name transaction
-                    trac.Start("Update Multi-Leg Switch Ids");
+                    trac.Start("CMWElec-Update Multi-Leg Switch Ids");
 
                     foreach (Element sw in ltg_devices)
                     {

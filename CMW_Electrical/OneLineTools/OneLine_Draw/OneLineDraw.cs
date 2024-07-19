@@ -68,7 +68,7 @@ namespace OneLineDraw
             //create transaction and begin operation
             using (Transaction trac = new Transaction(doc))
             {
-                trac.Start("Draw Feeder Lines");
+                trac.Start("CMWElec-Draw Feeder Lines");
 
                 bool run = true;
 

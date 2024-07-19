@@ -151,7 +151,7 @@ namespace OneLine_Associate
             {
                 try
                 {
-                    trac.Start("Associate Electrical Equipment and Schematic Component");
+                    trac.Start("CMWElec-Associate Electrical Equipment and Schematic Component");
 
                     ElecEquipInfo elecEquipInfo;
                     DetailItemInfo detItemInfo;

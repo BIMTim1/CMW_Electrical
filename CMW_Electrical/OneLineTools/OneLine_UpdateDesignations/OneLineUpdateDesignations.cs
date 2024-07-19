@@ -84,7 +84,7 @@ namespace OneLineUpdateDesignations
                     if (dialogSelectUpdateMethod.rbtnUseEquipment.Checked)
                     {
                         //determine Transaction name from user selection
-                        tracName = "Update Schematic Detail Items from Electrical Equipment families";
+                        tracName = "CMWElec-Update Schematic Detail Items from Electrical Equipment families";
 
                         trac.Start(tracName);
 
@@ -125,7 +125,7 @@ namespace OneLineUpdateDesignations
                     }
                     else
                     {
-                        tracName = "Update Electrical Equipment families from Schematic Detail Items";
+                        tracName = "CMWElec-Update Electrical Equipment families from Schematic Detail Items";
 
                         trac.Start(tracName);
 

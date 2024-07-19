@@ -83,7 +83,7 @@ namespace MotorUIDUpdate
             {
                 try
                 {
-                    trac.Start("Update Motor UIDs and Circuit Load Names");
+                    trac.Start("CMWElec-Update Motor UIDs and Circuit Load Names");
 
                     //filter selected ElementIds
                     List<FamilyInstance> motors = new FilteredElementCollector(doc, selectedIds)

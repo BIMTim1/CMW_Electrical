@@ -154,6 +154,9 @@ namespace OneLineFind
             //add parameters to schedule
             ScheduleDefinition schedDef = sched.Definition;
 
+            //check to see if Project Parameter EqConId can be referenced
+            //rework tool to not use Comments parameter updating if this is true
+            //schedule can just reference the correct elements
             ScheduleFilter schedFil = new ScheduleFilter();
 
             //collect all ScheduleFields that could be added to the schedule
@@ -174,22 +177,14 @@ namespace OneLineFind
 
                     //create ScheduleFilter for Comments parameter
                     ScheduleFieldId commentsId = commentsField.FieldId;
-                    schedFil = new ScheduleFilter(commentsId, ScheduleFilterType.Contains, commentsVal);
+                    schedFil = new ScheduleFilter(commentsId, ScheduleFilterType.Equal, commentsVal);
                 }
                 else if (fName == "Family and Type")
                 {
                     famTypeField = schedDef.AddField(f.FieldType, f.ParameterId);
                 }
-                else if (fName == "Panel Name")
-                {
-                    panNameField = schedDef.AddField(f.FieldType, f.ParameterId);
-                }
-                else if (fName == "Panel Name - Detail")
-                {
-                    panNameDetField = schedDef.AddField(f.FieldType, f.ParameterId);
-                }
             }
-
+            //verify if this section will work when creating
             //sort added parameters in schedule
             IList<ScheduleFieldId> sortFieldList = new List<ScheduleFieldId>()
             {

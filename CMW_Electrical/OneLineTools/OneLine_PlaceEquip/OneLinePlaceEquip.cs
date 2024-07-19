@@ -284,7 +284,7 @@ namespace OneLinePlaceEquip
             {
                 try
                 {
-                    trac.Start("CMWElec_Update Equipment from Detail Item");
+                    trac.Start("CMWElec-Update Equipment from Detail Item");
 
                     Element placedItem = doc.GetElement(_added_element_ids.First());
                     

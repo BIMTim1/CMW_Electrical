@@ -56,7 +56,7 @@ namespace MotorMOCPUpdate
             {
                 try
                 {
-                    trac.Start("Update Motor Circuit Load Name from MOCP");
+                    trac.Start("CMWElec-Update Motor Circuit Load Name from MOCP");
 
                     foreach (FamilyInstance motor in all_motors)
                     {

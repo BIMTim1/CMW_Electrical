@@ -39,7 +39,7 @@ namespace PanelSchedFormatting
             {
                 try
                 {
-                    trac.Start("Format Panelboard Schedules");
+                    trac.Start("CMWElec-Format Panelboard Schedules");
 
                     //collect activeView as PanelScheduleView
                     PanelScheduleView panSched = activeView as PanelScheduleView;
