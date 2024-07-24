@@ -56,7 +56,7 @@ namespace MotorMOCPUpdate
             {
                 try
                 {
-                    trac.Start("Update Motor Circuit Load Name from MOCP");
+                    trac.Start("CMWElec-Update Motor Circuit Load Name from MOCP");
 
                     foreach (FamilyInstance motor in all_motors)
                     {
@@ -90,7 +90,14 @@ namespace MotorMOCPUpdate
                 }
                 catch (Exception ex)
                 {
-                    TaskDialog.Show("An Error Occurred", "Contact the BIM Team for Assistance.");
+                    //TaskDialog.Show("An Error Occurred", "Contact the BIM Team for Assistance.");
+                    errorReport = ex.Message;
+
+                    foreach (Element motor in all_motors)
+                    {
+                        elementSet.Insert(motor);
+                    }
+
                     return Result.Failed;
                 }
             }

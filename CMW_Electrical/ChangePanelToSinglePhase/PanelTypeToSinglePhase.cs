@@ -77,7 +77,6 @@ namespace ChangePanelTypeToSinglePhase
                 catch (OperationCanceledException ex)
                 {
                     errorReport = ex.Message;
-                    TaskDialog.Show("User Canceled Operation", "Tool operation canceled.");
                     return Result.Cancelled;
                 }
                 catch (Exception ex)
@@ -145,13 +144,13 @@ namespace ChangePanelTypeToSinglePhase
 
             using (TransactionGroup tracGroup = new TransactionGroup(doc))
             {
-                tracGroup.Start("Update Panel Type to Single Phase and Reconnect Circuits");
+                tracGroup.Start("CMWElec-Update Panel Type to Single Phase and Reconnect Circuits");
 
                 using (Transaction trac = new Transaction(doc))
                 {
                     try
                     {
-                        trac.Start("Update Panel Type to Single Phase");
+                        trac.Start("CMWElec-Update Panel Type to Single Phase");
 
                         //change selected Electrical Equipment Type Id
                         Parameter pnlTypeParam = selElem.get_Parameter(BuiltInParameter.ELEM_TYPE_PARAM);
@@ -159,7 +158,7 @@ namespace ChangePanelTypeToSinglePhase
 
                         trac.Commit();
 
-                        trac.Start("Reconnect Original Circuits");
+                        trac.Start("CMWElec-Reconnect Original Circuits");
 
                         //collect updated Electrical Equipment FamilyInstance
                         FamilyInstance updated_pnl = new FilteredElementCollector(doc)

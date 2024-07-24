@@ -11,6 +11,7 @@ using Autodesk.Revit.DB.Electrical;
 using Autodesk.Revit.UI;
 using Autodesk.Revit.UI.Selection;
 using System.Linq.Expressions;
+using CMW_Electrical.EquipNameUpdate;
 
 namespace EquipNameUpdate
 {
@@ -44,11 +45,20 @@ namespace EquipNameUpdate
                 .Cast<FamilyInstance>()
                 .ToList();
 
+            //cancel tool if no elements to update
+            if (!all_equip.Any())
+            {
+                errorReport = "No instances of Electrical Equipment exist in the model.";
+                elementSet.Insert(doc.ActiveView);
+
+                return Result.Cancelled;
+            }
+
             using (Transaction trac = new Transaction(doc))
             {
                 try
                 {
-                    trac.Start("Update Electrical Equipment Information");
+                    trac.Start("CMWElec-Update Electrical Equipment Information");
 
                     foreach (FamilyInstance eq in all_equip)
                     {
@@ -146,8 +156,11 @@ namespace EquipNameUpdate
                     }
 
                     trac.Commit();
-                    TaskDialog.Show("Update Equipment Info Succeeded",
-                        $"{countPanName} Panel Schedule Names were updated.\n{countLoadname} Load Names were updated.");
+
+                    //user interface completed form
+                    EquipNameUpdateForm updateForm = new EquipNameUpdateForm(all_equip);
+                    updateForm.ShowDialog();
+
                     return Result.Succeeded;
                 }
                 catch (Exception ex)

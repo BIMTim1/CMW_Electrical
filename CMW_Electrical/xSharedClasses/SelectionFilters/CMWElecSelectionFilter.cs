@@ -73,5 +73,22 @@ namespace CMW_Electrical
                 return false;
             }
         }
+
+        public class ElecFixtureSelectionFilter : ISelectionFilter
+        {
+            public bool AllowElement(Element element)
+            {
+                if (element.Category.Name == "Electrical Fixtures")
+                {
+                    return true;
+                }
+                return false;
+            }
+
+            public bool AllowReference(Reference refer, XYZ point)
+            {
+                return false;
+            }
+        }
     }
 }

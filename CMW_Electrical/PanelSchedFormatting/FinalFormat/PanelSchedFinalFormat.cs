@@ -24,19 +24,13 @@ namespace PanelSchedFormatting
             Application app = uiapp.Application;
 
             int versionNum = Int32.Parse(app.VersionNumber); //only applicable in Revit 2023 API
+            View activeView = doc.ActiveView;
 
-            //collect all PanelScheduleViews in model
-            List<PanelScheduleView> allPanelSchedViews = 
-                new FilteredElementCollector(doc)
-                .OfClass(typeof(PanelScheduleView))
-                .ToElements()
-                .Cast<PanelScheduleView>()
-                .ToList();
-
-            if (!allPanelSchedViews.Any())
+            //check if ActiveView is a PanelScheduleView, cancel if not
+            if (activeView.ViewType != ViewType.PanelSchedule)
             {
-                TaskDialog.Show("No Panelboard Schedules", 
-                    "There are no Panelboard schedules created in this project. The tool will now cancel.");
+                errorReport = "Active View must be a Panelboard Schedule. Change the Active View then rerun the tool.";
+                elementSet.Insert(activeView);
 
                 return Result.Cancelled;
             }
@@ -45,78 +39,79 @@ namespace PanelSchedFormatting
             {
                 try
                 {
-                    trac.Start("Format Panelboard Schedules");
+                    trac.Start("CMWElec-Format Panelboard Schedules");
 
-                    foreach (PanelScheduleView panSched in allPanelSchedViews)
+                    //collect activeView as PanelScheduleView
+                    PanelScheduleView panSched = activeView as PanelScheduleView;
+
+                    //Get TableData to interact with specific cells of the PanelScheduleView
+                    TableData tableData = panSched.GetTableData();
+                    TableSectionData sectionData = tableData.GetSectionData(SectionType.Body);
+
+                    PanelScheduleType templateTypeName = (doc.GetElement(panSched.GetTemplate()) as PanelScheduleTemplate).GetPanelScheduleType();
+
+                    GetScheduleFormatting schedFormat = new GetScheduleFormatting();
+                    List<Int32> columns = schedFormat.GetPanelScheduleColumns(templateTypeName, panSched, doc);
+                    Int32 rows = schedFormat.GetPanelScheduleRows(templateTypeName, panSched);
+
+                    for (Int32 rowNum = 2; rowNum <= rows; rowNum++)
                     {
-                        TableData tableData = panSched.GetTableData();
-                        TableSectionData sectionData = tableData.GetSectionData(SectionType.Body);
-
-                        PanelScheduleType templateTypeName = (doc.GetElement(panSched.GetTemplate()) as PanelScheduleTemplate).GetPanelScheduleType();
-
-                        GetScheduleFormatting schedFormat = new GetScheduleFormatting();
-                        List<Int32> columns = schedFormat.GetPanelScheduleColumns(templateTypeName, panSched, doc);
-                        Int32 rows = schedFormat.GetPanelScheduleRows(templateTypeName, panSched);
-
-                        for (Int32 rowNum = 2; rowNum <= rows; rowNum++)
+                        foreach (Int32 colNum in columns)
                         {
-                            foreach (Int32 colNum in columns)
+                            ElectricalSystem cct = panSched.GetCircuitByCell(rowNum, colNum);
+
+                            if (cct != null)
                             {
-                                ElectricalSystem cct = panSched.GetCircuitByCell(rowNum, colNum);
+                                //check if slot is a Spare and has a modified name
+                                bool isSpare = panSched.IsSpare(rowNum, colNum);
+                                string cctName = cct.LookupParameter("Load Name").AsString();
 
-                                if (cct != null)
+                                if (isSpare && cctName == "SPARE")
                                 {
-                                    //check if slot is a Spare and has a modified name
-                                    bool isSpare = panSched.IsSpare(rowNum, colNum);
-                                    string cctName = cct.LookupParameter("Load Name").AsString();
+                                    //delete blank Spares, these are to be added at the end of the panelboard schedule
+                                    panSched.RemoveSpare(rowNum, colNum);
+                                }
+                                else
+                                {
+                                    Int32 rowIter = rowNum;
 
-                                    if (isSpare && cctName == "SPARE")
+                                    while (rowIter - 1 > 1)
                                     {
-                                        //delete blank Spares, these are to be added at the end of the panelboard schedule
-                                        panSched.RemoveSpare(rowNum, colNum);
-                                    }
-                                    else
-                                    {
-                                        Int32 rowIter = rowNum;
+                                        bool canMove = panSched.CanMoveSlotTo(rowIter, colNum, rowIter - 1, colNum);
+                                        ElectricalSystem canMoveCct = panSched.GetCircuitByCell(rowIter - 1, colNum);
 
-                                        while (rowIter - 1 > 1)
+                                        if (rowIter - 1 == 1)
                                         {
-                                            bool canMove = panSched.CanMoveSlotTo(rowIter, colNum, rowIter - 1, colNum);
-                                            ElectricalSystem canMoveCct = panSched.GetCircuitByCell(rowIter - 1, colNum);
-
-                                            if (rowIter - 1 == 1)
-                                            {
-                                                break;
-                                            }
-
-                                            if (!canMove)
-                                            {
-                                                break;
-                                            }
-
-                                            if (canMoveCct != null)
-                                            {
-                                                break;
-                                            }
-
-                                            panSched.MoveSlotTo(rowIter, colNum, rowIter - 1, colNum);
-                                            rowIter -= 1;
+                                            break;
                                         }
+
+                                        if (!canMove)
+                                        {
+                                            break;
+                                        }
+
+                                        if (canMoveCct != null)
+                                        {
+                                            break;
+                                        }
+
+                                        panSched.MoveSlotTo(rowIter, colNum, rowIter - 1, colNum);
+                                        rowIter -= 1;
                                     }
                                 }
                             }
                         }
+                    }
 
-                        for (Int32 rowNum = 2; rowNum <= rows; rowNum++)
+                    for (Int32 rowNum = 2; rowNum <= rows; rowNum++)
+                    {
+                        foreach (Int32 colNum in columns)
                         {
-                            foreach (Int32 colNum in columns)
-                            {
-                                AddSpares(panSched, rowNum, colNum);
+                            AddSpares(panSched, rowNum, colNum, sectionData);
 
-                                if (versionNum > 2022)
-                                {
-                                    UnlockSlot(panSched, rowNum, colNum);
-                                }
+                            if (versionNum > 2022)
+                            {
+                                UnlockSlot(panSched, rowNum, colNum);
                             }
                         }
                     }
@@ -127,21 +122,33 @@ namespace PanelSchedFormatting
                 }
                 catch (Exception ex)
                 {
-                    TaskDialog.Show("An error occurred", 
-                        "An error occurred that has stopped the tool. Contact the BIM team for assistance.");
+                    errorReport = ex.Message;
 
                     return Result.Failed;
                 }
             }
         }
 
-        public bool AddSpares(PanelScheduleView panSchedView, Int32 rowNumber, Int32 columnNumber)
+        public bool AddSpares(PanelScheduleView panSchedView, Int32 rowNumber, Int32 columnNumber, TableSectionData sectData)
         {
             ElectricalSystem circuit = panSchedView.GetCircuitByCell(rowNumber, columnNumber);
 
             if (circuit == null)
             {
                 panSchedView.AddSpare(rowNumber, columnNumber);
+
+                //collect cell data to update HorizontalAlignmentStyle
+                TableCellStyle cellStyle = sectData.GetTableCellStyle(rowNumber, columnNumber);
+
+                //create new HorizontalAlignmentStyle object
+                HorizontalAlignmentStyle horizAlignment = new HorizontalAlignmentStyle();
+                horizAlignment = HorizontalAlignmentStyle.Right;
+
+                //update the collected TableCellStyle with the newly created HorizontalAlignemntStyle
+                cellStyle.FontHorizontalAlignment = horizAlignment;
+
+                //apply updated TableCellStyle to active cell
+                sectData.SetCellStyle(rowNumber, columnNumber, cellStyle);
             }
 
             return true;

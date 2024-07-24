@@ -16,8 +16,8 @@ namespace CMW_Electrical
 {
     public class CMW_Electrical_Ribbon : IExternalApplication
     {
-        public const string versionNumber = "1.0";
-        public const string releaseDate = "March 2024";
+        public const string versionNumber = "0.1";
+        public const string releaseDate = "August 2024";
 
         static void AddRibbonPanel(UIControlledApplication application)
         {
@@ -67,48 +67,38 @@ namespace CMW_Electrical
 
 
             //------------create push button for PanelScheduleReset------------
-            PushButtonData schedResetData = new PushButtonData(
-                "cmdPanelScheduleReset",
-                "Reset" + System.Environment.NewLine + " Templates ",
-                thisAssemblyPath, "ResetPanelScheduleTemplate.PanelScheduleReset");
-
+            PushButtonData schedResetData = 
+                new PushButtonData(
+                    "cmdPanelScheduleReset", 
+                    "Reset" + System.Environment.NewLine + " Templates ", 
+                    thisAssemblyPath, 
+                    "ResetPanelScheduleTemplate.PanelScheduleReset")
+            {
+                LargeImage = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/ResetPanelTemplate_32x32.png")),
+                Image = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/ResetPanelTemplate_16x16.png")),
+                ToolTip = "Reset All Panel Schedule Views.",
+                LongDescription = "This tool will 'refresh' all Panel Schedule Views in a project. Any change made to a Panel Schedule Template will now be applied to all Panel Schedule Views. Any change made to Electrical Equipment families will now be correctly shown in the associated Panel Schedule View.",
+                ToolTipImage = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/ToolTipImages/ResetPanelSchedTTImage.png"))
+            };
             PushButton schedResetBtn = schedulePanel.AddItem(schedResetData) as PushButton;
-            //schedResetBtn ToolTip Information
-            schedResetBtn.ToolTip = "Reset All Panel Schedule Views.";
-            schedResetBtn.LongDescription = "This tool will 'refresh' all Panel Schedule Views in a project. Any change made to a Panel Schedule Template will now be applied to all Panel Schedule Views. Any change made to Electrical Equipment families will now be correctly shown in the associated Panel Schedule View.";
-            schedResetBtn.ToolTipImage = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/ToolTipImages/ResetPanelSchedTTImage.png"));
-            //schedResetBtn ContextualHelp Information
-            //ContextualHelp schedResetHelp = new ContextualHelp(ContextualHelpType.Url, "");
-            //schedResetBtn.SetContextualHelp(schedResetHelp);
-            //create main image information
-            BitmapImage schedResetImage = new BitmapImage(new Uri(
-                "pack://application:,,,/CMW_Electrical;component/Resources/ResetPanelTemplate_32x32.png"));
-            schedResetBtn.LargeImage = schedResetImage;
-            //create secondary image for Quick Access Toolbar
-            schedResetBtn.Image = new BitmapImage(new Uri(
-                "pack://application:,,,/CMW_Electrical;component/Resources/ResetPanelTemplate_16x16.png"));
 
 
             //------------create push button for PanelTypeToSinglePhase------------
-            PushButtonData pnlTypeToSingleData = new PushButtonData("cmdPanelTypeToSinglePhase",
-                "Panel Type" + System.Environment.NewLine + " To 1-Ph ",
-                thisAssemblyPath, "ChangePanelTypeToSinglePhase.PanelTypeToSinglePhase");
-
+            PushButtonData pnlTypeToSingleData = 
+                new PushButtonData(
+                    "cmdPanelTypeToSinglePhase", 
+                    "Panel Type" + System.Environment.NewLine + " To 1-Ph ", 
+                    thisAssemblyPath, 
+                    "ChangePanelTypeToSinglePhase.PanelTypeToSinglePhase")
+            {
+                LargeImage = new BitmapImage(new Uri(
+                "pack://application:,,,/CMW_Electrical;component/Resources/PanelToSinglePhase32x32.png")),
+                Image = new BitmapImage(new Uri(
+                "pack://application:,,,/CMW_Electrical;component/Resources/PanelToSinglePhase16x16.png")),
+                ToolTip = "Change 3-Phase Panel Type to Single Phase",
+                LongDescription = "Circumvent the limitations of default Revit properties by selecting an Electrical Equipment family to update from a 3-Phase distribution system to a 1-Phase distribution system and type. This tool will also reconnect existing circuits from the selected equipment to the source as well as any branch circuits."
+            };
             PushButton pnlTypeToSingleBtn = equipPanel.AddItem(pnlTypeToSingleData) as PushButton;
-            //pnlTypeToSingleBtn ToolTip Information
-            pnlTypeToSingleBtn.ToolTip = "Change 3-Phase Panel Type to Single Phase";
-            pnlTypeToSingleBtn.LongDescription = "Circumvent the limitations of default Revit properties by selecting an Electrical Equipment family to update from a 3-Phase distribution system to a 1-Phase distribution system and type. This tool will also reconnect existing circuits from the selected equipment to the source as well as any branch circuits.";
-            //pnlTypeToSingleBtn.ToolTipImage = new BitmapImage(new Uri(""));
-            //pnlTypeToSingleBtn ContextualHelp Information
-            //ContextualHelp pnlTypeToSingleHelp = new ContextualHelp(ContextualHelpType.URL, ""pack://application:,,,/CMW_Electrical;component/Resources/ToolTipImages/");
-            //pnlTypeToSingleBtn.SetContextualHelp(pnlTypeToSingleHelp);
-            //pnlTypeToSingleBtn Image Information
-            BitmapImage pnlTypeToSingleImage = new BitmapImage(new Uri(
-                "pack://application:,,,/CMW_Electrical;component/Resources/PanelToSinglePhase32x32.png"));
-            pnlTypeToSingleBtn.LargeImage = pnlTypeToSingleImage;
-            //pnlTypeToSingleBtn QuickAccess Image
-            pnlTypeToSingleBtn.Image = new BitmapImage(new Uri(
-                "pack://application:,,,/CMW_Electrical;component/Resources/PanelToSinglePhase16x16.png"));
 
 
             ////------------create push button for MutliLegSwitchLegUpdate------------
@@ -127,91 +117,68 @@ namespace CMW_Electrical
 
 
             //------------create push button for DeviceSymbolsRotate------------
-            PushButtonData rotateSymData = new PushButtonData("cmdRotateDeviceSymbols",
-                "Rotate" + System.Environment.NewLine + " Text Symbols ",
-                thisAssemblyPath, "RotateDeviceSymbols.DeviceSymbolsRotate");
-
+            PushButtonData rotateSymData = 
+                new PushButtonData(
+                    "cmdRotateDeviceSymbols", 
+                    "Rotate" + System.Environment.NewLine + " Text Symbols ", 
+                    thisAssemblyPath, 
+                    "RotateDeviceSymbols.DeviceSymbolsRotate")
+            {
+                LargeImage = new BitmapImage(new Uri(
+                "pack://application:,,,/CMW_Electrical;component/Resources/SymbolRotate32x32.png")),
+                Image = new BitmapImage(new Uri(
+                "pack://application:,,,/CMW_Electrical;component/Resources/SymbolRotate16x16.png")),
+                ToolTip = "Rotate Electrical Device Text Symbols",
+                LongDescription = "Rotates the nested Generic Annotation family of all Electrical devices if the U_D Symbol parameter is present."
+            };
             PushButton rotateSymBtn = devicePanel.AddItem(rotateSymData) as PushButton;
-            //rotateSymBtn ToolTip Information
-            rotateSymBtn.ToolTip = "Rotate Electrical Device Text Symbols";
-            rotateSymBtn.LongDescription = "Rotates the nested Generic Annotation family of all Electrical devices if the U_D Symbol parameter is present.";
-            //rotateSymBtn.ToolTipImage = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/ToolTipImages/"));
-            //rotateSymBtn ContextualHelp Information
-            //ContextualHelp rotateSymHelp = new ContextualHelp(ContextualHelpType.URL, ""pack://application:,,,/CMW_Electrical;component/Resources/ToolTipImages/");
-            //rotateSymBtn.SetContextualHelp(rotateSymHelp);
-            //rotateSymBtn Image Information
-            BitmapImage rotateSymImage = new BitmapImage(new Uri(
-                "pack://application:,,,/CMW_Electrical;component/Resources/SymbolRotate32x32.png"));
-            rotateSymBtn.LargeImage = rotateSymImage;
-            //rotateSymBtn QuickAccess Image
-            rotateSymBtn.Image = new BitmapImage(new Uri(
-                "pack://application:,,,/CMW_Electrical;component/Resources/SymbolRotate16x16.png"));
 
 
             //------------create push button for EquipNameUpdate------------
-            PushButtonData equipUpdateData = new PushButtonData("cmdEquipNameUpdate",
-                "Panel Name" + System.Environment.NewLine + " Updater ",
-                thisAssemblyPath, "EquipNameUpdate.EquipInfoUpdate");
-
+            PushButtonData equipUpdateData = new PushButtonData("cmdEquipNameUpdate", "Panel Name" + System.Environment.NewLine + " Updater ", thisAssemblyPath, "EquipNameUpdate.EquipInfoUpdate")
+            {
+                LargeImage = new BitmapImage(new Uri(
+                "pack://application:,,,/CMW_Electrical;component/Resources/EquipNameUpdate32x32.png")),
+                Image = new BitmapImage(new Uri(
+                "pack://application:,,,/CMW_Electrical;component/Resources/EquipNameUpdate16x16.png")),
+                ToolTip = "Update ALL Electrical Equipment Name Information",
+                LongDescription = "This tool will update the associated Electrical Circuit Load Name and Panel Schedule Name parameter values from the Panel Name parameter."
+            };
             PushButton equipUpdateBtn = equipPanel.AddItem(equipUpdateData) as PushButton;
-            //equipUpdateBtn ToolTip Information
-            equipUpdateBtn.ToolTip = "Update ALL Electrical Equipment Name Information";
-            equipUpdateBtn.LongDescription = "";
-            //equipUpdateBtn.ToolTipImage = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/ToolTipImages/"));
-            //equipUpdateBtn ContextualHelp Information
-            //ContextualHelp equipUpdateHelp = new ContextualHelp(ContextualHelpType.URL, ""pack://application:,,,/CMW_Electrical;component/Resources/ToolTipImages/");
-            //equipUpdateBtn.SetContextualHelp(equipUpdateHelp);
-            //equipUpdateBtn Image Information
-            BitmapImage equipUpdateImage = new BitmapImage(new Uri(
-                "pack://application:,,,/CMW_Electrical;component/Resources/EquipNameUpdate32x32.png"));
-            equipUpdateBtn.LargeImage = equipUpdateImage;
-            //equipUpdateBtn QuickAccess Image
-            equipUpdateBtn.Image = new BitmapImage(new Uri(
-                "pack://application:,,,/CMW_Electrical;component/Resources/EquipNameUpdate16x16.png"));
 
 
             //------------create push button for CreatePanelSchedules------------
-            PushButtonData createPanSchedData = new PushButtonData("cmdCreatePanelSchedules",
-                "Create Panel" + System.Environment.NewLine + " Schedules ",
-                thisAssemblyPath, "CreatePanelSchedules.CreatePanelSchedules");
-
+            PushButtonData createPanSchedData = 
+                new PushButtonData(
+                    "cmdCreatePanelSchedules", 
+                    "Create Panel" + System.Environment.NewLine + " Schedules ", 
+                    thisAssemblyPath, 
+                    "CreatePanelSchedules.CreatePanelSchedules")
+            {
+                    Image = new BitmapImage(new Uri(
+                "pack://application:,,,/CMW_Electrical;component/Resources/CreatePanelSchedules16x16.png")),
+                    LargeImage = new BitmapImage(new Uri(
+                "pack://application:,,,/CMW_Electrical;component/Resources/CreatePanelSchedules32x32.png")),
+                    ToolTip = "Create Panel Schedules for All Electrical Equipment"
+        };
             PushButton createPanSchedBtn = schedulePanel.AddItem(createPanSchedData) as PushButton;
-            //createPanSched ToolTip Information
-            createPanSchedBtn.ToolTip = "Create Panel Schedules for All Electrical Equipment";
-            createPanSchedBtn.LongDescription = "";
-            //createPanSchedBtn.ToolTipImage = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/ToolTipImages/"));
-            //createPanSched ContextualHelp Information
-            //ContextualHelp createPanSchedHelp = new ContextualHelp(ContextualHelpType.URL, ""pack://application:,,,/CMW_Electrical;component/Resources/ToolTipImages/");
-            //createPanSchedBtn.SetContextualHelp(createPanSchedHelp);
-            //createPanSched Image Information
-            BitmapImage createPanSchedImage = new BitmapImage(new Uri(
-                "pack://application:,,,/CMW_Electrical;component/Resources/CreatePanelSchedules32x32.png"));
-            createPanSchedBtn.LargeImage = createPanSchedImage;
-            //equipUpdateBtn QuickAccess Image
-            createPanSchedBtn.Image = new BitmapImage(new Uri(
-                "pack://application:,,,/CMW_Electrical;component/Resources/CreatePanelSchedules16x16.png"));
 
 
             //------------create push button for FlipFacingOrientation------------
-            PushButtonData flipFacingOrientData = new PushButtonData("cmdFlipFacingOrientation",
+            PushButtonData flipFacingOrientData =
+                new PushButtonData(
+                    "cmdFlipFacingOrientation",
                 "Flip Lighting" + System.Environment.NewLine + " Host Plane ",
-                thisAssemblyPath, "FlipFacingOrientation.FlipFacingOrientationBySelection");
-
+                thisAssemblyPath,
+                "FlipFacingOrientation.FlipFacingOrientationBySelection")
+            {
+                    LargeImage = new BitmapImage(new Uri(
+                        "pack://application:,,,/CMW_Electrical;component/Resources/FlipFacingOrientation32x32.png")),
+                    Image = new BitmapImage(new Uri(
+                        "pack://application:,,,/CMW_Electrical;component/Resources/FlipFacingOrientation16x16.png")),
+                    ToolTip = "Using a Selection Window, select multiple Lighting Fixtures to Flip the Facing Orientation."
+            };
             PushButton flipFacingOrientBtn = devicePanel.AddItem(flipFacingOrientData) as PushButton;
-            //flipFacingOrient ToolTip Information
-            flipFacingOrientBtn.ToolTip = "Using a Selection Window, select multiple Lighting Fixtures to Flip the Facing Orientation.";
-            flipFacingOrientBtn.LongDescription = "";
-            //flipFacingOrientBtn.ToolTipImage = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/ToolTipImages/"));
-            //flipFacingOrient ContextualHelp Information
-            //ContextualHelp flipFacingOrientHelp = new ContextualHelp(ContextualHelpType.URL, ""pack://application:,,,/CMW_Electrical;component/Resources/ToolTipImages/");
-            //flipFacingOrientBtn.SetContextualHelp(flipFacingOrientHelp);
-            //flipFacingOrient Image Information
-            BitmapImage flipFacingOrientImage = new BitmapImage(new Uri(
-                "pack://application:,,,/CMW_Electrical;component/Resources/FlipFacingOrientation32x32.png"));
-            flipFacingOrientBtn.LargeImage = flipFacingOrientImage;
-            //equipUpdateBtn QuickAccess Image
-            flipFacingOrientBtn.Image = new BitmapImage(new Uri(
-                "pack://application:,,,/CMW_Electrical;component/Resources/FlipFacingOrientation16x16.png"));
 
 
             //------------create push button for UpdateMotorMOCP------------
@@ -221,8 +188,8 @@ namespace CMW_Electrical
                     "Update Motor MOCP",
                     thisAssemblyPath, "MotorMOCPUpdate.UpdateMotorMOCP")
             {
-                Image = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/UpdateMotorMOCP16x16.png")),
                 LargeImage = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/UpdateMotorMOCP32x32.png")),
+                Image = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/UpdateMotorMOCP16x16.png")),
                 ToolTip = "Updates all Motor Electrical Circuit Ratings that have their MES_(MCA) MOCP parameter set to a non-blank value."
             };
 
@@ -236,7 +203,10 @@ namespace CMW_Electrical
             {
                 LargeImage = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/UpdateMotorUID32x32.png")),
                 Image = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/UpdateMotorUID16x16.png")),
-                ToolTip = "Update Motor UID values based on hosted Mechanical Equipment."
+                ToolTip = "Select Motors to update UID and associated Electrical Circuit Load Name from host Mechanical Equipment.",
+                LongDescription = "The tool will prompt the user to select E_EF_Motor elements in the active view to update the UID parameter " +
+                "and associated Electrical Circuit Load Name parameter of any E_EF_Motor family selected that is hosted to a Mechanical Equipment family. " +
+                "The tool will update E_EF_Motor values based on the Identity Mark parameter of the host Mechanical Equipment family."
             };
 
             //create motorPulldownButton
@@ -277,39 +247,43 @@ namespace CMW_Electrical
             //    "pack://application:,,,/CMW_Electrical;component/Resources/CorrectLightFixtures16x16.png"));
 
 
-            //------------create push button for oneLineConnectAndPlace------------
-            PushButtonData oneLineConnectAndPlaceData = 
-                new PushButtonData(
-                    "cmdOneLineConnectAndPlace", 
-                    "Connect and Place Component", 
-                    thisAssemblyPath, 
-                    "OneLineConnectAndPlace.OneLineConnectAndPlace")
-            {
-                    LargeImage = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/OLConnectAndPlace32x32.png")),
-                    Image = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/OLConnectAndPlace16x16.png")),
-                    ToolTip = "Select an existing One-Line item to connect to, and place the down-stream equipment."
-            };
+            ////------------create push button for oneLineConnectAndPlace------------
+            //PushButtonData oneLineConnectAndPlaceData = 
+            //    new PushButtonData(
+            //        "cmdOneLineConnectAndPlace", 
+            //        "Power/" + System.Environment.NewLine + " Create ", //"Connect and Place Component"
+            //        thisAssemblyPath, 
+            //        "OneLineConnectAndPlace.OneLineConnectAndPlace")
+            //{
+            //        LargeImage = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/OLConnectAndPlace32x32.png")),
+            //        Image = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/OLConnectAndPlace16x16.png")),
+            //        ToolTip = "Select an existing One-Line item to connect to, and place the down-stream equipment."
+            //};
 
 
             //------------create push button for oneLineConnect------------
             PushButtonData oneLineConnectData = 
                 new PushButtonData(
                     "cmdOneLineConnect", 
-                    "Connect Component", 
+                    "Power", //"Connect Component"
                     thisAssemblyPath, 
                     "OneLineConnect.OneLineConnect")
             {
                 LargeImage = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/OLConnect32x32.png")),
                 Image = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/OLConnect16x16.png")),
-                ToolTip = "Select existing One-Line items to be connected together."
+                ToolTip = "Select One-Line Detail Items to be connected together.",
+                LongDescription = "This tool will create feeder lines " +
+                "and a circuit breaker (if applicable) on the Active One-Line Schematic. " +
+                "If the selected Detail Items are associated to Electrical Equipment families in the model, " +
+                "then an Electrical Circuit will be created between the associated Electrical Equipment families."
             };
 
 
             //------------create push button for oneLineUpdatePanelInfo------------
-            PushButtonData oneLineUpdateDesignations = 
+            PushButtonData oneLineUpdateDesignationsData = 
                 new PushButtonData(
                     "cmdOneLineUpdateDesignations", 
-                    "Update Component or Panel Designation", 
+                    "Update", //"Update Component or Panel Designation"
                     thisAssemblyPath,
                     "OneLineUpdateDesignations.OneLineUpdateDesignations")
             {
@@ -323,16 +297,115 @@ namespace CMW_Electrical
             PushButtonData oneLinePlaceEquipData =
                 new PushButtonData(
                     "cmdOneLinePlaceEquip",
-                    "Place Equipment from One-Line",
+                    "Create", //"Place Equipment from One-Line"
                     thisAssemblyPath,
                     "OneLinePlaceEquip.OneLinePlaceEquip")
                 {
                     LargeImage = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/OLPlaceEquip32x32.png")),
                     Image = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/OLPlaceEquip16x16.png")),
-                    ToolTip = "Select a Detail Item from your One-Line and Place the Corresponding Equipment in the model from a selected Level view."
+                    ToolTip = "Select a Detail Item or Electrical Equipment family from the available list to place in your active view.",
+                    LongDescription = "If you are in a Drafting View, the dialog will display Electrical Equipment that can be associated to a new element. " +
+                    "Place an instance of the object selected. " +
+                    "If you are in a Floor Plan View, the dialog will display Detail Items that can be associated to new elements. " +
+                    "Place an instance of the object selected."
             };
-            oneLinePanel.AddStackedItems(oneLineConnectAndPlaceData, oneLineConnectData);
-            oneLinePanel.AddStackedItems(oneLineUpdateDesignations, oneLinePlaceEquipData);
+
+
+            PushButtonData oneLineAssociateData = 
+                new PushButtonData(
+                    "cmdOneLineAssociate", 
+                    "Associate", //"Associate Equipment + Detail Item"
+                    thisAssemblyPath, 
+                    "OneLine_Associate.OneLineAssociate")
+            {
+                LargeImage = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/OLAssociate32x32.png")),
+                Image = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/OLAssociate16x16.png")),
+                ToolTip = "Select a Detail Item or Electrical Equipment family from the available list to associate to an Electrical Equipment or Detail Item instance in your active view."
+            };
+
+
+            PushButtonData oneLineDrawData = new PushButtonData(
+                "cmdOneLineDraw", 
+                "Draw", //"Draw Feeder"
+                thisAssemblyPath, 
+                "OneLineDraw.OneLineDraw")
+            {
+                LargeImage = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/OLDraw32x32.png")),
+                Image = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/OLDraw16x16.png")),
+                ToolTip = "Create Detail Item Lines for Feeder Representation in OneLine Schematic views."
+            };
+
+
+            PushButtonData oneLineCopy = new PushButtonData(
+                "cmdOneLineCopy", 
+                "Copy", //"Copy Components"
+                thisAssemblyPath, 
+                "OneLineCopy.OneLineCopy")
+            {
+                LargeImage = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/OLCopy32x32.png")),
+                Image = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/OLCopy16x16.png")),
+                ToolTip = "Copy One Line Detail Components and assign Model Building Elements."
+            };
+
+
+            PushButtonData oneLineSelectData = new PushButtonData(
+                "cmdOneLineSelect", 
+                "Select", 
+                thisAssemblyPath, 
+                "OneLineSelect.OneLineSelect")
+            {
+                LargeImage = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/OLSelect32x32.png")),
+                Image = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/OLSelect16x16.png")),
+                ToolTip = "Select an Detail Item or Electrical Equipment family and select the associated component in a Floor Plan View or Drafting View."
+            };
+
+            PushButtonData oneLineFindData = new PushButtonData(
+                "cmdLineLineFind", 
+                "Find", 
+                thisAssemblyPath, 
+                "OneLineFind.OneLineFind")
+            {
+                LargeImage = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/OLFind32x32.png")),
+                Image = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/OLFind16x16.png")),
+                ToolTip = "Opens the E_Working_Unassociated Electrical Schematic Elements schedule for users to find unassociated elements.",
+                LongDescription = "Applies a custom value to the Comments parameter of Electrical Equipment and Detail Items that are " +
+                "not assigned to other items in the model from the other CMW Electrical tools. The tool will activate the working " +
+                "schedule needed to find these elements in the model."
+            };
+
+            PushButtonData oneLineHalftoneExistingData = 
+                new PushButtonData(
+                    "cmdOneLineHalftoneExisting", 
+                    "Halftone" + System.Environment.NewLine + " Existing ", 
+                    thisAssemblyPath,
+                    "OneLine_HalftoneExisting.OneLineHalftoneExisting")
+            {
+                LargeImage = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/OLHalftoneExisting32x32.png")),
+                Image = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/OlHalftoneExisting16x16.png")),
+                ToolTip = "Sets the Graphic Override for all Existing phased content in active Schematic Drafting View to be Halftone."
+            };
+            
+
+            PushButton oneLineAssociateBtn = oneLinePanel.AddItem(oneLineAssociateData) as PushButton;
+            PushButton oneLinePlaceEquipBtn = oneLinePanel.AddItem(oneLinePlaceEquipData) as PushButton;
+            //PushButton oneLineConnectAndPlaceBtn = oneLinePanel.AddItem(oneLineConnectAndPlaceData) as PushButton;
+            PushButton oneLineConnectBtn = oneLinePanel.AddItem(oneLineConnectData) as PushButton;
+
+            oneLinePanel.AddSeparator();
+
+            PushButton oneLineUpdateDesignationsBtn = oneLinePanel.AddItem(oneLineUpdateDesignationsData) as PushButton;
+
+            oneLinePanel.AddSeparator();
+
+            PushButton oneLineCopyBtn = oneLinePanel.AddItem(oneLineCopy) as PushButton;
+            PushButton oneLineDrawBtn = oneLinePanel.AddItem(oneLineDrawData) as PushButton;
+            PushButton oneLineSelectBtn = oneLinePanel.AddItem(oneLineSelectData) as PushButton;
+            PushButton oneLineFindBtn = oneLinePanel.AddItem(oneLineFindData) as PushButton;
+
+            oneLinePanel.AddSeparator();
+
+            PushButton oneLineHalftoneExistingBtn = oneLinePanel.AddItem(oneLineHalftoneExistingData) as PushButton;
+
 
 
             ////create pushbuttons for AlignTagTools
@@ -443,7 +516,7 @@ namespace CMW_Electrical
             {
                 LargeImage = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/PanelSchedFormat32x32.png")),
                 Image = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/PanelSchedFormat16x16.png")),
-                ToolTip = "Moves all circuits breakers up to be aligned to the top of the Panelboard Schedule and adds Spares to all remaining circuit breakers. NOTE: Per NEC, 20% of panelboards circuit breakers shall be Spares."
+                ToolTip = "Moves all circuit breakers up to be aligned to the top of the active Panelboard Schedule and adds Spares to all remaining circuit breakers. NOTE: Per NEC, 20% of panelboards circuit breakers shall be Spares."
             };
 
 
@@ -493,6 +566,8 @@ namespace CMW_Electrical
 
         public Result OnShutdown(UIControlledApplication application)
         {
+            //add shutdown for Modeless forms
+
             //return result succeeded
             return Result.Succeeded;
         }

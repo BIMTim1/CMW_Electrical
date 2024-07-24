@@ -32,7 +32,7 @@ namespace PanelSchedFormatting
 
             if (!allPanelSchedules.Any())
             {
-                TaskDialog.Show("No Panelboard Schedules", "There are no Panelboard schedules created in this project. The tool will now cancel.");
+                errorReport = "There are no Panelboard schedules created in the active model. The tool will now cancel.";
 
                 return Result.Cancelled;
             }
@@ -41,7 +41,7 @@ namespace PanelSchedFormatting
             {
                 try
                 {
-                    trac.Start("Spare and Space Alignment");
+                    trac.Start("CMWElec-Spare and Space Alignment");
 
                     foreach (PanelScheduleView panSchedView in allPanelSchedules)
                     {
@@ -69,27 +69,33 @@ namespace PanelSchedFormatting
                                 //collect TableCellStyle information to update with FontHorizontalAlignment determined by Spare or Space
                                 TableCellStyle cellStyle = sectionData.GetTableCellStyle(rowNum, colNum);
 
-                                string loadName = panSchedView.GetCircuitByCell(rowNum, colNum).LookupParameter("Load Name").AsString();
+                                ElectricalSystem cellCircuit = panSchedView.GetCircuitByCell(rowNum, colNum);
 
-                                HorizontalAlignmentStyle horizAlignment = new HorizontalAlignmentStyle();
-
-                                if (isSpare && loadName == "SPARE")
+                                if (cellCircuit != null) //skip cells in schedule that are blank
                                 {
-                                    horizAlignment = HorizontalAlignmentStyle.Right;
-                                }
-                                else if (isSpace && loadName == "SPACE")
-                                {
-                                    horizAlignment = HorizontalAlignmentStyle.Center;
-                                }
-                                else
-                                {
-                                    horizAlignment = HorizontalAlignmentStyle.Left;
-                                }
+                                    string loadName = panSchedView.GetCircuitByCell(rowNum, colNum).LookupParameter("Load Name").AsString();
 
-                                cellStyle.FontHorizontalAlignment = horizAlignment;
+                                    //create HorizontalAlignmentStyle object
+                                    HorizontalAlignmentStyle horizAlignment = new HorizontalAlignmentStyle();
 
-                                sectionData.SetCellStyle(rowNum, colNum, cellStyle);
+                                    //compare load name of Spares and Spaces to skip customized options (e.g. existing circuits)
+                                    if (isSpare && loadName == "SPARE")
+                                    {
+                                        horizAlignment = HorizontalAlignmentStyle.Right;
+                                    }
+                                    else if (isSpace && loadName == "SPACE")
+                                    {
+                                        horizAlignment = HorizontalAlignmentStyle.Center;
+                                    }
+                                    else
+                                    {
+                                        horizAlignment = HorizontalAlignmentStyle.Left;
+                                    }
 
+                                    cellStyle.FontHorizontalAlignment = horizAlignment;
+
+                                    sectionData.SetCellStyle(rowNum, colNum, cellStyle);
+                                }
                             }
                         }
                     }
@@ -100,7 +106,7 @@ namespace PanelSchedFormatting
                 }
                 catch (Exception ex)
                 {
-                    TaskDialog.Show("An error occurred", "An error occurred that has stopped the tool. Contact the BIM team for assistance.");
+                    errorReport = ex.Message;
 
                     return Result.Failed;
                 }
