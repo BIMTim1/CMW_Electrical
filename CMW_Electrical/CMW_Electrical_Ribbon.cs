@@ -16,7 +16,7 @@ namespace CMW_Electrical
 {
     public class CMW_Electrical_Ribbon : IExternalApplication
     {
-        public const string versionNumber = "1.0";
+        public const string versionNumber = "0.1";
         public const string releaseDate = "August 2024";
 
         static void AddRibbonPanel(UIControlledApplication application)
@@ -303,7 +303,11 @@ namespace CMW_Electrical
                 {
                     LargeImage = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/OLPlaceEquip32x32.png")),
                     Image = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/OLPlaceEquip16x16.png")),
-                    ToolTip = "Select a Detail Item from your One-Line and Place the Corresponding Equipment in the model from a selected Level view."
+                    ToolTip = "Select a Detail Item or Electrical Equipment family from the available list to place in your active view.",
+                    LongDescription = "If you are in a Drafting View, the dialog will display Electrical Equipment that can be associated to a new element. " +
+                    "Place an instance of the object selected. " +
+                    "If you are in a Floor Plan View, the dialog will display Detail Items that can be associated to new elements. " +
+                    "Place an instance of the object selected."
             };
 
 
@@ -316,7 +320,7 @@ namespace CMW_Electrical
             {
                 LargeImage = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/OLAssociate32x32.png")),
                 Image = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/OLAssociate16x16.png")),
-                ToolTip = "Select an Electrical Equipment family from a list of Panel Names and associate to a selected Detail Item family in One-Line."
+                ToolTip = "Select a Detail Item or Electrical Equipment family from the available list to associate to an Electrical Equipment or Detail Item instance in your active view."
             };
 
 

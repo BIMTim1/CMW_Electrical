@@ -77,7 +77,7 @@ namespace OneLine_Associate
 
                 paramRef = "Panel Name - Detail";
                 selFilter = new CMWElecSelectionFilter.EquipmentSelectionFilter();
-                selectionStatus = "Select a Schematic Detail Item to reference.";
+                selectionStatus = "Select an Electrical Equipment instance to reference";
             }
             else if(activeView.ViewType == ViewType.DraftingView)
             {
@@ -104,7 +104,7 @@ namespace OneLine_Associate
 
                 paramRef = "Panel Name";
                 selFilter = new CMWElecSelectionFilter.DetailItemSelectionFilter();
-                selectionStatus = "Select an Electrical Equipment instance to reference";
+                selectionStatus = "Select a Schematic Detail Item to reference.";
             }
             else //cancel tool if activeView is not a FloorPlan or DraftingView
             {

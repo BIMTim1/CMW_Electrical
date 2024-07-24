@@ -15,6 +15,8 @@ using OneLineTools;
 using CMW_Electrical;
 using Autodesk.Revit.UI.Events;
 using System.Diagnostics;
+using CMW_Electrical.OneLineTools.OneLine_Find;
+using System.Windows.Forms;
 
 namespace OneLineFind
 {
@@ -22,13 +24,12 @@ namespace OneLineFind
     [Regeneration(RegenerationOption.Manual)]
     public class OneLineFind : IExternalCommand
     {
-
         public Result Execute(ExternalCommandData commandData, ref string errorReport, ElementSet elementSet)
         {
             //define background Revit information to reference
             UIApplication uiapp = commandData.Application;
             Document doc = uiapp.ActiveUIDocument.Document;
-            Application app = uiapp.Application;
+            Autodesk.Revit.ApplicationServices.Application app = uiapp.Application;
             UIDocument uidoc = uiapp.ActiveUIDocument;
 
             //check for EqConId Current Value parameter
@@ -42,9 +43,6 @@ namespace OneLineFind
 
                 return Result.Failed;
             }
-
-            string schedName = "E_Working_Unassociated Electrical Schematic Elements";
-            string commentsValue = "Schematic Element not Associated";
 
             using (Transaction trac = new Transaction(doc))
             {
@@ -63,28 +61,15 @@ namespace OneLineFind
                     ElementMulticategoryFilter mCatFilter = new ElementMulticategoryFilter(mCats);
 
                     //clear Comments parameter of items that may have not been assigned before
-                    List<Element> clearList = 
-                        new FilteredElementCollector(doc)
-                        .WherePasses(mCatFilter)
-                        .ToElements()
-                        .Where(x => x.LookupParameter("EqConId").AsString().Contains("EqId") && 
-                        x.LookupParameter("Comments").AsString() == commentsValue)
-                        .ToList();
-
-                    if (clearList.Any())
-                    {
-                        foreach (Element e in clearList)
-                        {
-                            e.LookupParameter("Comments").Set("");
-                        }
-                    }
-
                     List<Element> elems = 
                         new FilteredElementCollector(doc)
                         .WherePasses(mCatFilter)
+                        .WhereElementIsNotElementType()
                         .ToElements()
-                        .Where(x=>x.LookupParameter("EqConId").AsString() == "not assigned" || 
-                        x.LookupParameter("EqConId").AsString() == null)
+                        .Where(x => x.LookupParameter("EqConId").AsString() == null || 
+                        x.LookupParameter("EqConId").AsString() == "not assigned")
+                        .Where(x => x.LookupParameter("Panel Name") != null ||
+                        x.LookupParameter("Panel Name - Detail") != null)
                         .ToList();
 
                     if (!elems.Any())
@@ -95,35 +80,47 @@ namespace OneLineFind
                         return Result.Cancelled;
                     }
 
-                    foreach (Element e in elems)
+                    //convert elements into List<ElementData>
+                    List<ElementData> elemDataList = new List<ElementData>();
+
+                    foreach (Element elem in elems)
                     {
-                        e.LookupParameter("Comments").Set(commentsValue);
+                        ElementData elemData = new ElementData(elem);
+                        elemDataList.Add(elemData);
                     }
 
-                    //get Multi-Category schedule or create if not already created
-                    ViewSchedule mCatSched;
+                    //initialize form
+                    OneLineFindForm form = new OneLineFindForm(elemDataList.OrderBy(x=>x.EPanelName).ToList());
+                    form.ShowDialog();
 
-                    List<Element> schedCollector =
-                        new FilteredElementCollector(doc)
-                        .OfClass(typeof(ViewSchedule))
-                        .WhereElementIsNotElementType()
-                        .ToElements()
-                        .Where(x => x.LookupParameter("Name").AsString() == schedName)
-                        .ToList();
+                    //if (form.outputElementId != null)
+                    //{
+                    //    MessageBox.Show($"Selected Element Id:\n{form.outputElementId}");
+                    //}
 
-                    if (!schedCollector.Any())
+                    if (form.DialogResult == DialogResult.Cancel)
                     {
-                        mCatSched = CreateSchedule(doc, schedName, commentsValue);
-                    }
-                    else
-                    {
-                        mCatSched = schedCollector.First() as ViewSchedule;
+                        return Result.Cancelled;
                     }
 
-                    //change ActiveView to ViewSchedule
-                    uidoc.RequestViewChange(mCatSched);
+                    //collect views that the selected ElementId is visible in
+                    var views = doc.GetElement(form.outputElementId).FindAllViewsWhereAllElementsVisible();
+                    ICollection<ElementId> elemList = new List<ElementId>()
+                    {
+                        form.outputElementId
+                    };
+
+                    if (!views.Any()) return Result.Failed;
+
+                    Autodesk.Revit.DB.View selView = views.First();
 
                     trac.Commit();
+
+                    uidoc.RequestViewChange(selView);
+
+                    uidoc.ShowElements(elemList);
+
+                    uidoc.Selection.SetElementIds(elemList);
 
                     return Result.Succeeded;
                 }
@@ -136,76 +133,5 @@ namespace OneLineFind
                 }
             }
         }
-
-        #region CreateSchedule
-        /// <summary>
-        /// Create the Multi-Category schedule for the user
-        /// to easily find elements that are not associated
-        /// between Electrical Equipment and Detail Items
-        /// for use in connected information between the 
-        /// One Line diagram and model content.
-        /// </summary>
-        internal ViewSchedule CreateSchedule(Document document, string scheduleName, string commentsVal)
-        {
-            ViewSchedule sched = 
-                ViewSchedule.CreateSchedule(document, ElementId.InvalidElementId);
-            sched.Name = scheduleName;
-
-            //add parameters to schedule
-            ScheduleDefinition schedDef = sched.Definition;
-
-            //check to see if Project Parameter EqConId can be referenced
-            //rework tool to not use Comments parameter updating if this is true
-            //schedule can just reference the correct elements
-            ScheduleFilter schedFil = new ScheduleFilter();
-
-            //collect all ScheduleFields that could be added to the schedule
-            IList<SchedulableField> allFields = schedDef.GetSchedulableFields();
-
-            ScheduleField commentsField = null;
-            ScheduleField famTypeField = null;
-            ScheduleField panNameField = null;
-            ScheduleField panNameDetField = null;
-
-            foreach (SchedulableField f in allFields)
-            {
-                string fName = f.GetName(document);
-
-                if (fName == "Comments")
-                {
-                    commentsField = schedDef.AddField(f.FieldType, f.ParameterId);
-
-                    //create ScheduleFilter for Comments parameter
-                    ScheduleFieldId commentsId = commentsField.FieldId;
-                    schedFil = new ScheduleFilter(commentsId, ScheduleFilterType.Equal, commentsVal);
-                }
-                else if (fName == "Family and Type")
-                {
-                    famTypeField = schedDef.AddField(f.FieldType, f.ParameterId);
-                }
-            }
-            //verify if this section will work when creating
-            //sort added parameters in schedule
-            IList<ScheduleFieldId> sortFieldList = new List<ScheduleFieldId>()
-            {
-                famTypeField.FieldId,
-                panNameField.FieldId,
-                panNameDetField.FieldId,
-                commentsField.FieldId
-            };
-
-            schedDef.SetFieldOrder(sortFieldList);
-
-            //add filter to schedule
-            schedDef.AddFilter(schedFil);
-
-            //set View Classification, Discipline, and Sub-Discipline parameters of newly created schedule
-            sched.LookupParameter("View Classification").Set("Working");
-            sched.LookupParameter("Sub-Discipline").Set("Power");
-            sched.LookupParameter("Discipline").Set("Electrical");
-
-            return sched;
-        }
-        #endregion // CreateSchedule
     }
 }

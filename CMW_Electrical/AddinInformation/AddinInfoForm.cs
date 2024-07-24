@@ -39,12 +39,12 @@ namespace CMW_Electrical.AddinInformation
 
             if (btn.Name == btnReportBug.Name)
             {
-                Process.Start("https://therma123.sharepoint.com/:u:/r/sites/ObernelBIM/SitePages/Support.aspx?csf=1&web=1&e=VNHdtj");
+                Process.Start("https://wearelegence.sharepoint.com/sites/CMTAMidwestBIM/SitePages/Support.aspx");
             }
 
             else if (btn.Name == btnBIMSite.Name)
             {
-                Process.Start("https://therma123.sharepoint.com/sites/ObernelBIM");
+                Process.Start("https://wearelegence.sharepoint.com/sites/CMTAMidwestBIM");
             }
         }
     }
