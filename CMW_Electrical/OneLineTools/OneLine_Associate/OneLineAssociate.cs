@@ -139,7 +139,7 @@ namespace OneLine_Associate
             }
 
             //launch form to select Equipment Family
-            OneLineAssociateForm form = new OneLineAssociateForm(formInfo);
+            OneLineAssociateForm form = new OneLineAssociateForm(formInfo, paramRef);
             form.ShowDialog();
 
             if (form.DialogResult == System.Windows.Forms.DialogResult.Cancel)

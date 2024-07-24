@@ -13,21 +13,21 @@ namespace CMW_Electrical.OneLineTools.OneLine_Copy
 {
     public partial class CopySelectionReferenceForm : Form
     {
-        [DllImport("Gdi32.dll", EntryPoint = "CreateRoundRectRgn")]
-        private static extern IntPtr CreateRoundRectRgn
-            (
-            int nLeftRect,
-            int nTopRect,
-            int nRightRect,
-            int nBottomRect,
-            int nWidthEllipse,
-            int nHeightEllipse
-            );
+        //[DllImport("Gdi32.dll", EntryPoint = "CreateRoundRectRgn")]
+        //private static extern IntPtr CreateRoundRectRgn
+        //    (
+        //    int nLeftRect,
+        //    int nTopRect,
+        //    int nRightRect,
+        //    int nBottomRect,
+        //    int nWidthEllipse,
+        //    int nHeightEllipse
+        //    );
         public CopySelectionReferenceForm(List<string> equipNames)
         {
             InitializeComponent();
 
-            Region = System.Drawing.Region.FromHrgn(CreateRoundRectRgn(0, 0, Width, Height, 20, 20));
+            //Region = System.Drawing.Region.FromHrgn(CreateRoundRectRgn(0, 0, Width, Height, 20, 20));
 
             cBoxEquipSelect.Items.AddRange(equipNames.ToArray());
         }

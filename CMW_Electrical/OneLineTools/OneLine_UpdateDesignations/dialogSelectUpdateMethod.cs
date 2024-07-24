@@ -15,21 +15,21 @@ namespace OneLineUpdateDesignations
 {
     public partial class dialogSelectUpdateMethod : System.Windows.Forms.Form
     {
-        [DllImport("Gdi32.dll", EntryPoint = "CreateRoundRectRgn")]
-        private static extern IntPtr CreateRoundRectRgn
-            (
-            int nLeftRect,
-            int nTopRect,
-            int nRightRect,
-            int nBottomRect,
-            int nWidthEllipse,
-            int nHeightEllipse
-            );
+        //[DllImport("Gdi32.dll", EntryPoint = "CreateRoundRectRgn")]
+        //private static extern IntPtr CreateRoundRectRgn
+        //    (
+        //    int nLeftRect,
+        //    int nTopRect,
+        //    int nRightRect,
+        //    int nBottomRect,
+        //    int nWidthEllipse,
+        //    int nHeightEllipse
+        //    );
         public dialogSelectUpdateMethod()
         {
             InitializeComponent();
 
-            Region = System.Drawing.Region.FromHrgn(CreateRoundRectRgn(0, 0, Width, Height, 20, 20));
+            //Region = System.Drawing.Region.FromHrgn(CreateRoundRectRgn(0, 0, Width, Height, 20, 20));
 
             ToolTip useEquipToolTip = new ToolTip();
             useEquipToolTip.SetToolTip(rbtnUseEquipment, "This option is used to update all Detail Item families in the One-Line / Riser schematic that have the same EqConId value as an Electrical Equipment family located in the Revit model.");
