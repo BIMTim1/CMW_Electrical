@@ -122,6 +122,7 @@ namespace OneLineConnect
                         foreach (FamilyInstance feeder in feederLines)
                         {
                             feeder.LookupParameter("EqConId").Set(detItemInfo.EqConId);
+                            feeder.LookupParameter("EqConId Connection Source").Set(detItemInfo.EqConIdConnectedSource);
                         }
                     }
 

@@ -184,16 +184,28 @@ namespace OneLineDraw
                         deleteFirst = true;
                     }
 
-                    DetailItemInfo selItem = new DetailItemInfo(doc.GetElement(fedToDetailItem))
+                    //connected EqConId
+                    string sourceId = sourceDetailItem.LookupParameter("EqConId").AsString();
+                    Element fedToElement = doc.GetElement(fedToDetailItem);
+
+                    DetailItemInfo selItem = new DetailItemInfo(fedToElement)
                     {
-                        EqConIdConnectedSource = sourceDetailItem.LookupParameter("EqConId").AsString()
+                        EqConIdConnectedSource = sourceId
                     };
 
                     //set EqConId value of created Feeder Lines
                     foreach (FamilyInstance fam in newFamInstances)
                     {
                         fam.LookupParameter("EqConId").Set(selItem.EqConId);
+                        fam.LookupParameter("EqConId Connection Source").Set(sourceId);
                     }
+
+                    //create Electrical Equipment circuit
+                    ElectricalSystem elecSys = 
+                        new CreateEquipmentCircuit()
+                        .CreateEquipCircuit(doc,
+                            sourceDetailItem, 
+                            fedToElement as FamilyInstance);
 
                     if (deleteFirst)
                     {
