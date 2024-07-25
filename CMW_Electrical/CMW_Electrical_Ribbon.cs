@@ -384,7 +384,18 @@ namespace CMW_Electrical
                 Image = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/OlHalftoneExisting16x16.png")),
                 ToolTip = "Sets the Graphic Override for all Existing phased content in active Schematic Drafting View to be Halftone."
             };
-            
+
+            PushButtonData oneLineRemoveData = 
+                new PushButtonData(
+                    "cmdOneLineRemove", 
+                    "Remove", 
+                    thisAssemblyPath, 
+                    "OneLine_Remove.OneLineRemove")
+            {
+                LargeImage = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/OLRemove32x32.png")),
+                Image = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/OLRemove16x16.png")),
+                ToolTip = ""
+            };
 
             PushButton oneLineAssociateBtn = oneLinePanel.AddItem(oneLineAssociateData) as PushButton;
             PushButton oneLinePlaceEquipBtn = oneLinePanel.AddItem(oneLinePlaceEquipData) as PushButton;
@@ -394,6 +405,7 @@ namespace CMW_Electrical
             oneLinePanel.AddSeparator();
 
             PushButton oneLineUpdateDesignationsBtn = oneLinePanel.AddItem(oneLineUpdateDesignationsData) as PushButton;
+            PushButton oneLineRemoveBtn = oneLinePanel.AddItem(oneLineRemoveData) as PushButton;
 
             oneLinePanel.AddSeparator();
 
