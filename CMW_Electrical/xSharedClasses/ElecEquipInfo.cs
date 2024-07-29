@@ -16,6 +16,7 @@ namespace CMW_Electrical
     {
         private readonly FamilyInstance EEFamInst;
         private readonly Parameter EEName;
+        private readonly Parameter EEMains;
         private readonly Parameter EEEqConId;
         private readonly Parameter EEDistributionSystem;
         private FamilySymbol EEFamilyType;
@@ -24,8 +25,8 @@ namespace CMW_Electrical
         public ElecEquipInfo(Element elecEquip)
         {
             EEFamInst = elecEquip as FamilyInstance;
-            //EEName = EEFamInst.LookupParameter("Panel Name");
             EEName = EEFamInst.get_Parameter(BuiltInParameter.RBS_ELEC_PANEL_NAME);
+            EEMains = EEFamInst.get_Parameter(BuiltInParameter.RBS_ELEC_MAINS);
             EEEqConId = EEFamInst.LookupParameter("EqConId");
             //EEDistributionSystem = EEFamInst.LookupParameter("Distribution System");
             EEDistributionSystem = EEFamInst.get_Parameter(BuiltInParameter.RBS_FAMILY_CONTENT_DISTRIBUTION_SYSTEM);
@@ -61,6 +62,15 @@ namespace CMW_Electrical
         {
             get { return EEName.AsString(); }
             set { EEName.Set(value); }
+        }
+
+        /// <summary>
+        /// Get or set the Mains parameter of the ElectricalEquipment FamilyInstance
+        /// </summary>
+        public double Mains
+        {
+            get { return EEMains.AsDouble(); }
+            set { EEMains.Set(value); }
         }
 
         /// <summary>

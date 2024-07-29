@@ -17,6 +17,7 @@ namespace CMW_Electrical
         private readonly Parameter DIEqConId;
         private readonly Parameter DIVoltage;
         private readonly Parameter DINumberOfPhases;
+        private readonly Parameter DICurrent;
         private readonly Parameter DIPhasing;
         private readonly Parameter DIEqConIdConnSource;
 
@@ -27,6 +28,7 @@ namespace CMW_Electrical
             DIEqConId = DIFamInst.LookupParameter("EqConId");
             DIVoltage = DIFamInst.LookupParameter("E_Voltage");
             DINumberOfPhases = DIFamInst.LookupParameter("Number of Phases - Detail");
+            DICurrent = DIFamInst.LookupParameter("Current - Detail");
             DIPhasing = DIFamInst.LookupParameter("New, Existing, Demo (1,2,3)");
             DIEqConIdConnSource = DIFamInst.LookupParameter("EqConId Connection Source");
         }
@@ -90,6 +92,16 @@ namespace CMW_Electrical
         {
             get { return DINumberOfPhases.AsInteger(); }
             set { DINumberOfPhases.Set(value); }
+        }
+
+        /// <summary>
+        /// Get or set the Current - Detail parameter of this DetailItem
+        /// </summary>
+        /// <value>Return the double value of the Current - Detail parameter of this DetailItem.</value>
+        public double Current
+        {
+            get { return DICurrent.AsDouble(); }
+            set { DICurrent.Set(value); }
         }
 
         /// <summary>

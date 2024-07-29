@@ -11,6 +11,7 @@ using Autodesk.Revit.DB.Electrical;
 using Autodesk.Revit.UI;
 using Autodesk.Revit.UI.Selection;
 using System.Linq.Expressions;
+using System.Windows.Forms;
 
 namespace RotateDeviceSymbols
 {
@@ -56,7 +57,18 @@ namespace RotateDeviceSymbols
 
                     trac.Commit();
 
+                    TaskDialog results = new TaskDialog("CMW-Elec - Results")
+                    {
+                        TitleAutoPrefix = false,
+                        CommonButtons = TaskDialogCommonButtons.Ok,
+                        MainInstruction = "Results:",
+                        MainContent = "All applicable device symbol text has been rotated."
+                    };
+
+                    results.Show();
+
                     return Result.Succeeded;
+
                 }
                 catch (Exception ex)
                 {

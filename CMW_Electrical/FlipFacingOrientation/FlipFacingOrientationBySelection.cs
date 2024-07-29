@@ -70,7 +70,16 @@ namespace FlipFacingOrientation
 
                     trac.Commit();
 
-                    TaskDialog.Show("Lighting Fixtures Modification Complete", $"{count} Lighting Fixtures have had their Host Orientation Flipped.");
+                    //TaskDialog.Show("Lighting Fixtures Modification Complete", $"{count} Lighting Fixtures have had their Host Orientation Flipped.");
+                    TaskDialog myDialog = new TaskDialog("CMW-Elec - Results")
+                    {
+                        TitleAutoPrefix = false,
+                        CommonButtons = TaskDialogCommonButtons.Ok,
+                        MainInstruction = "Results:",
+                        MainContent = $"{count} Lighting Fixtures have had their Host Orientation Flipped."
+                    };
+
+                    myDialog.Show();
 
                     return Result.Succeeded;
                 }
