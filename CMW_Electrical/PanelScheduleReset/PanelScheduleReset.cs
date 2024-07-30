@@ -40,16 +40,27 @@ namespace ResetPanelScheduleTemplate
             List<Element> allSchedules = new FilteredElementCollector(doc).OfClass(typeof(PanelScheduleView)).ToElements().ToList();
 
             //create transaction to modify active document
-            using (Transaction trans = new Transaction(doc))
+            using (Transaction trac = new Transaction(doc))
             {
                 try
                 {
                     //do thing
-                    trans.Start("CMWElec-Reset all Panel Schedule Templates");
+                    trac.Start("CMWElec-Reset all Panel Schedule Templates");
 
                     UpdatePanelSchedules(allSchedules, allBranchTemp, allSwitchTemp);
 
-                    trans.Commit();
+                    trac.Commit();
+
+                    //create Results dialog
+                    TaskDialog results = new TaskDialog("CMW-Elec - Results")
+                    {
+                        TitleAutoPrefix = false,
+                        CommonButtons = TaskDialogCommonButtons.Ok,
+                        MainInstruction = "Results:",
+                        MainContent = "All Panel Schedules have been refreshed to display the latest template information."
+                    };
+
+                    results.Show();
 
                     return Result.Succeeded;
                 }

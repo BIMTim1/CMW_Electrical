@@ -212,6 +212,17 @@ namespace ChangePanelTypeToSinglePhase
 
                 tracGroup.Assimilate();
 
+                //create Results dialog
+                TaskDialog results = new TaskDialog("CMW-Elec - Results")
+                {
+                    TitleAutoPrefix = false,
+                    MainInstruction = "The following changes were made to the selected panel:",
+                    MainContent = "1. Panel type changed to Single Phase.\n2. Panel reconnected to original source.\n3. All branch circuits reconnected to panel.",
+                    CommonButtons = TaskDialogCommonButtons.Ok
+                };
+
+                results.Show();
+
                 return Result.Succeeded;
             }
         }

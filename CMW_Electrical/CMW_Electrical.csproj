@@ -176,6 +176,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="xSharedClasses\XFMRInfo.cs" />
     <Compile Include="xSharedClasses\CreateEquipmentCircuit.cs" />
     <Compile Include="xSharedClasses\ElecDistributionSystem.cs" />
     <Compile Include="xSharedClasses\ElecEquipInfo.cs" />
