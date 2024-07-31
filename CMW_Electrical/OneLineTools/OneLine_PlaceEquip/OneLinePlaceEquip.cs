@@ -247,7 +247,8 @@ namespace OneLinePlaceEquip
             {
                 //TaskDialog.Show("No Family Symbol Found",
                 //    "An Electrical Equipment Family Type could not be found to match the Detail Item selected. Load an applicable family from HIVE, then rerun the tool.");
-                errorReport = "An Electrical Equipment Family Type could not be found to match the Detail Item selected. Load an applicable family from HIVE, then rerun the tool.";
+                errorReport = "An Electrical Equipment Family Type could not be found to match the Detail Item selected. " +
+                    "Load an applicable family from HIVE, then rerun the tool.";
 
                 return Result.Failed;
             }

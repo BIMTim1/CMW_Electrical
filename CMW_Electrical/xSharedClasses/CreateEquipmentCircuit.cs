@@ -97,6 +97,17 @@ namespace CMW_Electrical
         {
             ElectricalSystem createdCircuit = null;
 
+            //update Secondary Distribution System of Transformer if not set
+            if (sourceEquipment.Symbol.Family.get_Parameter(
+                BuiltInParameter.FAMILY_CONTENT_PART_TYPE).AsValueString() == "Transformer")
+            {
+                ElementId fedToDisSys = fedToEquipment.get_Parameter(
+                    BuiltInParameter.RBS_FAMILY_CONTENT_DISTRIBUTION_SYSTEM)
+                    .AsElementId();
+
+                sourceEquipment.get_Parameter(BuiltInParameter.RBS_FAMILY_CONTENT_SECONDARY_DISTRIBSYS).Set(fedToDisSys);
+            }
+
             ConnectorSet connectorSet = fedToEquipment.MEPModel.ConnectorManager.UnusedConnectors;
 
             foreach (Connector connector in connectorSet)

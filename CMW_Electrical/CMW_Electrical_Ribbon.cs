@@ -135,7 +135,13 @@ namespace CMW_Electrical
 
 
             //------------create push button for EquipNameUpdate------------
-            PushButtonData equipUpdateData = new PushButtonData("cmdEquipNameUpdate", "Panel Name" + System.Environment.NewLine + " Updater ", thisAssemblyPath, "EquipNameUpdate.EquipInfoUpdate")
+            PushButtonData equipUpdateData = 
+                new PushButtonData(
+                    "cmdEquipNameUpdate", 
+                    "Panel Name" + 
+                    System.Environment.NewLine + " Updater ", 
+                    thisAssemblyPath,
+                    "EquipNameUpdate.EquipInfoUpdate")
             {
                 LargeImage = new BitmapImage(new Uri(
                 "pack://application:,,,/CMW_Electrical;component/Resources/EquipNameUpdate32x32.png")),
@@ -144,7 +150,34 @@ namespace CMW_Electrical
                 ToolTip = "Update ALL Electrical Equipment Name Information",
                 LongDescription = "This tool will update the associated Electrical Circuit Load Name and Panel Schedule Name parameter values from the Panel Name parameter."
             };
-            PushButton equipUpdateBtn = equipPanel.AddItem(equipUpdateData) as PushButton;
+
+
+            //------------create push button for EquipCircuitUpdate------------
+            PushButtonData equipCircuitUpdateData = 
+                new PushButtonData(
+                    "cmdEquipCircuitUpdate", 
+                    "Panel Circuit" + System.Environment.NewLine + " Updater ", 
+                    thisAssemblyPath, 
+                    "EquipCircuitUpdate.EquipCircuitUpdate")
+            {
+                LargeImage = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/PnlUpdateRating32x32.png")),
+                Image = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/PnlUpdateRating16x16.png")),
+                ToolTip = "Update the Rating and Frame parameters of all Electrical Equipment instances.",
+                LongDescription = "This tool will take the Mains and E_Bussing values of all Electrical Equipment families " +
+                "and use these values to update the associated Electrical Circuit of the Electrical Equipment."
+            };
+
+            //create equipUpdatePulldownButton
+            PulldownButtonData equipUpdatePulldownButtonData = new PulldownButtonData("equipUpdatePullDown", "Equipment" + System.Environment.NewLine + " Update ")
+            {
+                LargeImage = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/EquipNameUpdate32x32.png"))
+            };
+
+            PulldownButton equipUpdatePulldownButton = equipPanel.AddItem(equipUpdatePulldownButtonData) as PulldownButton;
+            equipUpdatePulldownButton.AddPushButton(equipUpdateData);
+            equipUpdatePulldownButton.AddPushButton(equipCircuitUpdateData);
+
+            //PushButton equipUpdateBtn = equipPanel.AddItem(equipUpdateData) as PushButton;
 
 
             //------------create push button for CreatePanelSchedules------------
@@ -394,7 +427,8 @@ namespace CMW_Electrical
             {
                 LargeImage = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/OLRemove32x32.png")),
                 Image = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/OLRemove16x16.png")),
-                ToolTip = ""
+                ToolTip = "Remove a selected Detail Item or Electrical Equipment family from the model.",
+                LongDescription = "The tool will prompt the user to select whether or not to keep any associated elements made through the CMW - Electrical tools."
             };
 
             PushButton oneLineAssociateBtn = oneLinePanel.AddItem(oneLineAssociateData) as PushButton;

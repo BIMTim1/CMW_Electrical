@@ -83,6 +83,7 @@
       <DependentUpon>PanelSchedCreatedForm.cs</DependentUpon>
     </Compile>
     <Compile Include="DeviceSymbolsRotate\DeviceSymbolsRotate.cs" />
+    <Compile Include="EquipCircuitUpdate\EquipCircuitUpdate.cs" />
     <Compile Include="EquipNameUpdate\EquipNameUpdate.cs" />
     <Compile Include="EquipNameUpdate\EquipNameUpdateForm.cs">
       <SubType>Form</SubType>
@@ -257,6 +258,8 @@
     <Resource Include="Resources\OLFind32x32.png" />
     <Resource Include="Resources\OLRemove16x16.png" />
     <Resource Include="Resources\OLRemove32x32.png" />
+    <Resource Include="Resources\PnlUpdateRating16x16.png" />
+    <Resource Include="Resources\PnlUpdateRating32x32.png" />
     <Content Include="_Addin\CMW_Electrical.addin">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

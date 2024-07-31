@@ -45,7 +45,10 @@ namespace OneLineConnect
             //stop tool if activeView is not a Drafting View
             if (activeView.ViewType != ViewType.DraftingView)
             {
-                TaskDialog.Show("Incorrect View Type", "Open a Drafting View that contains your One-Line Diagram and rerun the tool.");
+                //TaskDialog.Show("Incorrect View Type", "Open a Drafting View that contains your One-Line Diagram and rerun the tool.");
+                errorReport = "Open a Drafting View that contains your One-Line Diagram and rerun the tool.";
+                elementSet.Insert(activeView);
+
                 return Result.Cancelled;
             }
 
@@ -85,10 +88,7 @@ namespace OneLineConnect
                 {
                     trac.Start("CMWElec-Power");
 
-                    DetailItemInfo detItemInfo = new DetailItemInfo(fedToDetailItem)
-                    {
-                        EqConIdConnectedSource = sourceDetailItem.LookupParameter("EqConId").AsString() //set value of EqConIdConnectedSource
-                    };
+                    DetailItemInfo detItemInfo = new DetailItemInfo(fedToDetailItem);
 
                     //verify if feeder lines already exist
                     List<Element> createdFeederLines = new FilteredElementCollector(doc)
@@ -119,19 +119,39 @@ namespace OneLineConnect
                             doc,
                             feederLine);
 
-                        foreach (FamilyInstance feeder in feederLines)
+                        //check if detItemInfo has an EqConId value to apply to created Feeder Lines
+                        if (detItemInfo.EqConId != null || detItemInfo.EqConId != "")
                         {
-                            feeder.LookupParameter("EqConId").Set(detItemInfo.EqConId);
-                            feeder.LookupParameter("EqConId Connection Source").Set(detItemInfo.EqConIdConnectedSource);
+                            foreach (FamilyInstance feeder in feederLines)
+                            {
+                                feeder.LookupParameter("EqConId").Set(detItemInfo.EqConId);
+                            }
+                        }
+
+                        //check if sourceDetailItem has an EqConId to assign connected information
+                        if (sourceDetailItem.LookupParameter("EqConId").AsString() != null &&
+                            sourceDetailItem.LookupParameter("EqConId").AsString() != "")
+                        {
+                            detItemInfo.EqConIdConnectedSource = sourceDetailItem.LookupParameter("EqConId").AsString();
+
+                            foreach (FamilyInstance feeder in feederLines)
+                            {
+                                feeder.LookupParameter("EqConId Connection Source").Set(detItemInfo.EqConIdConnectedSource);
+                            }
                         }
                     }
 
-                    //create ElectricalSystem of selected DetailItems
-                    ElectricalSystem createdCircuit = 
-                        new CreateEquipmentCircuit().CreateEquipCircuit(
-                            doc, 
-                            sourceDetailItem as FamilyInstance, 
-                            fedToDetailItem as FamilyInstance);
+                    //check if detItemInfo has a connected Electrical Equipment family
+                    if (detItemInfo.EqConId != null && detItemInfo.EqConId != "")
+                    {
+                        //create ElectricalSystem of selected DetailItems
+                        ElectricalSystem createdCircuit = 
+                            new CreateEquipmentCircuit()
+                            .CreateEquipCircuit(
+                                doc, 
+                                sourceDetailItem as FamilyInstance, 
+                                fedToDetailItem as FamilyInstance);
+                    }
 
                     trac.Commit();
 
@@ -139,7 +159,7 @@ namespace OneLineConnect
                 }
                 catch (Exception ex)
                 {
-                    errorReport = "An error occurred that has prevented the tool from running. Contact the BIM team for assistance.";
+                    errorReport = ex.Message;
                     elementSet.Insert(sourceDetailItem);
 
                     return Result.Failed;
