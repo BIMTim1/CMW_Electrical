@@ -164,7 +164,7 @@ namespace OneLineCopy
                     ElecEquipInfo selEquipInfo = new ElecEquipInfo(selEquip);
 
                     List<Element> copiedElems = (from id in copiedElemIds select doc.GetElement(id)).ToList();
-                    Element mainDetItem = (from el in copiedElems where el.LookupParameter("Family").AsValueString().Contains("Panelboard") select el).ToList().First();
+                    Element mainDetItem = (from el in copiedElems where !el.LookupParameter("Family").AsValueString().Contains("Feeder") select el).ToList().First();
 
                     DetailItemInfo detItemInfo = new DetailItemInfo(mainDetItem);
                     detItemInfo.Name = selEquipInfo.Name;

@@ -106,6 +106,7 @@
     <Compile Include="MultiLegSwitchIdUpdate\MultiLegSwitchIdUpdate.cs" />
     <Compile Include="OneLineTools\EqConIdCheck.cs" />
     <Compile Include="OneLineTools\ExentsionMethods.cs" />
+    <Compile Include="OneLineTools\OneLine_FindDuplicates\OneLineFindDuplicates.cs" />
     <Compile Include="OneLineTools\OneLine_Remove\OneLineRemoveForm.cs">
       <SubType>Form</SubType>
     </Compile>

@@ -16,6 +16,7 @@ namespace CMW_Electrical
         private readonly Parameter DIName;
         private readonly Parameter DIEqConId;
         private readonly Parameter DIVoltage;
+        private readonly double DIActualVoltage;
         private readonly Parameter DINumberOfPhases;
         private readonly Parameter DICurrent;
         private readonly Parameter DIPhasing;
@@ -31,6 +32,12 @@ namespace CMW_Electrical
             DICurrent = DIFamInst.LookupParameter("Current - Detail");
             DIPhasing = DIFamInst.LookupParameter("New, Existing, Demo (1,2,3)");
             DIEqConIdConnSource = DIFamInst.LookupParameter("EqConId Connection Source");
+
+            //collect converted voltage information
+            double val = DIVoltage.AsDouble();
+            ForgeTypeId unitTypeId = DIVoltage.GetUnitTypeId();
+
+            DIActualVoltage = UnitUtils.ConvertFromInternalUnits(val, unitTypeId);
         }
 
         /// <summary>
@@ -82,6 +89,14 @@ namespace CMW_Electrical
             //double voltCalc = 10.763910416709711538461538461538
             get { return DIVoltage.AsDouble(); }
             set { DIVoltage.Set(value); }
+        }
+
+        /// <summary>
+        /// Get the human readable voltage value of the Detail Item.
+        /// </summary>
+        public double GetActualVoltage
+        {
+            get { return DIActualVoltage; }
         }
 
         /// <summary>

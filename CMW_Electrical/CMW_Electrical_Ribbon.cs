@@ -138,8 +138,7 @@ namespace CMW_Electrical
             PushButtonData equipUpdateData = 
                 new PushButtonData(
                     "cmdEquipNameUpdate", 
-                    "Panel Name" + 
-                    System.Environment.NewLine + " Updater ", 
+                    "Panel Name Updater", 
                     thisAssemblyPath,
                     "EquipNameUpdate.EquipInfoUpdate")
             {
@@ -156,7 +155,7 @@ namespace CMW_Electrical
             PushButtonData equipCircuitUpdateData = 
                 new PushButtonData(
                     "cmdEquipCircuitUpdate", 
-                    "Panel Circuit" + System.Environment.NewLine + " Updater ", 
+                    "Panel Circuit Updater", 
                     thisAssemblyPath, 
                     "EquipCircuitUpdate.EquipCircuitUpdate")
             {

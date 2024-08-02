@@ -20,6 +20,7 @@ namespace CMW_Electrical
         private readonly Parameter EEEqConId;
         private readonly Parameter EEDistributionSystem;
         private FamilySymbol EEFamilyType;
+        private readonly double EEActualVoltage;
         private readonly PanelScheduleView EEScheduleView;
 
         public ElecEquipInfo(Element elecEquip)
@@ -34,6 +35,13 @@ namespace CMW_Electrical
             Document document = elecEquip.Document;
 
             EEFamilyType = EEFamInst.Symbol;
+
+            //collect information for converted voltage from Revit Internal Units
+            Parameter param = EEFamilyType.LookupParameter("Voltage Nominal");
+            double voltVal = param.AsDouble();
+            ForgeTypeId unitTypeId = param.GetUnitTypeId();
+
+            EEActualVoltage = UnitUtils.ConvertFromInternalUnits(voltVal, unitTypeId);
 
             try
             {
@@ -98,6 +106,14 @@ namespace CMW_Electrical
         {
             get { return EEFamilyType; }
             set { EEFamilyType = value; }
+        }
+
+        /// <summary>
+        /// Get the converted double that represents the human readable Voltage of the Electrical Equipment element.
+        /// </summary>
+        public double GetActualVoltage
+        {
+            get { return EEActualVoltage; }
         }
 
         /// <summary>

@@ -29,7 +29,7 @@ namespace EquipCircuitUpdate
             List<FamilyInstance> all_equip = 
                 new FilteredElementCollector(doc)
                 .OfCategory(bic)
-                .WhereElementIsElementType()
+                .WhereElementIsNotElementType()
                 .ToElements()
                 .Cast<FamilyInstance>()
                 .Where(x=>HasCircuit(x))
