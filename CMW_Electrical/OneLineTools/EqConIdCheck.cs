@@ -11,21 +11,30 @@ namespace OneLineTools
     {
         public bool EqConIdCurrentValueExists(Document document)
         {
+            Parameter param = GetEqConIdCurrentValue(document);
+
+            return param != null;
+        }
+
+        public Parameter GetEqConIdCurrentValue(Document document)
+        {
+            Parameter param = null;
+
             string paramName = "EqConId Current Value";
 
             ProjectInfo projectInfo = document.ProjectInformation;
 
             ParameterSet projectParams = projectInfo.Parameters;
 
-            foreach (Parameter param in projectParams)
+            foreach (Parameter p in projectParams)
             {
-                if (param.Definition.Name == paramName)
+                if (p.Definition.Name == paramName)
                 {
-                    return true;
+                    param = p;
                 }
             }
 
-            return false;
+            return param;
         }
     }
 }

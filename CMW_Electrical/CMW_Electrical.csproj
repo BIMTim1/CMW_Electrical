@@ -106,6 +106,13 @@
     <Compile Include="MultiLegSwitchIdUpdate\MultiLegSwitchIdUpdate.cs" />
     <Compile Include="OneLineTools\EqConIdCheck.cs" />
     <Compile Include="OneLineTools\ExentsionMethods.cs" />
+    <Compile Include="OneLineTools\OneLine_FindDuplicates\DuplicateElementData.cs" />
+    <Compile Include="OneLineTools\OneLine_FindDuplicates\FindDuplicateElementForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="OneLineTools\OneLine_FindDuplicates\FindDuplicateElementForm.Designer.cs">
+      <DependentUpon>FindDuplicateElementForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="OneLineTools\OneLine_FindDuplicates\OneLineFindDuplicates.cs" />
     <Compile Include="OneLineTools\OneLine_Remove\OneLineRemoveForm.cs">
       <SubType>Form</SubType>
@@ -261,6 +268,8 @@
     <Resource Include="Resources\OLRemove32x32.png" />
     <Resource Include="Resources\PnlUpdateRating16x16.png" />
     <Resource Include="Resources\PnlUpdateRating32x32.png" />
+    <Resource Include="Resources\OLFindDuplicates16x16.png" />
+    <Resource Include="Resources\OLFindDuplicates32x32.png" />
     <Content Include="_Addin\CMW_Electrical.addin">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -289,6 +298,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="OneLineTools\OneLine_Copy\CopySelectionReferenceForm.resx">
       <DependentUpon>CopySelectionReferenceForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="OneLineTools\OneLine_FindDuplicates\FindDuplicateElementForm.resx">
+      <DependentUpon>FindDuplicateElementForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="OneLineTools\OneLine_Find\OneLineFindForm.resx">
       <DependentUpon>OneLineFindForm.cs</DependentUpon>

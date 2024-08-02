@@ -392,17 +392,25 @@ namespace CMW_Electrical
             };
 
             PushButtonData oneLineFindData = new PushButtonData(
-                "cmdLineLineFind", 
-                "Find", 
+                "cmdOneLineFind", 
+                "Find Not Associated", 
                 thisAssemblyPath, 
                 "OneLineFind.OneLineFind")
             {
                 LargeImage = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/OLFind32x32.png")),
                 Image = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/OLFind16x16.png")),
-                ToolTip = "Opens the E_Working_Unassociated Electrical Schematic Elements schedule for users to find unassociated elements.",
+                ToolTip = "Opens a dialog for users to find unassociated Electrical Equipment and Detail Items.",
                 LongDescription = "Applies a custom value to the Comments parameter of Electrical Equipment and Detail Items that are " +
                 "not assigned to other items in the model from the other CMW Electrical tools. The tool will activate the working " +
                 "schedule needed to find these elements in the model."
+            };
+
+            PushButtonData oneLineFindDuplicatesData = new PushButtonData("cmdOneLineFindDuplicates", "Find Duplicates", thisAssemblyPath, "OneLine_FindDuplicates.OneLineFindDuplicates")
+            {
+                LargeImage = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/OLFindDuplicates32x32.png")),
+                Image = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/OLFindDuplicates16x16.png")),
+                ToolTip = "Opens a dialog for users to find Electrical Equipment or Detail Items that have duplicate EqConId values.",
+                LongDescription = "This tool allows users to find any elements in the model that were copied and thus contain the same referencing Id for the CMW-Electrical tools. Duplicate elements will be updated through the tools and will cause problems if not resolved properly. The tool will reference Electrical Equipment if the tool is launched from a FloorPlan or 3D view, or Detail Items if launched through the OneLine Schematic View."
             };
 
             PushButtonData oneLineHalftoneExistingData = 
@@ -445,7 +453,15 @@ namespace CMW_Electrical
             PushButton oneLineCopyBtn = oneLinePanel.AddItem(oneLineCopy) as PushButton;
             PushButton oneLineDrawBtn = oneLinePanel.AddItem(oneLineDrawData) as PushButton;
             PushButton oneLineSelectBtn = oneLinePanel.AddItem(oneLineSelectData) as PushButton;
-            PushButton oneLineFindBtn = oneLinePanel.AddItem(oneLineFindData) as PushButton;
+            //PushButton oneLineFindBtn = oneLinePanel.AddItem(oneLineFindData) as PushButton;
+
+            PulldownButtonData oneLineFindButtonData = new PulldownButtonData("findSplitButton", "Find")
+            {
+                LargeImage = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/OLFind32x32.png"))
+            };
+            PulldownButton oneLineFindButton = oneLinePanel.AddItem(oneLineFindButtonData) as PulldownButton;
+            oneLineFindButton.AddPushButton(oneLineFindData);
+            oneLineFindButton.AddPushButton(oneLineFindDuplicatesData);
 
             oneLinePanel.AddSeparator();
 
