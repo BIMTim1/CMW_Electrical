@@ -27,13 +27,26 @@ namespace CMW_Electrical
             DIFamInst = detailItem as FamilyInstance;
             DIName = DIFamInst.LookupParameter("Panel Name - Detail");
             DIEqConId = DIFamInst.LookupParameter("EqConId");
-            DIVoltage = DIFamInst.LookupParameter("E_Voltage");
+            
             DINumberOfPhases = DIFamInst.LookupParameter("Number of Phases - Detail");
             DICurrent = DIFamInst.LookupParameter("Current - Detail");
             DIPhasing = DIFamInst.LookupParameter("New, Existing, Demo (1,2,3)");
             DIEqConIdConnSource = DIFamInst.LookupParameter("EqConId Connection Source");
 
             //collect converted voltage information
+            string paramName;
+
+            if (DIFamInst.Symbol.Family.Name.Equals("E_DI_OL_XFMR"))
+            {
+                paramName = "Primary Voltage";
+            }
+            else
+            {
+                paramName = "E_Voltage";
+            }
+
+            DIVoltage = DIFamInst.LookupParameter(paramName);
+
             double val = DIVoltage.AsDouble();
             ForgeTypeId unitTypeId = DIVoltage.GetUnitTypeId();
 

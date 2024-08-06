@@ -108,13 +108,34 @@ namespace CMW_Electrical
                 sourceEquipment.get_Parameter(BuiltInParameter.RBS_FAMILY_CONTENT_SECONDARY_DISTRIBSYS).Set(fedToDisSys);
             }
 
-            ConnectorSet connectorSet = fedToEquipment.MEPModel.ConnectorManager.UnusedConnectors;
-
-            foreach (Connector connector in connectorSet)
+            //check if equipment is already circuited
+            BuiltInParameter supplyFrom = BuiltInParameter.RBS_ELEC_PANEL_SUPPLY_FROM_PARAM;
+            if (fedToEquipment.get_Parameter(supplyFrom).AsString() != "")
             {
-                ElectricalSystemType elecSysType = connector.ElectricalSystemType;
-                createdCircuit = ElectricalSystem.Create(connector, elecSysType);
-                createdCircuit.SelectPanel(sourceEquipment);
+                ISet<ElectricalSystem> electricalSystems = fedToEquipment.MEPModel.GetElectricalSystems();
+
+                foreach (ElectricalSystem elecSys in electricalSystems)
+                {
+                    if (elecSys.BaseEquipment.Name != fedToEquipment.LookupParameter("Panel Name").AsString()) //check through all circuits to avoid non-equipment
+                    {
+                        elecSys.DisconnectPanel(); //disconnect previous connection
+
+                        elecSys.SelectPanel(sourceEquipment); //reconnect panel to new source
+
+                        createdCircuit = elecSys; //assign ElectricalSystem information for parameter values
+                    }
+                }
+            }
+            else
+            {
+                ConnectorSet connectorSet = fedToEquipment.MEPModel.ConnectorManager.UnusedConnectors;
+
+                foreach (Connector connector in connectorSet)
+                {
+                    ElectricalSystemType elecSysType = connector.ElectricalSystemType;
+                    createdCircuit = ElectricalSystem.Create(connector, elecSysType);
+                    createdCircuit.SelectPanel(sourceEquipment);
+                }
             }
 
             return createdCircuit;

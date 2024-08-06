@@ -37,7 +37,18 @@ namespace CMW_Electrical
             EEFamilyType = EEFamInst.Symbol;
 
             //collect information for converted voltage from Revit Internal Units
-            Parameter param = EEFamilyType.LookupParameter("Voltage Nominal");
+            string paramName;
+
+            if (EEFamilyType.Family.Name.Contains("Transformer") || EEFamilyType.Family.Name.Contains("CT Cab"))
+            {
+                paramName = "E_Primary Voltage";
+            }
+            else
+            {
+                paramName = "Voltage Nominal";
+            }
+
+            Parameter param = EEFamilyType.LookupParameter(paramName);
             double voltVal = param.AsDouble();
             ForgeTypeId unitTypeId = param.GetUnitTypeId();
 

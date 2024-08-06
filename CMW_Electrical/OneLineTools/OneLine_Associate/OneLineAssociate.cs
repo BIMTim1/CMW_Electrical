@@ -181,9 +181,10 @@ namespace OneLine_Associate
                              select di)
                              .First());
 
-                        elecEquipInfo = new ElecEquipInfo(doc.GetElement(userSelection));
-
-                        elecEquipInfo.Name = detItemInfo.Name;
+                        elecEquipInfo = new ElecEquipInfo(doc.GetElement(userSelection))
+                        {
+                            Name = detItemInfo.Name
+                        };
                     }
 
                     OLEqConIdUpdateClass updateEqConId = new OLEqConIdUpdateClass();
@@ -196,7 +197,7 @@ namespace OneLine_Associate
                 }
                 catch (Exception ex)
                 {
-                    errorReport = "An error occurred. Contact the BIM team for assistance.";
+                    errorReport = ex.Message;
 
                     return Result.Failed;
                 }

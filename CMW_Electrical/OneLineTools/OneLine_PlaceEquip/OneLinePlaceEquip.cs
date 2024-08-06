@@ -48,6 +48,7 @@ namespace OneLinePlaceEquip
             }
 
             string refCategory = "";
+            string refErrorCat = "";
             List<Element> filteredRefElements = new List<Element>();
             List<string> formNameInfo = new List<string>();
             List<string> formTypeInfo = new List<string>();
@@ -55,6 +56,7 @@ namespace OneLinePlaceEquip
             if (activeView.ViewType == ViewType.FloorPlan)
             {
                 refCategory = "Detail Item";
+                refErrorCat = "Electrical Equipment";
 
                 //check active Workset for E_Panels
                 Workset panelWorkset = new FilteredWorksetCollector(doc)
@@ -115,6 +117,7 @@ namespace OneLinePlaceEquip
             else if (activeView.ViewType == ViewType.DraftingView)
             {
                 refCategory = "Electrical Equipment";
+                refErrorCat = "Detail Item";
 
                 filteredRefElements = new FilteredElementCollector(doc)
                     .OfCategory(BuiltInCategory.OST_ElectricalEquipment)
@@ -237,7 +240,7 @@ namespace OneLinePlaceEquip
 
                 if (equipInfo.EquipFamSymbol.FamilyName.Contains("Dry Type"))
                 {
-                    famSymbols = GetDryTypeTransformerSymbol(doc, bicDI, equipInfo);
+                    famSymbols = GetDryTypeTransformerSymbol(doc, bicDI, selectedElecEquip);
                 }
                 else
                 {
@@ -255,7 +258,7 @@ namespace OneLinePlaceEquip
             {
                 //TaskDialog.Show("No Family Symbol Found",
                 //    "An Electrical Equipment Family Type could not be found to match the Detail Item selected. Load an applicable family from HIVE, then rerun the tool.");
-                errorReport = "An Electrical Equipment Family Type could not be found to match the Detail Item selected. " +
+                errorReport = $"A {refCategory} Family Type could not be found to match the Detail Item selected. " +
                     "Load an applicable family from HIVE, then rerun the tool.";
 
                 return Result.Failed;
@@ -355,14 +358,16 @@ namespace OneLinePlaceEquip
         /// <param name="bic"></param>
         /// <param name="equipInfo"></param>
         /// <returns>List of FamilySymbols that pass criteria.</returns>
-        internal List<FamilySymbol> GetDryTypeTransformerSymbol(Document document, BuiltInCategory bic, ElecEquipInfo equipInfo)
+        internal List<FamilySymbol> GetDryTypeTransformerSymbol(Document document, BuiltInCategory bic, Element element)
         {
+            string kva = element.LookupParameter("kVA_Rating").AsDouble().ToString() + " kVA";
+
             List<FamilySymbol> famSymbols = 
                 new FilteredElementCollector(document)
                 .OfCategory(bic)
                 .OfClass(typeof(FamilySymbol))
                 .ToElements()
-                .Where(x => x.Name == equipInfo.EquipFamSymbol.Name)
+                .Where(x => x.Name == kva)
                 .Cast<FamilySymbol>()
                 .ToList();
 
