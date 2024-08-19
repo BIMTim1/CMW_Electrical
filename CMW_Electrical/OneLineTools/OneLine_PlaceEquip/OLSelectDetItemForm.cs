@@ -24,11 +24,15 @@ namespace CMW_Electrical.OneLineTools.OneLine_PlaceEquip
         //    int nWidthEllipse, 
         //    int nHeightEllipse
         //    );
-        public OLSelectDetItemForm(List<string> itemNames, List<string> typeNames)
+        public OLSelectDetItemForm(List<string> itemNames, List<string> typeNames, string refCat)
         {
             InitializeComponent();
 
             //Region = System.Drawing.Region.FromHrgn(CreateRoundRectRgn(0, 0, Width, Height, 20, 20));
+
+            this.Text = "Select Element to Reference";
+
+            lblHeader.Text = "Select " + refCat + " Name";
 
             cboxDetailItemList.Items.AddRange(itemNames.ToArray());
 

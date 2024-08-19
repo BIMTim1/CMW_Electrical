@@ -58,7 +58,7 @@ namespace EquipCircuitUpdate
                     {
                         //collect parameter values to update from
                         double rating = fam.get_Parameter(BuiltInParameter.RBS_ELEC_MAINS).AsDouble();
-                        double bussing = fam.LookupParameter("E_Bussing").AsDouble();
+                        double bussing = fam.get_Parameter(BuiltInParameter.RBS_ELEC_PANEL_MCB_RATING_PARAM).AsDouble();
 
                         //collect associated ElectricalSystems from equipment
                         ISet<ElectricalSystem> assoc_circuits = fam.MEPModel.GetElectricalSystems();
@@ -119,9 +119,12 @@ namespace EquipCircuitUpdate
 
             foreach (ElectricalSystem cct in circuits)
             {
-                if (cct.BaseEquipment.Name != equip.get_Parameter(BuiltInParameter.RBS_ELEC_PANEL_NAME).AsString())
+                if (cct.BaseEquipment != null)
                 {
-                    hasCircuit = true;
+                    if (cct.BaseEquipment.Name != equip.get_Parameter(BuiltInParameter.RBS_ELEC_PANEL_NAME).AsString())
+                    {
+                        hasCircuit = true;
+                    }
                 }
             }
 

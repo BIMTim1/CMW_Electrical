@@ -72,6 +72,7 @@
     <Compile Include="AlignTagTools\TagAlignBottom.cs" />
     <Compile Include="AlignTagTools\TagAlign.cs" />
     <Compile Include="AlignTagTools\TagAlignTop.cs" />
+    <Compile Include="AnnotateByReference\TagByReference.cs" />
     <Compile Include="ChangePanelToSinglePhase\PanelTypeToSinglePhase.cs" />
     <Compile Include="CMW_Electrical_Ribbon.cs" />
     <Compile Include="CorrectLightFixtures\CorrectLightFixtures.cs" />
@@ -106,6 +107,21 @@
     <Compile Include="MultiLegSwitchIdUpdate\MultiLegSwitchIdUpdate.cs" />
     <Compile Include="OneLineTools\EqConIdCheck.cs" />
     <Compile Include="OneLineTools\ExentsionMethods.cs" />
+    <Compile Include="OneLineTools\OneLine_Clear\OneLineClearForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="OneLineTools\OneLine_Clear\OneLineClearForm.Designer.cs">
+      <DependentUpon>OneLineClearForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="OneLineTools\OneLine_Clear\OneLineClear.cs" />
+    <Compile Include="OneLineTools\OneLine_FindDisconnected\DisconnectedElement.cs" />
+    <Compile Include="OneLineTools\OneLine_FindDisconnected\FindDisconnectedElementForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="OneLineTools\OneLine_FindDisconnected\FindDisconnectedElementForm.Designer.cs">
+      <DependentUpon>FindDisconnectedElementForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="OneLineTools\OneLine_FindDisconnected\OneLineFindDisconnected.cs" />
     <Compile Include="OneLineTools\OneLine_FindDuplicates\DuplicateElementData.cs" />
     <Compile Include="OneLineTools\OneLine_FindDuplicates\FindDuplicateElementForm.cs">
       <SubType>Form</SubType>
@@ -270,6 +286,12 @@
     <Resource Include="Resources\PnlUpdateRating32x32.png" />
     <Resource Include="Resources\OLFindDuplicates16x16.png" />
     <Resource Include="Resources\OLFindDuplicates32x32.png" />
+    <Resource Include="Resources\OLFindDisconnected16x16.png" />
+    <Resource Include="Resources\OLFindDisconnected32x32.png" />
+    <Resource Include="Resources\TagByRef16x16.png" />
+    <Resource Include="Resources\TagByRef32x32.png" />
+    <Resource Include="Resources\OLClear16x16.png" />
+    <Resource Include="Resources\OLClear32x32.png" />
     <Content Include="_Addin\CMW_Electrical.addin">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -293,11 +315,17 @@
     <EmbeddedResource Include="OneLineTools\OneLine_Associate\OneLineAssociateForm.resx">
       <DependentUpon>OneLineAssociateForm.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="OneLineTools\OneLine_Clear\OneLineClearForm.resx">
+      <DependentUpon>OneLineClearForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="OneLineTools\OneLine_ConnectAndPlace\SelectEquipmentToReferenceForm.resx">
       <DependentUpon>SelectEquipmentToReferenceForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="OneLineTools\OneLine_Copy\CopySelectionReferenceForm.resx">
       <DependentUpon>CopySelectionReferenceForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="OneLineTools\OneLine_FindDisconnected\FindDisconnectedElementForm.resx">
+      <DependentUpon>FindDisconnectedElementForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="OneLineTools\OneLine_FindDuplicates\FindDuplicateElementForm.resx">
       <DependentUpon>FindDuplicateElementForm.cs</DependentUpon>

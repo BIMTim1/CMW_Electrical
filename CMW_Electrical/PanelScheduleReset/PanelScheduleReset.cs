@@ -39,6 +39,14 @@ namespace ResetPanelScheduleTemplate
             //collect all PanelScheduleViews
             List<Element> allSchedules = new FilteredElementCollector(doc).OfClass(typeof(PanelScheduleView)).ToElements().ToList();
 
+            //cancel tool if no schedules to update
+            if (!allSchedules.Any())
+            {
+                errorReport = "There are no Panel Schedules in the project to update. The tool will now cancel.";
+
+                return Result.Cancelled;
+            }
+
             //create transaction to modify active document
             using (Transaction trac = new Transaction(doc))
             {

@@ -58,13 +58,18 @@ namespace CMW_Electrical
             //set sourceEquipment to input instance or collect from model
             if (sourceEquipmentInput.Category.Name == "Detail Items")
             {
-                sourceEquipment = new FilteredElementCollector(document)
+                List<FamilyInstance> sourceList = new FilteredElementCollector(document)
                 .OfCategory(BuiltInCategory.OST_ElectricalEquipment)
                 .OfClass(typeof(FamilyInstance))
                 .ToElements()
                 .Cast<FamilyInstance>()
                 .Where(x => x.LookupParameter("EqConId").AsString() == sourceEquipmentInput.LookupParameter("EqConId").AsString())
-                .First();
+                .ToList();
+
+                if (sourceList.Any())
+                {
+                    sourceEquipment = sourceList.First();
+                }
             }
             else
             {
@@ -74,13 +79,18 @@ namespace CMW_Electrical
             //set fedToEquipment to input instance or collect from model
             if (fedToEquipmentInput.Category.Name == "Detail Items")
             {
-                fedToEquipment = new FilteredElementCollector(document)
+                List<FamilyInstance> fedToList = new FilteredElementCollector(document)
                     .OfCategory(BuiltInCategory.OST_ElectricalEquipment)
                     .OfClass(typeof(FamilyInstance))
                     .ToElements()
                     .Cast<FamilyInstance>()
                     .Where(x => x.LookupParameter("EqConId").AsString() == fedToEquipmentInput.LookupParameter("EqConId").AsString())
-                    .First();
+                    .ToList();
+
+                if (fedToList.Any())
+                {
+                    fedToEquipment = fedToList.First();
+                }
             }
 
             //update method to accept detail items or equipment

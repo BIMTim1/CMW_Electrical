@@ -48,7 +48,9 @@ namespace MotorMOCPUpdate
             //if no, close the tool.
             if (all_motors.Count == 0)
             {
-                TaskDialog.Show("No Motors in Project", "There are no Motor Families placed in the Active Project. The tool will now close.");
+                //TaskDialog.Show("No Motors in Project", "There are no Motor Families placed in the Active Project. The tool will now close.");
+                errorReport = "There are no Motor Families placed in the Active Project. The tool will now close.";
+
                 return Result.Cancelled;
             }
 

@@ -53,17 +53,24 @@ namespace OneLineSelect
 
             if (activeView.ViewType == ViewType.DraftingView)
             {
-                selFilter = new CMWElecSelectionFilter.DetailItemSelectionFilter();
+                selFilter = new CustomDetailItemSelectionFilter();
                 selectBic = BuiltInCategory.OST_DetailComponents;
                 statusPrompt = "Select a Detail Item reference.";
                 selType = "Detail Item";
             }
-            else
+            else if (activeView.ViewType == ViewType.FloorPlan)
             {
                 selFilter = new CMWElecSelectionFilter.EquipmentSelectionFilter();
                 selectBic = BuiltInCategory.OST_ElectricalEquipment;
                 statusPrompt = "Select an Electrical Equipment family reference.";
                 selType = "Electrical Equipment";
+            }
+            else
+            {
+                errorReport = "Incorrect view type. This tool can only be run from a Floor Plan or Drafting View.";
+                elementSet.Insert(activeView);
+
+                return Result.Cancelled;
             }
 
             //!test if user already has elements selected
@@ -142,14 +149,24 @@ namespace OneLineSelect
                 return Result.Cancelled;
             }
 
-            Element connectedElem = (from el in 
+            List<Element> connectedElems = (from el in
                                          new FilteredElementCollector(doc)
                                          .OfCategory(bic)
                                          .WhereElementIsNotElementType()
-                                         .ToElements() 
-                                     where el.LookupParameter("EqConId").AsString() == compId 
-                                     select el)
-                                     .First();
+                                         .ToElements()
+                                            where el.LookupParameter("EqConId").AsString() == compId
+                                            select el)
+                                            .ToList();
+            
+            if (!connectedElems.Any())
+            {
+                errorReport = "There are no connected elements to the selected object. Use the the Find Disconnected tool to locate all disconnected items in the model.";
+                elementSet.Insert(selElem);
+
+                return Result.Cancelled;
+            }
+
+            Element connectedElem = connectedElems.First();
 
             var views = connectedElem.FindAllViewsWhereAllElementsVisible();
             ICollection<ElementId> connectedElemList = new List<ElementId>
@@ -169,6 +186,24 @@ namespace OneLineSelect
             uidoc.Selection.SetElementIds(connectedElemList);
 
             return Result.Succeeded;
+        }
+    }
+
+    public class CustomDetailItemSelectionFilter : ISelectionFilter
+    {
+        public bool AllowElement(Element element)
+        {
+            if (element.Category.Name == "Detail Items" && 
+                !element.LookupParameter("Family").AsValueString().Contains("Feeder") && 
+                !element.LookupParameter("Family").AsValueString().Contains("Circuit"))
+            {
+                return true;
+            }
+            return false;
+        }
+        public bool AllowReference(Reference refer, XYZ point)
+        {
+            return false;
         }
     }
 }

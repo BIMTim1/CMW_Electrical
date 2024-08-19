@@ -207,6 +207,19 @@ namespace OneLineDraw
                             sourceDetailItem, 
                             fedToElement as FamilyInstance);
 
+                    if (elecSys == null)
+                    {
+                        TaskDialog results = new TaskDialog("CMW-Elec - Results")
+                        {
+                            TitleAutoPrefix = false,
+                            MainInstruction = "Results:",
+                            MainContent = "Feeder lines were created but an Electrical Circuit was not created. One instance of the selected connected items is not associated to a model element.",
+                            CommonButtons = TaskDialogCommonButtons.Ok
+                        };
+
+                        results.Show();
+                    }
+
                     if (deleteFirst)
                     {
                         doc.Delete(newFamInstances[0].Id);
@@ -216,9 +229,15 @@ namespace OneLineDraw
                 }
                 catch (Autodesk.Revit.Exceptions.OperationCanceledException ex)
                 {
-                    //TaskDialog.Show("User canceled", 
-                    //    "User canceled the selection operation. Feeder lines were created but not assigned to an Equipment reference.");
-                    errorReport = "User canceled the selection operation. Feeder lines were created but not assigned to an Equipment reference.";
+                    TaskDialog results = new TaskDialog("CMW-Elec - Results")
+                    {
+                        TitleAutoPrefix = false,
+                        MainInstruction = "Results:",
+                        MainContent = "User canceled the selection operation. Feeder lines were created but not assigned to an Equipment reference.",
+                        CommonButtons = TaskDialogCommonButtons.Ok
+                    };
+
+                    results.Show();
                 }
                 catch (Exception ex)
                 {

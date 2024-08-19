@@ -76,7 +76,9 @@ namespace OneLinePlaceEquip
                     .OfCategory(BuiltInCategory.OST_DetailComponents)
                     .WhereElementIsNotElementType()
                     .ToElements()
-                    .Where(x => x.get_Parameter(bipFamily).AsValueString().Contains("E_DI_OL_") && x.LookupParameter("EqConId").AsString() == null && x.LookupParameter("Panel Name - Detail") != null)// || x.LookupParameter("EqConId").AsString() == "")
+                    .Where(x => x.get_Parameter(bipFamily).AsValueString().Contains("E_DI_OL_"))
+                    .Where(x=>x.LookupParameter("EqConId").AsString() == null || x.LookupParameter("EqConId").AsString() == "")
+                    .Where(x=>x.LookupParameter("Panel Name - Detail") != null)
                     .ToList();
 
                 if (!filteredRefElements.Any())
@@ -169,7 +171,7 @@ namespace OneLinePlaceEquip
                 return Result.Cancelled;
             }
 
-            OLSelectDetItemForm form = new OLSelectDetItemForm(formNameInfo, formTypeInfo);
+            OLSelectDetItemForm form = new OLSelectDetItemForm(formNameInfo, formTypeInfo, refCategory);
             form.ShowDialog();
 
             //cancel tool if user canceled form

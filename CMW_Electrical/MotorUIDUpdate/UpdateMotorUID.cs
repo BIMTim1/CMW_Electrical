@@ -32,8 +32,7 @@ namespace MotorUIDUpdate
             //cancel tool if incorrect ViewType
             if (activeView.ViewType != ViewType.FloorPlan)
             {
-                TaskDialog.Show("Incorrect View Type", 
-                    "The current View must be a Floor Plan. Change your active view to a Floor Plan and then rerun the tool.");
+                errorReport = "The current View must be a Floor Plan. Change your active view to a Floor Plan and then rerun the tool.";
 
                 return Result.Cancelled;
             }

@@ -9,14 +9,14 @@ using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
 using System.Windows.Media.Imaging;
 
-//Revit 2021 API
-//Debug in Revit 2020
+//Revit 2023 API
+//Debug in Revit 2022
 
 namespace CMW_Electrical
 {
     public class CMW_Electrical_Ribbon : IExternalApplication
     {
-        public const string versionNumber = "0.1";
+        public const string versionNumber = "0.1.0";
         public const string releaseDate = "August 2024";
 
         static void AddRibbonPanel(UIControlledApplication application)
@@ -48,6 +48,20 @@ namespace CMW_Electrical
             };
             
             PushButton generalInfoBtn = aboutPanel.AddItem(generalInfoData) as PushButton;
+
+
+            PushButtonData tagByRefData = new PushButtonData(
+                "cmdTagByReference", 
+                "Tag By" + System.Environment.NewLine + " Reference ", 
+                thisAssemblyPath, 
+                "AnnotateByReference.TagByReference")
+            {
+                LargeImage = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/TagByRef32x32.png")),
+                Image = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/TagByRef16x16.png")),
+                ToolTip = "Tag multiple elements with multiple tags from already placed reference element."
+            };
+
+            PushButton tagByRefBtn = devicePanel.AddItem(tagByRefData) as PushButton;
 
 
             //------------create push button for AddElecCircuitNote------------
@@ -400,9 +414,9 @@ namespace CMW_Electrical
                 LargeImage = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/OLFind32x32.png")),
                 Image = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/OLFind16x16.png")),
                 ToolTip = "Opens a dialog for users to find unassociated Electrical Equipment and Detail Items.",
-                LongDescription = "Applies a custom value to the Comments parameter of Electrical Equipment and Detail Items that are " +
-                "not assigned to other items in the model from the other CMW Electrical tools. The tool will activate the working " +
-                "schedule needed to find these elements in the model."
+                LongDescription = "Unassociated elements that are dispalyed in the dialog can be selected. Upon selection, " +
+                "the tool will jump to a view that contains these elements, select the elements, " +
+                "and zoom, centered to the selected element."
             };
 
             PushButtonData oneLineFindDuplicatesData = new PushButtonData("cmdOneLineFindDuplicates", "Find Duplicates", thisAssemblyPath, "OneLine_FindDuplicates.OneLineFindDuplicates")
@@ -411,6 +425,18 @@ namespace CMW_Electrical
                 Image = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/OLFindDuplicates16x16.png")),
                 ToolTip = "Opens a dialog for users to find Electrical Equipment or Detail Items that have duplicate EqConId values.",
                 LongDescription = "This tool allows users to find any elements in the model that were copied and thus contain the same referencing Id for the CMW-Electrical tools. Duplicate elements will be updated through the tools and will cause problems if not resolved properly. The tool will reference Electrical Equipment if the tool is launched from a FloorPlan or 3D view, or Detail Items if launched through the OneLine Schematic View."
+            };
+
+            PushButtonData oneLineFindDisconnectedData = 
+                new PushButtonData(
+                    "cmdOneLineFindDisconnected", 
+                    "Find Disconnected", 
+                    thisAssemblyPath, 
+                    "OneLine_FindDisconnected.OneLineFindDisconnected")
+            {
+                LargeImage = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/OLFindDisconnected32x32.png")),
+                Image = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/OLFindDisconnected16x16.png")),
+                ToolTip = "Opens a dialog for users to find Electrical Equipment or Detail Items that have a disconnected EqConId value."
             };
 
             PushButtonData oneLineHalftoneExistingData = 
@@ -438,6 +464,16 @@ namespace CMW_Electrical
                 LongDescription = "The tool will prompt the user to select whether or not to keep any associated elements made through the CMW - Electrical tools."
             };
 
+            PushButtonData oneLineClearData = new PushButtonData("cmdOneLineClear", "Clear", thisAssemblyPath, "OneLine_Clear.OneLineClear")
+            {
+                LargeImage = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/OLClear32x32.png")),
+                Image = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/OLClear16x16.png")),
+                ToolTip = "Clear / remove the EqConId of a selected Electrical Equipment or Detail Item family.",
+                LongDescription = "The EqConId parameter is set through the workflow of using the CMW - Electrical toolset. " +
+                "If an element becomes disconnect (Detail Item or Electrical Equipment family is deleted) " +
+                "then this tool can clear the existing value to prepare the family for a different connection."
+            };
+
             PushButton oneLineAssociateBtn = oneLinePanel.AddItem(oneLineAssociateData) as PushButton;
             PushButton oneLinePlaceEquipBtn = oneLinePanel.AddItem(oneLinePlaceEquipData) as PushButton;
             //PushButton oneLineConnectAndPlaceBtn = oneLinePanel.AddItem(oneLineConnectAndPlaceData) as PushButton;
@@ -447,6 +483,7 @@ namespace CMW_Electrical
 
             PushButton oneLineUpdateDesignationsBtn = oneLinePanel.AddItem(oneLineUpdateDesignationsData) as PushButton;
             PushButton oneLineRemoveBtn = oneLinePanel.AddItem(oneLineRemoveData) as PushButton;
+            PushButton oneLineClearBtn = oneLinePanel.AddItem(oneLineClearData) as PushButton;
 
             oneLinePanel.AddSeparator();
 
@@ -462,6 +499,7 @@ namespace CMW_Electrical
             PulldownButton oneLineFindButton = oneLinePanel.AddItem(oneLineFindButtonData) as PulldownButton;
             oneLineFindButton.AddPushButton(oneLineFindData);
             oneLineFindButton.AddPushButton(oneLineFindDuplicatesData);
+            oneLineFindButton.AddPushButton(oneLineFindDisconnectedData);
 
             oneLinePanel.AddSeparator();
 
@@ -606,21 +644,21 @@ namespace CMW_Electrical
 
 
             //------------create push button for panelLegendUpdate------------
-            PushButtonData panelLegendUpdateData = new PushButtonData(
-                "cmdPanelLegendUpdate", 
-                "Schedule Legend" + System.Environment.NewLine + "Autofill", 
-                thisAssemblyPath, 
-                "ScheduleLegendUpdate.PanelLegendUpdate")
-            {
-                LargeImage = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/PanelLegendAutofill32x32.png")),
-                Image = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/PanelLegendAutofill16x16.png")),
-                ToolTip = "Updates the E_GA_Schedule Legend of the current sheet.",
-                LongDescription = "Updates the E_GA_Schedule Legend on the current sheet based on " +
-                    "the number of PanelScheduleInstances and ScheduleSheetInstances on the current sheet. " +
-                    "NOTE: If the current view is not a Sheet View, the tool will cancel."
-            };
+            //PushButtonData panelLegendUpdateData = new PushButtonData(
+            //    "cmdPanelLegendUpdate", 
+            //    "Schedule Legend" + System.Environment.NewLine + "Autofill", 
+            //    thisAssemblyPath, 
+            //    "ScheduleLegendUpdate.PanelLegendUpdate")
+            //{
+            //    LargeImage = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/PanelLegendAutofill32x32.png")),
+            //    Image = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/PanelLegendAutofill16x16.png")),
+            //    ToolTip = "Updates the E_GA_Schedule Legend of the current sheet.",
+            //    LongDescription = "Updates the E_GA_Schedule Legend on the current sheet based on " +
+            //        "the number of PanelScheduleInstances and ScheduleSheetInstances on the current sheet. " +
+            //        "NOTE: If the current view is not a Sheet View, the tool will cancel."
+            //};
 
-            PushButton panelLegendUpdateBtn = schedulePanel.AddItem(panelLegendUpdateData) as PushButton;
+            //PushButton panelLegendUpdateBtn = schedulePanel.AddItem(panelLegendUpdateData) as PushButton;
 
             //------------create push button for <button name>------------
         }

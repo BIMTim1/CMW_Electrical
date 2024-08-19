@@ -61,7 +61,8 @@ namespace OneLine_Associate
                     .OfCategory(selBic)
                     .OfClass(typeof(FamilyInstance))
                     .ToElements()
-                    .Where(x => x.LookupParameter("EqConId").AsString() == null && x.LookupParameter("Panel Name - Detail") != null)
+                    .Where(x => x.LookupParameter("EqConId").AsString() == null || x.LookupParameter("EqConId").AsString() == "")
+                    .Where(x=>x.LookupParameter("Panel Name - Detail") != null)
                     .ToList();
 
                 foreach (FamilyInstance di in allRefElements)

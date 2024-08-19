@@ -12,6 +12,7 @@ using Autodesk.Revit.DB.Electrical;
 using Autodesk.Revit.UI;
 using Autodesk.Revit.UI.Selection;
 using CMW_Electrical;
+using CMWElec_FailureHandlers;
 
 namespace ChangePanelTypeToSinglePhase
 {
@@ -152,6 +153,12 @@ namespace ChangePanelTypeToSinglePhase
                     {
                         trac.Start("CMWElec-Update Panel Type to Single Phase");
 
+                        //set FailureHandlingOptions to continue working despite disconnected circuits
+                        //FailureHandlingOptions failOpt = trac.GetFailureHandlingOptions();
+                        //failOpt.SetFailuresPreprocessor(new DisconnectCircuitFailure());
+
+                        //trac.SetFailureHandlingOptions(failOpt);
+
                         //change selected Electrical Equipment Type Id
                         Parameter pnlTypeParam = selElem.get_Parameter(BuiltInParameter.ELEM_TYPE_PARAM);
                         pnlTypeParam.Set(single_ph_type.Id);
@@ -183,12 +190,21 @@ namespace ChangePanelTypeToSinglePhase
                             }
                         }
 
+                        List<ElectricalSystem> notConnected = new List<ElectricalSystem>();
+
                         //reconnect branch circuits to updated panel
                         if (col_circuits.Any())
                         {
                             foreach (ElectricalSystem ogcct in col_circuits)
                             {
-                                ogcct.SelectPanel(updated_pnl);
+                                try //try to reconnect circuits
+                                {
+                                    ogcct.SelectPanel(updated_pnl);
+                                }
+                                catch (Exception ex) //if distribution doesn't match, add items to list
+                                {
+                                    notConnected.Add(ogcct);
+                                }
                             }
                         }
 
