@@ -43,7 +43,9 @@ namespace OneLineUpdateDesignations
                 .OfCategory(BuiltInCategory.OST_DetailComponents)
                 .OfClass(typeof(FamilyInstance))
                 .ToElements()
-                .Where(x => x.LookupParameter("EqConId").AsString() != null && x.Name.Contains("E_DI_OL_"))
+                .Where(x => x.LookupParameter("EqConId").AsString() != null)
+                .Where(x=>!x.LookupParameter("Family").AsValueString().Contains("Feeder") && 
+                !x.LookupParameter("Family").AsValueString().Contains("Circuit"))
                 .ToList();
 
             List<Element> allElectricalEquip = new FilteredElementCollector(doc)
@@ -92,14 +94,16 @@ namespace OneLineUpdateDesignations
                         {
                             ElecEquipInfo equipInst = new ElecEquipInfo(equip);
 
-                            Element detailItem = (from di
-                                                  in allDetailItems
-                                                  where di.LookupParameter("EqConId").AsString() == equipInst.EqConId
-                                                  select di)
-                                                  .First();
+                            List<Element> detailItems = (from di 
+                                                         in allDetailItems 
+                                                         where di.LookupParameter("EqConId").AsString() == equipInst.EqConId 
+                                                         select di)
+                                                         .ToList();
 
-                            if (detailItem != null)
+                            if (detailItems.Any())
                             {
+                                Element detailItem = detailItems.First();
+
                                 DetailItemInfo detailItemInst = new DetailItemInfo(detailItem);
 
                                 //collect voltage information from equipment distribution system
@@ -133,14 +137,16 @@ namespace OneLineUpdateDesignations
                         {
                             DetailItemInfo detItemInst = new DetailItemInfo(detItem);
 
-                            Element eqElem = (from eq
-                                              in allElectricalEquip
-                                              where eq.LookupParameter("EqConId").AsString() == detItemInst.EqConId
-                                              select eq)
-                                              .First();
+                            List<Element> eqElems = (from eq 
+                                                     in allElectricalEquip 
+                                                     where eq.LookupParameter("EqConId").AsString() == detItemInst.EqConId 
+                                                     select eq)
+                                                     .ToList();
 
-                            if (detItem != null)
+                            if (eqElems.Any())
                             {
+                                Element eqElem = eqElems.First();
+
                                 ElecEquipInfo equipInst = new ElecEquipInfo(eqElem)
                                 {
                                     Name = detItemInst.Name
@@ -165,7 +171,7 @@ namespace OneLineUpdateDesignations
 
                 catch (Exception ex)
                 {
-                    //TaskDialog.Show("An error occurred", "An error occurred, contact the BIM team for assistance.");\
+                    //TaskDialog.Show("An error occurred", "An error occurred, contact the BIM team for assistance.");
                     errorReport = ex.Message;
                     return Result.Failed;
                 }

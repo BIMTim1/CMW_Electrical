@@ -65,6 +65,7 @@ namespace OneLineCopy
                 }
                 catch (Autodesk.Revit.Exceptions.OperationCanceledException ex)
                 {
+                    errorReport = "User canceled operation.";
                     return Result.Cancelled;
                 }
                 catch (Exception ex)
@@ -147,8 +148,25 @@ namespace OneLineCopy
                     //result if canceled by user
                     if (copyForm.DialogResult == System.Windows.Forms.DialogResult.Cancel)
                     {
-                        TaskDialog.Show("User canceled assignment", "The selected elements have been copied, but not assigned to any Electrical Equipment.");
-                        
+                        //clear EqConId values of copied elements
+                        foreach (ElementId eid in copiedElemIds)
+                        {
+                            Element elem = doc.GetElement(eid);
+                            elem.LookupParameter("EqConId").Set("");
+                            elem.LookupParameter("EqConId Connection Source").Set("");
+                            elementSet.Insert(elem);
+                        }
+                        TaskDialog results = new TaskDialog("CMW-Elec - Results")
+                        {
+                            TitleAutoPrefix = false,
+                            MainInstruction = "Results:",
+                            MainContent = "The selected elements have been copied, but not assigned to any Electrical Equipment.",
+                            CommonButtons = TaskDialogCommonButtons.Ok
+                        };
+
+                        results.Show();
+                        //TaskDialog.Show("User canceled assignment", "The selected elements have been copied, but not assigned to any Electrical Equipment.");
+
                         trac.Commit();
                         return Result.Succeeded;
                     }
@@ -164,7 +182,7 @@ namespace OneLineCopy
                     ElecEquipInfo selEquipInfo = new ElecEquipInfo(selEquip);
 
                     List<Element> copiedElems = (from id in copiedElemIds select doc.GetElement(id)).ToList();
-                    Element mainDetItem = (from el in copiedElems where el.LookupParameter("Family").AsValueString().Contains("Panelboard") select el).ToList().First();
+                    Element mainDetItem = (from el in copiedElems where !el.LookupParameter("Family").AsValueString().Contains("Feeder") select el).ToList().First();
 
                     DetailItemInfo detItemInfo = new DetailItemInfo(mainDetItem);
                     detItemInfo.Name = selEquipInfo.Name;
@@ -202,7 +220,15 @@ namespace OneLineCopy
                     }
                     catch (Autodesk.Revit.Exceptions.OperationCanceledException ex)
                     {
-                        errorReport = "User canceled operation. Elements have been copied, but an Electrical Circuit has not been created.";
+                        TaskDialog results = new TaskDialog("CMW-Elec - Results")
+                        {
+                            TitleAutoPrefix = false,
+                            MainInstruction = "Results:",
+                            MainContent = "The selected elements have been copied and Electrical Equipment associated, but no circuit was created.",
+                            CommonButtons = TaskDialogCommonButtons.Ok
+                        };
+
+                        results.Show();
                     }
 
                     trac.Commit();

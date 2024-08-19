@@ -61,7 +61,8 @@ namespace OneLine_Associate
                     .OfCategory(selBic)
                     .OfClass(typeof(FamilyInstance))
                     .ToElements()
-                    .Where(x => x.LookupParameter("EqConId").AsString() == null && x.LookupParameter("Panel Name - Detail") != null)
+                    .Where(x => x.LookupParameter("EqConId").AsString() == null || x.LookupParameter("EqConId").AsString() == "")
+                    .Where(x=>x.LookupParameter("Panel Name - Detail") != null)
                     .ToList();
 
                 foreach (FamilyInstance di in allRefElements)
@@ -139,7 +140,7 @@ namespace OneLine_Associate
             }
 
             //launch form to select Equipment Family
-            OneLineAssociateForm form = new OneLineAssociateForm(formInfo);
+            OneLineAssociateForm form = new OneLineAssociateForm(formInfo, paramRef);
             form.ShowDialog();
 
             if (form.DialogResult == System.Windows.Forms.DialogResult.Cancel)
@@ -181,9 +182,10 @@ namespace OneLine_Associate
                              select di)
                              .First());
 
-                        elecEquipInfo = new ElecEquipInfo(doc.GetElement(userSelection));
-
-                        elecEquipInfo.Name = detItemInfo.Name;
+                        elecEquipInfo = new ElecEquipInfo(doc.GetElement(userSelection))
+                        {
+                            Name = detItemInfo.Name
+                        };
                     }
 
                     OLEqConIdUpdateClass updateEqConId = new OLEqConIdUpdateClass();
@@ -196,7 +198,7 @@ namespace OneLine_Associate
                 }
                 catch (Exception ex)
                 {
-                    errorReport = "An error occurred. Contact the BIM team for assistance.";
+                    errorReport = ex.Message;
 
                     return Result.Failed;
                 }

@@ -13,21 +13,31 @@ namespace OneLine_Associate
 {
     public partial class OneLineAssociateForm : Form
     {
-        [DllImport("Gdi32.dll", EntryPoint = "CreateRoundRectRgn")]
-        private static extern IntPtr CreateRoundRectRgn
-            (
-            int nLeftRect,
-            int nTopRect,
-            int nRightRect,
-            int nBottomRect,
-            int nWidthEllipse,
-            int nHeightEllipse
-            );
-        public OneLineAssociateForm(List<string> equipNames)
+        //[DllImport("Gdi32.dll", EntryPoint = "CreateRoundRectRgn")]
+        //private static extern IntPtr CreateRoundRectRgn
+        //    (
+        //    int nLeftRect,
+        //    int nTopRect,
+        //    int nRightRect,
+        //    int nBottomRect,
+        //    int nWidthEllipse,
+        //    int nHeightEllipse
+        //    );
+        public OneLineAssociateForm(List<string> equipNames, string labelInput)
         {
             InitializeComponent();
 
-            Region = System.Drawing.Region.FromHrgn(CreateRoundRectRgn(0, 0, Width, Height, 20, 20));
+            //Region = System.Drawing.Region.FromHrgn(CreateRoundRectRgn(0, 0, Width, Height, 20, 20));
+
+            //set lblInstruction Text based on model input
+            if (labelInput == "Panel Name - Detail")
+            {
+                lblInstruction.Text = "Select Detail Item";
+            }
+            else
+            {
+                lblInstruction.Text = "Select Electrical Equipment";
+            }
 
             //update ComboBox with Electrical Equipment Names
             cBoxEquipSelection.Items.AddRange(equipNames.ToArray());

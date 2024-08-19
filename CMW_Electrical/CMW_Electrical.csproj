@@ -72,6 +72,7 @@
     <Compile Include="AlignTagTools\TagAlignBottom.cs" />
     <Compile Include="AlignTagTools\TagAlign.cs" />
     <Compile Include="AlignTagTools\TagAlignTop.cs" />
+    <Compile Include="AnnotateByReference\TagByReference.cs" />
     <Compile Include="ChangePanelToSinglePhase\PanelTypeToSinglePhase.cs" />
     <Compile Include="CMW_Electrical_Ribbon.cs" />
     <Compile Include="CorrectLightFixtures\CorrectLightFixtures.cs" />
@@ -83,6 +84,7 @@
       <DependentUpon>PanelSchedCreatedForm.cs</DependentUpon>
     </Compile>
     <Compile Include="DeviceSymbolsRotate\DeviceSymbolsRotate.cs" />
+    <Compile Include="EquipCircuitUpdate\EquipCircuitUpdate.cs" />
     <Compile Include="EquipNameUpdate\EquipNameUpdate.cs" />
     <Compile Include="EquipNameUpdate\EquipNameUpdateForm.cs">
       <SubType>Form</SubType>
@@ -105,6 +107,36 @@
     <Compile Include="MultiLegSwitchIdUpdate\MultiLegSwitchIdUpdate.cs" />
     <Compile Include="OneLineTools\EqConIdCheck.cs" />
     <Compile Include="OneLineTools\ExentsionMethods.cs" />
+    <Compile Include="OneLineTools\OneLine_Clear\OneLineClearForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="OneLineTools\OneLine_Clear\OneLineClearForm.Designer.cs">
+      <DependentUpon>OneLineClearForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="OneLineTools\OneLine_Clear\OneLineClear.cs" />
+    <Compile Include="OneLineTools\OneLine_FindDisconnected\DisconnectedElement.cs" />
+    <Compile Include="OneLineTools\OneLine_FindDisconnected\FindDisconnectedElementForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="OneLineTools\OneLine_FindDisconnected\FindDisconnectedElementForm.Designer.cs">
+      <DependentUpon>FindDisconnectedElementForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="OneLineTools\OneLine_FindDisconnected\OneLineFindDisconnected.cs" />
+    <Compile Include="OneLineTools\OneLine_FindDuplicates\DuplicateElementData.cs" />
+    <Compile Include="OneLineTools\OneLine_FindDuplicates\FindDuplicateElementForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="OneLineTools\OneLine_FindDuplicates\FindDuplicateElementForm.Designer.cs">
+      <DependentUpon>FindDuplicateElementForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="OneLineTools\OneLine_FindDuplicates\OneLineFindDuplicates.cs" />
+    <Compile Include="OneLineTools\OneLine_Remove\OneLineRemoveForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="OneLineTools\OneLine_Remove\OneLineRemoveForm.Designer.cs">
+      <DependentUpon>OneLineRemoveForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="OneLineTools\OneLine_Remove\OneLineRemove.cs" />
     <Compile Include="OneLineTools\OneLine_Find\ElementData.cs" />
     <Compile Include="OneLineTools\OneLine_Find\OneLineFindForm.cs">
       <SubType>Form</SubType>
@@ -169,6 +201,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="xSharedClasses\XFMRInfo.cs" />
     <Compile Include="xSharedClasses\CreateEquipmentCircuit.cs" />
     <Compile Include="xSharedClasses\ElecDistributionSystem.cs" />
     <Compile Include="xSharedClasses\ElecEquipInfo.cs" />
@@ -247,6 +280,18 @@
     <Resource Include="Resources\PanelLegendAutofill32x32.png" />
     <Resource Include="Resources\OLFind16x16.png" />
     <Resource Include="Resources\OLFind32x32.png" />
+    <Resource Include="Resources\OLRemove16x16.png" />
+    <Resource Include="Resources\OLRemove32x32.png" />
+    <Resource Include="Resources\PnlUpdateRating16x16.png" />
+    <Resource Include="Resources\PnlUpdateRating32x32.png" />
+    <Resource Include="Resources\OLFindDuplicates16x16.png" />
+    <Resource Include="Resources\OLFindDuplicates32x32.png" />
+    <Resource Include="Resources\OLFindDisconnected16x16.png" />
+    <Resource Include="Resources\OLFindDisconnected32x32.png" />
+    <Resource Include="Resources\TagByRef16x16.png" />
+    <Resource Include="Resources\TagByRef32x32.png" />
+    <Resource Include="Resources\OLClear16x16.png" />
+    <Resource Include="Resources\OLClear32x32.png" />
     <Content Include="_Addin\CMW_Electrical.addin">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -270,17 +315,29 @@
     <EmbeddedResource Include="OneLineTools\OneLine_Associate\OneLineAssociateForm.resx">
       <DependentUpon>OneLineAssociateForm.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="OneLineTools\OneLine_Clear\OneLineClearForm.resx">
+      <DependentUpon>OneLineClearForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="OneLineTools\OneLine_ConnectAndPlace\SelectEquipmentToReferenceForm.resx">
       <DependentUpon>SelectEquipmentToReferenceForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="OneLineTools\OneLine_Copy\CopySelectionReferenceForm.resx">
       <DependentUpon>CopySelectionReferenceForm.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="OneLineTools\OneLine_FindDisconnected\FindDisconnectedElementForm.resx">
+      <DependentUpon>FindDisconnectedElementForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="OneLineTools\OneLine_FindDuplicates\FindDuplicateElementForm.resx">
+      <DependentUpon>FindDuplicateElementForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="OneLineTools\OneLine_Find\OneLineFindForm.resx">
       <DependentUpon>OneLineFindForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="OneLineTools\OneLine_PlaceEquip\OLSelectDetItemForm.resx">
       <DependentUpon>OLSelectDetItemForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="OneLineTools\OneLine_Remove\OneLineRemoveForm.resx">
+      <DependentUpon>OneLineRemoveForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="OneLineTools\OneLine_UpdateDesignations\dialogSelectUpdateMethod.resx">
       <DependentUpon>dialogSelectUpdateMethod.cs</DependentUpon>

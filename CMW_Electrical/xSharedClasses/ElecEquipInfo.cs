@@ -16,16 +16,18 @@ namespace CMW_Electrical
     {
         private readonly FamilyInstance EEFamInst;
         private readonly Parameter EEName;
+        private readonly Parameter EEMains;
         private readonly Parameter EEEqConId;
         private readonly Parameter EEDistributionSystem;
         private FamilySymbol EEFamilyType;
+        private readonly double EEActualVoltage;
         private readonly PanelScheduleView EEScheduleView;
 
         public ElecEquipInfo(Element elecEquip)
         {
             EEFamInst = elecEquip as FamilyInstance;
-            //EEName = EEFamInst.LookupParameter("Panel Name");
             EEName = EEFamInst.get_Parameter(BuiltInParameter.RBS_ELEC_PANEL_NAME);
+            EEMains = EEFamInst.get_Parameter(BuiltInParameter.RBS_ELEC_MAINS);
             EEEqConId = EEFamInst.LookupParameter("EqConId");
             //EEDistributionSystem = EEFamInst.LookupParameter("Distribution System");
             EEDistributionSystem = EEFamInst.get_Parameter(BuiltInParameter.RBS_FAMILY_CONTENT_DISTRIBUTION_SYSTEM);
@@ -33,6 +35,24 @@ namespace CMW_Electrical
             Document document = elecEquip.Document;
 
             EEFamilyType = EEFamInst.Symbol;
+
+            //collect information for converted voltage from Revit Internal Units
+            string paramName;
+
+            if (EEFamilyType.Family.Name.Contains("Transformer") || EEFamilyType.Family.Name.Contains("CT Cab"))
+            {
+                paramName = "E_Primary Voltage";
+            }
+            else
+            {
+                paramName = "Voltage Nominal";
+            }
+
+            Parameter param = EEFamilyType.LookupParameter(paramName);
+            double voltVal = param.AsDouble();
+            ForgeTypeId unitTypeId = param.GetUnitTypeId();
+
+            EEActualVoltage = UnitUtils.ConvertFromInternalUnits(voltVal, unitTypeId);
 
             try
             {
@@ -64,6 +84,15 @@ namespace CMW_Electrical
         }
 
         /// <summary>
+        /// Get or set the Mains parameter of the ElectricalEquipment FamilyInstance
+        /// </summary>
+        public double Mains
+        {
+            get { return EEMains.AsDouble(); }
+            set { EEMains.Set(value); }
+        }
+
+        /// <summary>
         /// Get or set the EqConId parameter of the ElectricalEquipment FamilyInstance.
         /// </summary>
         public string EqConId
@@ -88,6 +117,14 @@ namespace CMW_Electrical
         {
             get { return EEFamilyType; }
             set { EEFamilyType = value; }
+        }
+
+        /// <summary>
+        /// Get the converted double that represents the human readable Voltage of the Electrical Equipment element.
+        /// </summary>
+        public double GetActualVoltage
+        {
+            get { return EEActualVoltage; }
         }
 
         /// <summary>

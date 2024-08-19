@@ -34,8 +34,9 @@
             // 
             // btnOK
             // 
+            this.btnOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnOK.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this.btnOK.Location = new System.Drawing.Point(253, 292);
+            this.btnOK.Location = new System.Drawing.Point(303, 292);
             this.btnOK.Name = "btnOK";
             this.btnOK.Size = new System.Drawing.Size(75, 23);
             this.btnOK.TabIndex = 0;
@@ -45,10 +46,12 @@
             // 
             // listViewPanels
             // 
+            this.listViewPanels.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.listViewPanels.HideSelection = false;
             this.listViewPanels.Location = new System.Drawing.Point(12, 12);
             this.listViewPanels.Name = "listViewPanels";
-            this.listViewPanels.Size = new System.Drawing.Size(316, 274);
+            this.listViewPanels.Size = new System.Drawing.Size(366, 274);
             this.listViewPanels.TabIndex = 1;
             this.listViewPanels.UseCompatibleStateImageBehavior = false;
             this.listViewPanels.DrawColumnHeader += new System.Windows.Forms.DrawListViewColumnHeaderEventHandler(this.listView_DrawColumnHeader);
@@ -58,7 +61,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(340, 327);
+            this.ClientSize = new System.Drawing.Size(390, 327);
             this.Controls.Add(this.listViewPanels);
             this.Controls.Add(this.btnOK);
             this.Name = "EquipNameUpdateForm";

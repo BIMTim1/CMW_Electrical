@@ -14,22 +14,22 @@ namespace OneLineConnectAndPlace
 {
     public partial class SelectEquipmentToReferenceForm : System.Windows.Forms.Form
     {
-        [DllImport("Gdi32.dll", EntryPoint = "CreateRoundRectRgn")]
-        private static extern IntPtr CreateRoundRectRgn
-            (
-            int nLeftRect,
-            int nTopRect,
-            int nRightRect,
-            int nBottomRect,
-            int nWidthEllipse,
-            int nHeightEllipse
-            );
+        //[DllImport("Gdi32.dll", EntryPoint = "CreateRoundRectRgn")]
+        //private static extern IntPtr CreateRoundRectRgn
+        //    (
+        //    int nLeftRect,
+        //    int nTopRect,
+        //    int nRightRect,
+        //    int nBottomRect,
+        //    int nWidthEllipse,
+        //    int nHeightEllipse
+        //    );
         public SelectEquipmentToReferenceForm(List<string> equipNames)
         {
             InitializeComponent();
 
             //create rounded edges of Form
-            Region = System.Drawing.Region.FromHrgn(CreateRoundRectRgn(0, 0, Width, Height, 20, 20));
+            //Region = System.Drawing.Region.FromHrgn(CreateRoundRectRgn(0, 0, Width, Height, 20, 20));
 
             cboxEquipNameSelect.Items.AddRange(equipNames.ToArray());
 

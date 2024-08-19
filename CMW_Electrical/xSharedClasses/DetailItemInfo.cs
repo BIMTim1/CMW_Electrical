@@ -16,7 +16,9 @@ namespace CMW_Electrical
         private readonly Parameter DIName;
         private readonly Parameter DIEqConId;
         private readonly Parameter DIVoltage;
+        private readonly double DIActualVoltage;
         private readonly Parameter DINumberOfPhases;
+        private readonly Parameter DICurrent;
         private readonly Parameter DIPhasing;
         private readonly Parameter DIEqConIdConnSource;
 
@@ -25,10 +27,30 @@ namespace CMW_Electrical
             DIFamInst = detailItem as FamilyInstance;
             DIName = DIFamInst.LookupParameter("Panel Name - Detail");
             DIEqConId = DIFamInst.LookupParameter("EqConId");
-            DIVoltage = DIFamInst.LookupParameter("E_Voltage");
+            
             DINumberOfPhases = DIFamInst.LookupParameter("Number of Phases - Detail");
+            DICurrent = DIFamInst.LookupParameter("Current - Detail");
             DIPhasing = DIFamInst.LookupParameter("New, Existing, Demo (1,2,3)");
             DIEqConIdConnSource = DIFamInst.LookupParameter("EqConId Connection Source");
+
+            //collect converted voltage information
+            string paramName;
+
+            if (DIFamInst.Symbol.Family.Name.Equals("E_DI_OL_XFMR"))
+            {
+                paramName = "Primary Voltage";
+            }
+            else
+            {
+                paramName = "E_Voltage";
+            }
+
+            DIVoltage = DIFamInst.LookupParameter(paramName);
+
+            double val = DIVoltage.AsDouble();
+            ForgeTypeId unitTypeId = DIVoltage.GetUnitTypeId();
+
+            DIActualVoltage = UnitUtils.ConvertFromInternalUnits(val, unitTypeId);
         }
 
         /// <summary>
@@ -83,6 +105,14 @@ namespace CMW_Electrical
         }
 
         /// <summary>
+        /// Get the human readable voltage value of the Detail Item.
+        /// </summary>
+        public double GetActualVoltage
+        {
+            get { return DIActualVoltage; }
+        }
+
+        /// <summary>
         /// Get or set the E_Number of Poles parameter of this DetailItem.
         /// </summary>
         /// <value>Return the integer value of the E_Number of Poles parameter of this DetailItem.</value>
@@ -90,6 +120,16 @@ namespace CMW_Electrical
         {
             get { return DINumberOfPhases.AsInteger(); }
             set { DINumberOfPhases.Set(value); }
+        }
+
+        /// <summary>
+        /// Get or set the Current - Detail parameter of this DetailItem
+        /// </summary>
+        /// <value>Return the double value of the Current - Detail parameter of this DetailItem.</value>
+        public double Current
+        {
+            get { return DICurrent.AsDouble(); }
+            set { DICurrent.Set(value); }
         }
 
         /// <summary>

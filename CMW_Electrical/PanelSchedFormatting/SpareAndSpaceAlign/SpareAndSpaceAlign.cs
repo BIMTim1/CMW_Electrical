@@ -102,6 +102,17 @@ namespace PanelSchedFormatting
 
                     trac.Commit();
 
+                    //create results dialog
+                    TaskDialog results = new TaskDialog("CMW-Elec - Results")
+                    {
+                        TitleAutoPrefix = false,
+                        CommonButtons = TaskDialogCommonButtons.Ok,
+                        MainInstruction = "Results:",
+                        MainContent = "All Panelboard Schedules have had their Spares' text justified to the right and Spaces' text justified to the center."
+                    };
+
+                    results.Show();
+
                     return Result.Succeeded;
                 }
                 catch (Exception ex)

@@ -12,6 +12,7 @@ using CMW_Electrical.OneLineTools.OneLine_PlaceEquip;
 using Autodesk.Revit.DB.Events;
 using System.Net;
 using OneLineTools;
+using System.Windows.Media.Imaging;
 
 namespace OneLinePlaceEquip
 {
@@ -47,6 +48,7 @@ namespace OneLinePlaceEquip
             }
 
             string refCategory = "";
+            string refErrorCat = "";
             List<Element> filteredRefElements = new List<Element>();
             List<string> formNameInfo = new List<string>();
             List<string> formTypeInfo = new List<string>();
@@ -54,6 +56,7 @@ namespace OneLinePlaceEquip
             if (activeView.ViewType == ViewType.FloorPlan)
             {
                 refCategory = "Detail Item";
+                refErrorCat = "Electrical Equipment";
 
                 //check active Workset for E_Panels
                 Workset panelWorkset = new FilteredWorksetCollector(doc)
@@ -73,7 +76,9 @@ namespace OneLinePlaceEquip
                     .OfCategory(BuiltInCategory.OST_DetailComponents)
                     .WhereElementIsNotElementType()
                     .ToElements()
-                    .Where(x => x.get_Parameter(bipFamily).AsValueString().Contains("E_DI_OL_") && x.LookupParameter("EqConId").AsString() == null && x.LookupParameter("Panel Name - Detail") != null)// || x.LookupParameter("EqConId").AsString() == "")
+                    .Where(x => x.get_Parameter(bipFamily).AsValueString().Contains("E_DI_OL_"))
+                    .Where(x=>x.LookupParameter("EqConId").AsString() == null || x.LookupParameter("EqConId").AsString() == "")
+                    .Where(x=>x.LookupParameter("Panel Name - Detail") != null)
                     .ToList();
 
                 if (!filteredRefElements.Any())
@@ -114,6 +119,7 @@ namespace OneLinePlaceEquip
             else if (activeView.ViewType == ViewType.DraftingView)
             {
                 refCategory = "Electrical Equipment";
+                refErrorCat = "Detail Item";
 
                 filteredRefElements = new FilteredElementCollector(doc)
                     .OfCategory(BuiltInCategory.OST_ElectricalEquipment)
@@ -165,7 +171,7 @@ namespace OneLinePlaceEquip
                 return Result.Cancelled;
             }
 
-            OLSelectDetItemForm form = new OLSelectDetItemForm(formNameInfo, formTypeInfo);
+            OLSelectDetItemForm form = new OLSelectDetItemForm(formNameInfo, formTypeInfo, refCategory);
             form.ShowDialog();
 
             //cancel tool if user canceled form
@@ -195,7 +201,7 @@ namespace OneLinePlaceEquip
 
                 if (compType == "Branch Panelboard" || compType == "Distribution Panelboard" || compType == "Switchboard")
                 {
-                    string compVolt = (detItemInfo.Voltage / 10.763910416709711538461538461538).ToString();
+                    string compVolt = (detItemInfo.GetActualVoltage).ToString();
 
                     if (compVolt == "0")
                     {
@@ -234,12 +240,19 @@ namespace OneLinePlaceEquip
 
                 BuiltInCategory bicDI = BuiltInCategory.OST_DetailComponents;
 
-                famSymbols = new FilteredElementCollector(doc)
+                if (equipInfo.EquipFamSymbol.FamilyName.Contains("Dry Type"))
+                {
+                    famSymbols = GetDryTypeTransformerSymbol(doc, bicDI, selectedElecEquip);
+                }
+                else
+                {
+                    famSymbols = new FilteredElementCollector(doc)
                         .OfCategory(bicDI).OfClass(typeof(FamilySymbol))
                         .WhereElementIsElementType()
                         .Cast<FamilySymbol>()
                         .Where(x => x.FamilyName != null && x.FamilyName.Contains(compType))
                         .ToList();
+                }
             }
 
             //cancel if no FamilySymbol can be found
@@ -247,7 +260,8 @@ namespace OneLinePlaceEquip
             {
                 //TaskDialog.Show("No Family Symbol Found",
                 //    "An Electrical Equipment Family Type could not be found to match the Detail Item selected. Load an applicable family from HIVE, then rerun the tool.");
-                errorReport = "An Electrical Equipment Family Type could not be found to match the Detail Item selected. Load an applicable family from HIVE, then rerun the tool.";
+                errorReport = $"A {refCategory} Family Type could not be found to match the Detail Item selected. " +
+                    "Load an applicable family from HIVE, then rerun the tool.";
 
                 return Result.Failed;
             }
@@ -337,5 +351,30 @@ namespace OneLinePlaceEquip
         {
             _added_element_ids.AddRange(e.GetAddedElementIds());
         }
+
+        #region GetDryTypeTransformerSymbol
+        /// <summary>
+        /// Get List<FamilySymbol> information regarding the related Transformer Detail Item
+        /// </summary>
+        /// <param name="document"></param>
+        /// <param name="bic"></param>
+        /// <param name="equipInfo"></param>
+        /// <returns>List of FamilySymbols that pass criteria.</returns>
+        internal List<FamilySymbol> GetDryTypeTransformerSymbol(Document document, BuiltInCategory bic, Element element)
+        {
+            string kva = element.LookupParameter("kVA_Rating").AsDouble().ToString() + " kVA";
+
+            List<FamilySymbol> famSymbols = 
+                new FilteredElementCollector(document)
+                .OfCategory(bic)
+                .OfClass(typeof(FamilySymbol))
+                .ToElements()
+                .Where(x => x.Name == kva)
+                .Cast<FamilySymbol>()
+                .ToList();
+
+            return famSymbols;
+        }
+        #endregion //GetDryTypeTransformerSymbol
     }
 }

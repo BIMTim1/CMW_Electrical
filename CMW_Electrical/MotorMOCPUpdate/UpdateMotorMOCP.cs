@@ -48,7 +48,9 @@ namespace MotorMOCPUpdate
             //if no, close the tool.
             if (all_motors.Count == 0)
             {
-                TaskDialog.Show("No Motors in Project", "There are no Motor Families placed in the Active Project. The tool will now close.");
+                //TaskDialog.Show("No Motors in Project", "There are no Motor Families placed in the Active Project. The tool will now close.");
+                errorReport = "There are no Motor Families placed in the Active Project. The tool will now close.";
+
                 return Result.Cancelled;
             }
 
@@ -82,15 +84,22 @@ namespace MotorMOCPUpdate
                         }
                     }
 
-                    TaskDialog.Show("Motor Circuit Ratings Updated", $"{count} Motor Circuits have been updated to display the most up to date MOCP information.");
-
                     trac.Commit();
+
+                    TaskDialog results = new TaskDialog("CMW-Elec - Results")
+                    {
+                        TitleAutoPrefix = false,
+                        CommonButtons = TaskDialogCommonButtons.Ok,
+                        MainInstruction = "Results:",
+                        MainContent = $"{count} Motor Circuits have been updated to display the most up to date MOCP information."
+                    };
+
+                    results.Show();
 
                     return Result.Succeeded;
                 }
                 catch (Exception ex)
                 {
-                    //TaskDialog.Show("An Error Occurred", "Contact the BIM Team for Assistance.");
                     errorReport = ex.Message;
 
                     foreach (Element motor in all_motors)

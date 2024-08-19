@@ -29,6 +29,9 @@ namespace OneLine_HalftoneExisting
             //cancel tool if incorrect ViewType
             if (activeView.ViewType != ViewType.DraftingView)
             {
+                errorReport = "Incorrect view type. Change your active view to a One Line Schematic Drafting View and rerun the tool.";
+                elementSet.Insert(activeView);
+
                 return Result.Cancelled;
             }
 

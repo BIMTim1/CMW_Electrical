@@ -58,13 +58,18 @@ namespace CMW_Electrical
             //set sourceEquipment to input instance or collect from model
             if (sourceEquipmentInput.Category.Name == "Detail Items")
             {
-                sourceEquipment = new FilteredElementCollector(document)
+                List<FamilyInstance> sourceList = new FilteredElementCollector(document)
                 .OfCategory(BuiltInCategory.OST_ElectricalEquipment)
                 .OfClass(typeof(FamilyInstance))
                 .ToElements()
                 .Cast<FamilyInstance>()
                 .Where(x => x.LookupParameter("EqConId").AsString() == sourceEquipmentInput.LookupParameter("EqConId").AsString())
-                .First();
+                .ToList();
+
+                if (sourceList.Any())
+                {
+                    sourceEquipment = sourceList.First();
+                }
             }
             else
             {
@@ -74,13 +79,18 @@ namespace CMW_Electrical
             //set fedToEquipment to input instance or collect from model
             if (fedToEquipmentInput.Category.Name == "Detail Items")
             {
-                fedToEquipment = new FilteredElementCollector(document)
+                List<FamilyInstance> fedToList = new FilteredElementCollector(document)
                     .OfCategory(BuiltInCategory.OST_ElectricalEquipment)
                     .OfClass(typeof(FamilyInstance))
                     .ToElements()
                     .Cast<FamilyInstance>()
                     .Where(x => x.LookupParameter("EqConId").AsString() == fedToEquipmentInput.LookupParameter("EqConId").AsString())
-                    .First();
+                    .ToList();
+
+                if (fedToList.Any())
+                {
+                    fedToEquipment = fedToList.First();
+                }
             }
 
             //update method to accept detail items or equipment
@@ -97,13 +107,45 @@ namespace CMW_Electrical
         {
             ElectricalSystem createdCircuit = null;
 
-            ConnectorSet connectorSet = fedToEquipment.MEPModel.ConnectorManager.UnusedConnectors;
-
-            foreach (Connector connector in connectorSet)
+            //update Secondary Distribution System of Transformer if not set
+            if (sourceEquipment.Symbol.Family.get_Parameter(
+                BuiltInParameter.FAMILY_CONTENT_PART_TYPE).AsValueString() == "Transformer")
             {
-                ElectricalSystemType elecSysType = connector.ElectricalSystemType;
-                createdCircuit = ElectricalSystem.Create(connector, elecSysType);
-                createdCircuit.SelectPanel(sourceEquipment);
+                ElementId fedToDisSys = fedToEquipment.get_Parameter(
+                    BuiltInParameter.RBS_FAMILY_CONTENT_DISTRIBUTION_SYSTEM)
+                    .AsElementId();
+
+                sourceEquipment.get_Parameter(BuiltInParameter.RBS_FAMILY_CONTENT_SECONDARY_DISTRIBSYS).Set(fedToDisSys);
+            }
+
+            //check if equipment is already circuited
+            BuiltInParameter supplyFrom = BuiltInParameter.RBS_ELEC_PANEL_SUPPLY_FROM_PARAM;
+            if (fedToEquipment.get_Parameter(supplyFrom).AsString() != "")
+            {
+                ISet<ElectricalSystem> electricalSystems = fedToEquipment.MEPModel.GetElectricalSystems();
+
+                foreach (ElectricalSystem elecSys in electricalSystems)
+                {
+                    if (elecSys.BaseEquipment.Name != fedToEquipment.LookupParameter("Panel Name").AsString()) //check through all circuits to avoid non-equipment
+                    {
+                        elecSys.DisconnectPanel(); //disconnect previous connection
+
+                        elecSys.SelectPanel(sourceEquipment); //reconnect panel to new source
+
+                        createdCircuit = elecSys; //assign ElectricalSystem information for parameter values
+                    }
+                }
+            }
+            else
+            {
+                ConnectorSet connectorSet = fedToEquipment.MEPModel.ConnectorManager.UnusedConnectors;
+
+                foreach (Connector connector in connectorSet)
+                {
+                    ElectricalSystemType elecSysType = connector.ElectricalSystemType;
+                    createdCircuit = ElectricalSystem.Create(connector, elecSysType);
+                    createdCircuit.SelectPanel(sourceEquipment);
+                }
             }
 
             return createdCircuit;

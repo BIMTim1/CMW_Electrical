@@ -184,15 +184,40 @@ namespace OneLineDraw
                         deleteFirst = true;
                     }
 
-                    DetailItemInfo selItem = new DetailItemInfo(doc.GetElement(fedToDetailItem))
+                    //connected EqConId
+                    string sourceId = sourceDetailItem.LookupParameter("EqConId").AsString();
+                    Element fedToElement = doc.GetElement(fedToDetailItem);
+
+                    DetailItemInfo selItem = new DetailItemInfo(fedToElement)
                     {
-                        EqConIdConnectedSource = sourceDetailItem.LookupParameter("EqConId").AsString()
+                        EqConIdConnectedSource = sourceId
                     };
 
                     //set EqConId value of created Feeder Lines
                     foreach (FamilyInstance fam in newFamInstances)
                     {
                         fam.LookupParameter("EqConId").Set(selItem.EqConId);
+                        fam.LookupParameter("EqConId Connection Source").Set(sourceId);
+                    }
+
+                    //create Electrical Equipment circuit
+                    ElectricalSystem elecSys = 
+                        new CreateEquipmentCircuit()
+                        .CreateEquipCircuit(doc,
+                            sourceDetailItem, 
+                            fedToElement as FamilyInstance);
+
+                    if (elecSys == null)
+                    {
+                        TaskDialog results = new TaskDialog("CMW-Elec - Results")
+                        {
+                            TitleAutoPrefix = false,
+                            MainInstruction = "Results:",
+                            MainContent = "Feeder lines were created but an Electrical Circuit was not created. One instance of the selected connected items is not associated to a model element.",
+                            CommonButtons = TaskDialogCommonButtons.Ok
+                        };
+
+                        results.Show();
                     }
 
                     if (deleteFirst)
@@ -204,9 +229,15 @@ namespace OneLineDraw
                 }
                 catch (Autodesk.Revit.Exceptions.OperationCanceledException ex)
                 {
-                    //TaskDialog.Show("User canceled", 
-                    //    "User canceled the selection operation. Feeder lines were created but not assigned to an Equipment reference.");
-                    errorReport = "User canceled the selection operation. Feeder lines were created but not assigned to an Equipment reference.";
+                    TaskDialog results = new TaskDialog("CMW-Elec - Results")
+                    {
+                        TitleAutoPrefix = false,
+                        MainInstruction = "Results:",
+                        MainContent = "User canceled the selection operation. Feeder lines were created but not assigned to an Equipment reference.",
+                        CommonButtons = TaskDialogCommonButtons.Ok
+                    };
+
+                    results.Show();
                 }
                 catch (Exception ex)
                 {
