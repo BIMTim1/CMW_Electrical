@@ -73,6 +73,12 @@
     <Compile Include="AlignTagTools\TagAlign.cs" />
     <Compile Include="AlignTagTools\TagAlignTop.cs" />
     <Compile Include="AnnotateByReference\TagByReference.cs" />
+    <Compile Include="ChangePanelToSinglePhase\DistributionSelectionForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ChangePanelToSinglePhase\DistributionSelectionForm.Designer.cs">
+      <DependentUpon>DistributionSelectionForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="ChangePanelToSinglePhase\PanelTypeToSinglePhase.cs" />
     <Compile Include="CMW_Electrical_Ribbon.cs" />
     <Compile Include="CorrectLightFixtures\CorrectLightFixtures.cs" />
@@ -302,6 +308,9 @@
   <ItemGroup>
     <EmbeddedResource Include="AddinInformation\AddinInfoForm.resx">
       <DependentUpon>AddinInfoForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ChangePanelToSinglePhase\DistributionSelectionForm.resx">
+      <DependentUpon>DistributionSelectionForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="CreatePanelSchedules\PanelSchedCreatedForm.resx">
       <DependentUpon>PanelSchedCreatedForm.cs</DependentUpon>

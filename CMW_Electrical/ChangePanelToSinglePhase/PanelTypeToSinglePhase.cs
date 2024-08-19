@@ -13,6 +13,9 @@ using Autodesk.Revit.UI;
 using Autodesk.Revit.UI.Selection;
 using CMW_Electrical;
 using CMWElec_FailureHandlers;
+using CMW_Electrical.ChangePanelToSinglePhase;
+using System.IO;
+using System.Diagnostics;
 
 namespace ChangePanelTypeToSinglePhase
 {
@@ -28,6 +31,17 @@ namespace ChangePanelTypeToSinglePhase
             Document doc = uiapp.ActiveUIDocument.Document;
             Application app = uiapp.Application;
             UIDocument uidoc = uiapp.ActiveUIDocument;
+
+            View activeView = doc.ActiveView;
+
+            //check view type
+            if (activeView.ViewType != ViewType.FloorPlan && activeView.ViewType != ViewType.ThreeD)
+            {
+                errorReport = "Incorrect view type. This tool can only be run from Floor Plan or 3D views. " +
+                    "Change your active view and rerun the tool.";
+
+                return Result.Cancelled;
+            }
 
             //BuiltInParameter references
             BuiltInParameter bipPanelName = BuiltInParameter.RBS_ELEC_PANEL_NAME;
@@ -77,7 +91,8 @@ namespace ChangePanelTypeToSinglePhase
                 }
                 catch (OperationCanceledException ex)
                 {
-                    errorReport = ex.Message;
+                    errorReport = "User canceled operation.";
+
                     return Result.Cancelled;
                 }
                 catch (Exception ex)
@@ -143,9 +158,37 @@ namespace ChangePanelTypeToSinglePhase
                 }
             }
 
+            //collect Electrical Distributions Systems in active document
+            DistributionSysTypeSet disTypeSet = doc.Settings.ElectricalSetting.DistributionSysTypes;
+            List<DistributionSysType> disTypes = new List<DistributionSysType>();
+
+            foreach (DistributionSysType ds in disTypeSet)
+            {
+                disTypes.Add(ds);
+            }
+
+            //create form instance
+            DistributionSelectionForm form = new DistributionSelectionForm(disTypes);
+            form.ShowDialog();
+
+            //cancel if Cancel button selected
+            if (form.DialogResult == System.Windows.Forms.DialogResult.Cancel)
+            {
+                errorReport = "User canceled operation,";
+
+                return Result.Cancelled;
+            }
+
+            //collect DistributionSysType from form
+            DistributionSysType distType = (from ds 
+                                            in disTypes 
+                                            where ds.Name == form.cboxSelectDisSys.SelectedItem.ToString() 
+                                            select ds)
+                                            .First();
+
             using (TransactionGroup tracGroup = new TransactionGroup(doc))
             {
-                tracGroup.Start("CMWElec-Update Panel Type to Single Phase and Reconnect Circuits");
+                tracGroup.Start("CMWElec-Change Equipment Distribution System and Reconnect Circuits");
 
                 using (Transaction trac = new Transaction(doc))
                 {
@@ -190,8 +233,6 @@ namespace ChangePanelTypeToSinglePhase
                             }
                         }
 
-                        List<ElectricalSystem> notConnected = new List<ElectricalSystem>();
-
                         //reconnect branch circuits to updated panel
                         if (col_circuits.Any())
                         {
@@ -201,9 +242,9 @@ namespace ChangePanelTypeToSinglePhase
                                 {
                                     ogcct.SelectPanel(updated_pnl);
                                 }
-                                catch (Exception ex) //if distribution doesn't match, add items to list
+                                catch (InvalidOperationException ex) //if distribution doesn't match, add items to list
                                 {
-                                    notConnected.Add(ogcct);
+                                    //compile invalid circuits for output file
                                 }
                             }
                         }
@@ -339,6 +380,20 @@ namespace ChangePanelTypeToSinglePhase
             }
 
             return panel_bool;
+        }
+
+        public void CreateOutputFile(string output)
+        {
+            string outputLocation = $"C:\\Users\\{Environment.UserName}\\AppData\\Local\\Temp\\CMWElec_DistributionChangeLog.txt";
+
+            //create text file
+            using (StreamWriter sw = File.CreateText(outputLocation))
+            {
+                sw.WriteLine(output);
+            }
+
+            //start a new process and open the created file in NotePad
+            Process.Start("notepad.exe", outputLocation);
         }
     }
 }
