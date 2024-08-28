@@ -27,6 +27,16 @@ namespace FlipFacingOrientation
             Document doc = uiapp.ActiveUIDocument.Document;
             UIDocument uidoc = uiapp.ActiveUIDocument;
 
+            View activeView = doc.ActiveView;
+
+            //check for correct activeView
+            if (activeView.ViewType != ViewType.FloorPlan || activeView.ViewType != ViewType.CeilingPlan)
+            {
+                errorReport = "Incorrect view type. Change your active view to a Floor Plan or Ceiling Plan and rerun the tool.";
+
+                return Result.Cancelled;
+            }
+
             List<Element> user_selection;
 
             try
@@ -71,7 +81,7 @@ namespace FlipFacingOrientation
                     trac.Commit();
 
                     //TaskDialog.Show("Lighting Fixtures Modification Complete", $"{count} Lighting Fixtures have had their Host Orientation Flipped.");
-                    TaskDialog myDialog = new TaskDialog("CMW-Elec - Results")
+                    TaskDialog results = new TaskDialog("CMW-Elec - Results")
                     {
                         TitleAutoPrefix = false,
                         CommonButtons = TaskDialogCommonButtons.Ok,
@@ -79,7 +89,7 @@ namespace FlipFacingOrientation
                         MainContent = $"{count} Lighting Fixtures have had their Host Orientation Flipped."
                     };
 
-                    myDialog.Show();
+                    results.Show();
 
                     return Result.Succeeded;
                 }

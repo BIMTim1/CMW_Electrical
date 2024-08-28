@@ -89,7 +89,7 @@ namespace OneLine_Associate
                     .OfCategory(selBic)
                     .OfClass(typeof(FamilyInstance))
                     .ToElements()
-                    .Where(x => x.LookupParameter("EqConId").AsString() == null)
+                    .Where(x => x.LookupParameter("EqConId").AsString() == null || x.LookupParameter("EqConId").AsString() == "")
                     .ToList();
 
                 foreach (FamilyInstance eq in allRefElements)

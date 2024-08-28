@@ -155,6 +155,15 @@ namespace OneLineCopy
                             elem.LookupParameter("EqConId").Set("");
                             elem.LookupParameter("EqConId Connection Source").Set("");
                             elementSet.Insert(elem);
+
+                            //check for Panel Name - Detail, replace value
+                            Parameter nameParam = elem.LookupParameter("Panel Name - Detail");
+                            if (nameParam == null)
+                            {
+                                continue;
+                            }
+
+                            nameParam.Set("PNL XX");
                         }
                         TaskDialog results = new TaskDialog("CMW-Elec - Results")
                         {

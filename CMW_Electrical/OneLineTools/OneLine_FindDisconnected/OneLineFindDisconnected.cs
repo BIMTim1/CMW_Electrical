@@ -56,6 +56,7 @@ namespace OneLine_FindDisconnected
                     .Where(x => x.LookupParameter("Family").AsValueString().Contains("E_DI_OL_"))
                     .Where(x => !x.LookupParameter("Family").AsValueString().Contains("Feeder") && !x.LookupParameter("Family").AsValueString().Contains("Circuit"))
                     .Where(x => x.LookupParameter("Panel Name - Detail") != null)
+                    .Where(x=>x.LookupParameter("EqConId").AsString() != null && x.LookupParameter("EqConId").AsString() != "")
                     .ToList();
 
                 canceledRef = "Detail Items";

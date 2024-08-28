@@ -67,7 +67,7 @@ namespace OneLineFind
                         .WhereElementIsNotElementType()
                         .ToElements()
                         .Where(x => x.LookupParameter("EqConId").AsString() == null || 
-                        x.LookupParameter("EqConId").AsString() == "not assigned")
+                        x.LookupParameter("EqConId").AsString() == "")
                         .Where(x => x.LookupParameter("Panel Name") != null ||
                         x.LookupParameter("Panel Name - Detail") != null)
                         .ToList();

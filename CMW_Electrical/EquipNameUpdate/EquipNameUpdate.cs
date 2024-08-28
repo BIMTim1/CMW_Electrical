@@ -133,8 +133,9 @@ namespace EquipNameUpdate
                                 {
                                     foreach (ElectricalSystem cct in eqSys)
                                     {
-                                        string baseEq = cct.BaseEquipment.LookupParameter("Panel Name").AsString();
-                                        if (baseEq != eq_lbl)
+                                        //check if ElectricalSystem has BaseEquipment (circuit created but not connected)
+                                        FamilyInstance baseEq = cct.BaseEquipment;
+                                        if (baseEq == null || baseEq.LookupParameter("Panel Name").AsString() != eq_lbl)
                                         {
                                             //set Load DIName of Electrical Equipment
                                             Parameter loadName = cct.LookupParameter("Load Name");

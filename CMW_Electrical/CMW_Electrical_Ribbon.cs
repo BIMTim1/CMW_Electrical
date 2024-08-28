@@ -16,7 +16,7 @@ namespace CMW_Electrical
 {
     public class CMW_Electrical_Ribbon : IExternalApplication
     {
-        public const string versionNumber = "0.1.0";
+        public const string versionNumber = "1.0.0";
         public const string releaseDate = "August 2024";
 
         static void AddRibbonPanel(UIControlledApplication application)
@@ -58,7 +58,7 @@ namespace CMW_Electrical
             {
                 LargeImage = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/TagByRef32x32.png")),
                 Image = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/TagByRef16x16.png")),
-                ToolTip = "Tag multiple elements with multiple tags from already placed reference element."
+                ToolTip = "Tag elements from a reference."
             };
 
             PushButton tagByRefBtn = devicePanel.AddItem(tagByRefData) as PushButton;
@@ -183,7 +183,8 @@ namespace CMW_Electrical
             //create equipUpdatePulldownButton
             PulldownButtonData equipUpdatePulldownButtonData = new PulldownButtonData("equipUpdatePullDown", "Equipment" + System.Environment.NewLine + " Update ")
             {
-                LargeImage = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/EquipNameUpdate32x32.png"))
+                LargeImage = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/EquipNameUpdate32x32.png")),
+                ToolTip = "Update Electrical Equipment information based on Panel Name or Mains and MCB Rating."
             };
 
             PulldownButton equipUpdatePulldownButton = equipPanel.AddItem(equipUpdatePulldownButtonData) as PulldownButton;
@@ -258,7 +259,8 @@ namespace CMW_Electrical
             //create motorPulldownButton
             PulldownButtonData motorPulldownButtonData = new PulldownButtonData("motorSplitButton", "Motor")
             {
-                LargeImage = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/UpdateMotorMOCP32x32.png"))
+                LargeImage = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/UpdateMotorMOCP32x32.png")),
+                ToolTip = "Update Motor Electrical Circuit Rating or Motor UID values."
             };
             PulldownButton motorPulldownButton = devicePanel.AddItem(motorPulldownButtonData) as PulldownButton;
             //add motorMOCPUpdate PushButton to motorPulldownButton SplitButton
@@ -464,7 +466,12 @@ namespace CMW_Electrical
                 LongDescription = "The tool will prompt the user to select whether or not to keep any associated elements made through the CMW - Electrical tools."
             };
 
-            PushButtonData oneLineClearData = new PushButtonData("cmdOneLineClear", "Clear", thisAssemblyPath, "OneLine_Clear.OneLineClear")
+            PushButtonData oneLineClearData = 
+                new PushButtonData(
+                    "cmdOneLineClear", 
+                    "Clear", 
+                    thisAssemblyPath, 
+                    "OneLine_Clear.OneLineClear")
             {
                 LargeImage = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/OLClear32x32.png")),
                 Image = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/OLClear16x16.png")),
@@ -494,7 +501,8 @@ namespace CMW_Electrical
 
             PulldownButtonData oneLineFindButtonData = new PulldownButtonData("findSplitButton", "Find")
             {
-                LargeImage = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/OLFind32x32.png"))
+                LargeImage = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/OLFind32x32.png")),
+                ToolTip = "Find Electrical Equipment or Detail Item instances in the model that are unassociated, duplicated, or disconnected."
             };
             PulldownButton oneLineFindButton = oneLinePanel.AddItem(oneLineFindButtonData) as PulldownButton;
             oneLineFindButton.AddPushButton(oneLineFindData);
@@ -636,7 +644,8 @@ namespace CMW_Electrical
                 "panelSchedFormatButton", 
                 "Panel Schedule" + System.Environment.NewLine + " Formatting")
             {
-                LargeImage = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/PanelSchedFormat32x32.png"))
+                LargeImage = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/PanelSchedFormat32x32.png")),
+                ToolTip = "Update the formatting of Panel Schedules and Circuit Breaker text justification."
             };
             PulldownButton panelSchedFormatBtn = schedulePanel.AddItem(panelSchedFormatData) as PulldownButton;
             panelSchedFormatBtn.AddPushButton(panelSchedFinalFormatData);
