@@ -30,9 +30,9 @@ namespace FlipFacingOrientation
             View activeView = doc.ActiveView;
 
             //check for correct activeView
-            if (activeView.ViewType != ViewType.FloorPlan || activeView.ViewType != ViewType.CeilingPlan)
+            if (activeView.ViewType != ViewType.FloorPlan && activeView.ViewType != ViewType.CeilingPlan && activeView.ViewType != ViewType.Section)
             {
-                errorReport = "Incorrect view type. Change your active view to a Floor Plan or Ceiling Plan and rerun the tool.";
+                errorReport = "Incorrect view type. Change your active view to a Floor Plan, Ceiling Plan, or Section view and rerun the tool.";
 
                 return Result.Cancelled;
             }

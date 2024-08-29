@@ -57,7 +57,7 @@ namespace CMW_Electrical.OneLineTools.OneLine_Find
             {
                 DataPropertyName = "EPanelName",
                 Name = "Panel Name",
-                AutoSizeMode = DataGridViewAutoSizeColumnMode.ColumnHeader,
+                AutoSizeMode = DataGridViewAutoSizeColumnMode.DisplayedCells,
                 ReadOnly = true,
                 DefaultCellStyle = centerAlignStyle
             };
