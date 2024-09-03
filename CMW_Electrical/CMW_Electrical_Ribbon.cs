@@ -101,7 +101,7 @@ namespace CMW_Electrical
             PushButtonData pnlTypeToSingleData = 
                 new PushButtonData(
                     "cmdPanelTypeToSinglePhase", 
-                    "Panel Type" + System.Environment.NewLine + " To 1-Ph ", 
+                    "Change" + System.Environment.NewLine + " Distribution ", 
                     thisAssemblyPath, 
                     "ChangePanelTypeToSinglePhase.PanelTypeToSinglePhase")
             {
@@ -109,8 +109,8 @@ namespace CMW_Electrical
                 "pack://application:,,,/CMW_Electrical;component/Resources/PanelToSinglePhase32x32.png")),
                 Image = new BitmapImage(new Uri(
                 "pack://application:,,,/CMW_Electrical;component/Resources/PanelToSinglePhase16x16.png")),
-                ToolTip = "Change 3-Phase Panel Type to Single Phase",
-                LongDescription = "Circumvent the limitations of default Revit properties by selecting an Electrical Equipment family to update from a 3-Phase distribution system to a 1-Phase distribution system and type. This tool will also reconnect existing circuits from the selected equipment to the source as well as any branch circuits."
+                ToolTip = "Change Equipment Family, Type, and Distribution System",
+                LongDescription = "Circumvent the limitations of default Revit properties by selecting an Electrical Equipment family to update from the current family and type to the selected family and type. The tool will guide you through the process of reconnecting equipment and devices as Distriubtion Systems are changed."
             };
             PushButton pnlTypeToSingleBtn = equipPanel.AddItem(pnlTypeToSingleData) as PushButton;
 
