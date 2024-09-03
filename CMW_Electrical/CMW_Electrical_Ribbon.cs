@@ -18,7 +18,7 @@ namespace CMW_Electrical
     {
         public const string versionNumber = "1.0.0";
         public const string releaseDate = "August 2024";
-        //public const string bimProjectUrl = "https://studio.bluebeam.com/share/y3h5czc3ugf4fj";
+        public const string bimProjectUrl = "https://wearelegence.sharepoint.com/:l:/r/sites/CMTAMidwestBIM/Lists/CMW%20Electrical%20Tools?e=e8U3xA";
 
         static void AddRibbonPanel(UIControlledApplication application)
         {
@@ -34,8 +34,8 @@ namespace CMW_Electrical
             RibbonPanel schedulePanel = application.CreateRibbonPanel(tabName, "Panel Schedules");
             RibbonPanel oneLinePanel = application.CreateRibbonPanel(tabName, "One-Line");
 
-            //define ContextualHelp
-            //ContextualHelp contextHelp = new ContextualHelp(ContextualHelpType.Url, bimProjectUrl);
+            //define generic ContextualHelp
+            ContextualHelp contextHelp = new ContextualHelp(ContextualHelpType.Url, bimProjectUrl);
 
             //get dll assembly path
             string thisAssemblyPath = Assembly.GetExecutingAssembly().Location;
@@ -67,7 +67,8 @@ namespace CMW_Electrical
             };
 
             PushButton tagByRefBtn = devicePanel.AddItem(tagByRefData) as PushButton;
-            //tagByRefBtn.SetContextualHelp(contextHelp);
+            ContextualHelp tagByRefContextHelp = new ContextualHelp(ContextualHelpType.Url, "https://wearelegence.sharepoint.com/:v:/r/sites/CMTAMidwestBIM/Shared%20Documents/Video/CMW%20Electrical%20Add-in/Tag%20by%20Reference.mov?csf=1&web=1&e=obBMF5");
+            tagByRefBtn.SetContextualHelp(tagByRefContextHelp);
 
 
             //------------create push button for AddElecCircuitNote------------
@@ -101,7 +102,8 @@ namespace CMW_Electrical
                     ToolTipImage = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/ToolTipImages/ResetPanelSchedTTImage.png"))
                 };
             PushButton schedResetBtn = schedulePanel.AddItem(schedResetData) as PushButton;
-            //schedResetBtn.SetContextualHelp(contextHelp);
+            ContextualHelp schedResetContextHelp = new ContextualHelp(ContextualHelpType.Url, "https://wearelegence.sharepoint.com/:v:/r/sites/CMTAMidwestBIM/Shared%20Documents/Video/CMW%20Electrical%20Add-in/Reset%20Templates.mov?csf=1&web=1&e=BYF1rZ");
+            schedResetBtn.SetContextualHelp(schedResetContextHelp);
 
 
             //------------create push button for PanelTypeToSinglePhase------------
@@ -119,7 +121,8 @@ namespace CMW_Electrical
                 };
 
             PushButton pnlTypeToSingleBtn = equipPanel.AddItem(pnlTypeToSingleData) as PushButton;
-            //pnlTypeToSingleBtn.SetContextualHelp(contextHelp);
+            ContextualHelp changeDistContextHelp = new ContextualHelp(ContextualHelpType.Url, "https://wearelegence.sharepoint.com/:v:/r/sites/CMTAMidwestBIM/Shared%20Documents/Video/CMW%20Electrical%20Add-in/Panel%20Type%20to%201-Ph.mov?csf=1&web=1&e=JmoRiV");
+            pnlTypeToSingleBtn.SetContextualHelp(changeDistContextHelp);
 
 
             ////------------create push button for MutliLegSwitchLegUpdate------------
@@ -153,7 +156,8 @@ namespace CMW_Electrical
                     LongDescription = "Rotates the nested Generic Annotation family of all Electrical devices if the U_D Symbol parameter is present."
                 };
             PushButton rotateSymBtn = devicePanel.AddItem(rotateSymData) as PushButton;
-            //rotateSymBtn.SetContextualHelp(contextHelp);
+            ContextualHelp rotateSymContextHelp = new ContextualHelp(ContextualHelpType.Url, "https://wearelegence.sharepoint.com/:v:/r/sites/CMTAMidwestBIM/Shared%20Documents/Video/CMW%20Electrical%20Add-in/Rotate%20Text%20Symbols.mov?csf=1&web=1&e=PBf6Px");
+            rotateSymBtn.SetContextualHelp(rotateSymContextHelp);
 
 
             //------------create push button for EquipNameUpdate------------
@@ -196,7 +200,8 @@ namespace CMW_Electrical
             };
 
             PulldownButton equipUpdatePulldownButton = equipPanel.AddItem(equipUpdatePulldownButtonData) as PulldownButton;
-            //equipUpdatePulldownButton.SetContextualHelp(contextHelp);
+            //set ContextualHelp for PulldownButton
+            equipUpdatePulldownButton.SetContextualHelp(contextHelp);
 
             equipUpdatePulldownButton.AddPushButton(equipUpdateData);
             equipUpdatePulldownButton.AddPushButton(equipCircuitUpdateData);
@@ -219,7 +224,9 @@ namespace CMW_Electrical
                     ToolTip = "Create Panel Schedules for All Electrical Equipment"
                 };
             PushButton createPanSchedBtn = schedulePanel.AddItem(createPanSchedData) as PushButton;
-            //createPanSchedBtn.SetContextualHelp(contextHelp);
+            //set ContextualHelpfor PushButton
+            ContextualHelp createPanSchedContextHelp = new ContextualHelp(ContextualHelpType.Url, "https://wearelegence.sharepoint.com/:v:/r/sites/CMTAMidwestBIM/Shared%20Documents/Video/CMW%20Electrical%20Add-in/Create%20Panel%20Schedules.mov?csf=1&web=1&e=3CpYHn");
+            createPanSchedBtn.SetContextualHelp(createPanSchedContextHelp);
 
 
             //------------create push button for FlipFacingOrientation------------
@@ -237,7 +244,9 @@ namespace CMW_Electrical
                     ToolTip = "Using a Selection Window, select multiple Lighting Fixtures to Flip the Facing Orientation."
                 };
             PushButton flipFacingOrientBtn = devicePanel.AddItem(flipFacingOrientData) as PushButton;
-            //flipFacingOrientBtn.SetContextualHelp(contextHelp);
+            //set ContextualHelp for PushButton
+            ContextualHelp flipFacingOrientContextHelp = new ContextualHelp(ContextualHelpType.Url, "https://wearelegence.sharepoint.com/:v:/r/sites/CMTAMidwestBIM/Shared%20Documents/Video/CMW%20Electrical%20Add-in/Flip%20Lighting%20Host%20Plane.mov?csf=1&web=1&e=XeDadh");
+            flipFacingOrientBtn.SetContextualHelp(flipFacingOrientContextHelp);
 
 
             //------------create push button for UpdateMotorMOCP------------
@@ -275,7 +284,8 @@ namespace CMW_Electrical
                 ToolTip = "Update Motor Electrical Circuit Rating or Motor UID values."
             };
             PulldownButton motorPulldownButton = devicePanel.AddItem(motorPulldownButtonData) as PulldownButton;
-            //motorPulldownButton.SetContextualHelp(contextHelp);
+            //set ContextualHelp for PulldownButton
+            motorPulldownButton.SetContextualHelp(contextHelp);
             //add motorMOCPUpdate PushButton to motorPulldownButton SplitButton
             motorPulldownButton.AddPushButton(motorMOCPUpdateData);
             motorPulldownButton.AddPushButton(motorUIDUpdateData);
@@ -679,7 +689,8 @@ namespace CMW_Electrical
                 ToolTip = "Update the formatting of Panel Schedules and Circuit Breaker text justification."
             };
             PulldownButton panelSchedFormatBtn = schedulePanel.AddItem(panelSchedFormatData) as PulldownButton;
-            //panelSchedFormatBtn.SetContextualHelp(contextHelp);
+            //set ContextualHelp for PulldownButton
+            panelSchedFormatBtn.SetContextualHelp(contextHelp);
 
             panelSchedFormatBtn.AddPushButton(panelSchedFinalFormatData);
             panelSchedFormatBtn.AddPushButton(panelSchedSpareAndSpaceAlignData);
