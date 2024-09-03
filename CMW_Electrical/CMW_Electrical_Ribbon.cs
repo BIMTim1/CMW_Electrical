@@ -109,16 +109,15 @@ namespace CMW_Electrical
                 new PushButtonData(
                     "cmdPanelTypeToSinglePhase", 
                     "Change" + System.Environment.NewLine + " Distribution ", 
-                    thisAssemblyPath, 
+                    thisAssemblyPath,
                     "ChangePanelTypeToSinglePhase.PanelTypeToSinglePhase")
                 {
-                    LargeImage = new BitmapImage(new Uri(
-                "pack://application:,,,/CMW_Electrical;component/Resources/PanelToSinglePhase32x32.png")),
-                    Image = new BitmapImage(new Uri(
-                "pack://application:,,,/CMW_Electrical;component/Resources/PanelToSinglePhase16x16.png")),
-                ToolTip = "Change Equipment Family, Type, and Distribution System",
-                LongDescription = "Circumvent the limitations of default Revit properties by selecting an Electrical Equipment family to update from the current family and type to the selected family and type. The tool will guide you through the process of reconnecting equipment and devices as Distriubtion Systems are changed."
-            };
+                    LargeImage = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/PanelToSinglePhase32x32.png")),
+                    Image = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/PanelToSinglePhase16x16.png")),
+                    ToolTip = "Change Equipment Family, Type, and Distribution System",
+                    LongDescription = "Circumvent the limitations of default Revit properties by selecting an Electrical Equipment family to update from the current family and type to the selected family and type. The tool will guide you through the process of reconnecting equipment and devices as Distriubtion Systems are changed."
+                };
+
             PushButton pnlTypeToSingleBtn = equipPanel.AddItem(pnlTypeToSingleData) as PushButton;
             //pnlTypeToSingleBtn.SetContextualHelp(contextHelp);
 
