@@ -13,6 +13,11 @@ using Autodesk.Revit.UI;
 using Autodesk.Revit.UI.Selection;
 using CMW_Electrical;
 using CMWElec_FailureHandlers;
+using CMW_Electrical.ChangePanelToSinglePhase;
+using System.IO;
+using System.Diagnostics;
+using Autodesk.Revit.DB.Mechanical;
+using System.Net;
 
 namespace ChangePanelTypeToSinglePhase
 {
@@ -29,10 +34,25 @@ namespace ChangePanelTypeToSinglePhase
             Application app = uiapp.Application;
             UIDocument uidoc = uiapp.ActiveUIDocument;
 
+            View activeView = doc.ActiveView;
+
+            string output = "";
+
+            //check view type
+            if (activeView.ViewType != ViewType.FloorPlan && activeView.ViewType != ViewType.ThreeD)
+            {
+                errorReport = "Incorrect view type. This tool can only be run from Floor Plan or 3D views. " +
+                    "Change your active view and rerun the tool.";
+
+                return Result.Cancelled;
+            }
+
             //BuiltInParameter references
             BuiltInParameter bipPanelName = BuiltInParameter.RBS_ELEC_PANEL_NAME;
             BuiltInParameter bipRating = BuiltInParameter.RBS_ELEC_CIRCUIT_RATING_PARAM;
             BuiltInParameter bipFrame = BuiltInParameter.RBS_ELEC_CIRCUIT_FRAME_PARAM;
+            BuiltInParameter bipSupply = BuiltInParameter.RBS_ELEC_PANEL_SUPPLY_FROM_PARAM;
+            BuiltInParameter bipDistSys = BuiltInParameter.RBS_FAMILY_CONTENT_DISTRIBUTION_SYSTEM;
 
             //Reference selectPanel = null;
             BuiltInCategory bic = BuiltInCategory.OST_ElectricalEquipment;
@@ -70,14 +90,15 @@ namespace ChangePanelTypeToSinglePhase
                     ISelectionFilter selFilter = new CMWElecSelectionFilter.EquipmentSelectionFilter();
                     selItem = uidoc.Selection.PickObject(ObjectType.Element,
                         selFilter,
-                        "Select a Panelboard Family to Update the Type to Single Phase.");
+                        "Select an Electrical Equipment family to change family and type.");
 
                     //selItem = uidoc.Selection.PickObject(ObjectType.Element,
                     //"Select a Panelboard Family to Update the Type to Single Phase."); //debug only
                 }
                 catch (OperationCanceledException ex)
                 {
-                    errorReport = ex.Message;
+                    errorReport = "User canceled operation.";
+
                     return Result.Cancelled;
                 }
                 catch (Exception ex)
@@ -89,12 +110,10 @@ namespace ChangePanelTypeToSinglePhase
                 selElem = doc.GetElement(selItem) as FamilyInstance;
             }
 
-            //FamilyInstance selElem = doc.GetElement(selElem.Id) as FamilyInstance;
-
             //get Panel DIName to collect Electrical Equipment again
             string pnlName = selElem.get_Parameter(bipPanelName).AsString();
             //get Supply From parameter of Selected Electrical Equipment
-            string pnlSupply = selElem.get_Parameter(BuiltInParameter.RBS_ELEC_PANEL_SUPPLY_FROM_PARAM).AsString();
+            string pnlSupply = selElem.get_Parameter(bipSupply).AsString();
 
             //collect selected panelboard circuit parameters to update once new circuit is created
             List<ElectricalSystem> panelCircuits = (from x
@@ -127,25 +146,48 @@ namespace ChangePanelTypeToSinglePhase
                 .Where(x => x.get_Parameter(bipPanelName).AsString() == pnlSupply)
                 .ToList();
 
-            //get Panel family type to change to
-            FamilySymbol single_ph_type = null;
-            List<Element> single_ph_types = new FilteredElementCollector(doc).OfCategory(bic)
-                .WhereElementIsElementType()
-                .ToElements()
+            //collect Electrical Equipment types in model (exclude selected element FamilySymbol)
+            List<FamilySymbol> all_equipmentTypes = 
+                new FilteredElementCollector(doc)
+                .OfCategory(BuiltInCategory.OST_ElectricalEquipment)
+                .OfClass(typeof(FamilySymbol))
+                .Where(x => x.Name != selElem.Symbol.Name)
+                .Cast<FamilySymbol>()
                 .ToList();
 
-            foreach (FamilySymbol fam_type in single_ph_types)
+            //create form instance
+            DistributionSelectionForm form = new DistributionSelectionForm(all_equipmentTypes);
+            form.ShowDialog();
+
+            //cancel if Cancel button selected
+            if (form.DialogResult == System.Windows.Forms.DialogResult.Cancel)
             {
-                string fam_name = fam_type.get_Parameter(BuiltInParameter.ALL_MODEL_FAMILY_NAME).AsString();
-                if (fam_name == selElem.get_Parameter(BuiltInParameter.ELEM_FAMILY_PARAM).AsValueString() & fam_type.get_Parameter(BuiltInParameter.SYMBOL_NAME_PARAM).AsString().Contains("Single"))
-                {
-                    single_ph_type = fam_type;
-                }
+                errorReport = "User canceled operation,";
+
+                return Result.Cancelled;
             }
+
+            //select FamilySymbol to change selected family to
+            FamilySymbol selFamSym;
+            List<FamilySymbol> selFamSymList = (from fs 
+                                            in all_equipmentTypes 
+                                            where fs.FamilyName + ": " + fs.Name == form.cboxSelectDisSys.SelectedItem.ToString() 
+                                            select fs)
+                                            .ToList();
+
+            //check if empty
+            if (!selFamSymList.Any())
+            {
+                errorReport = "No Family Type matches the selected item. The tool will now cancel.";
+
+                return Result.Cancelled;
+            }
+
+            selFamSym = selFamSymList.First();
 
             using (TransactionGroup tracGroup = new TransactionGroup(doc))
             {
-                tracGroup.Start("CMWElec-Update Panel Type to Single Phase and Reconnect Circuits");
+                tracGroup.Start("CMWElec-Change Equipment Distribution System and Reconnect Circuits");
 
                 using (Transaction trac = new Transaction(doc))
                 {
@@ -153,19 +195,34 @@ namespace ChangePanelTypeToSinglePhase
                     {
                         trac.Start("CMWElec-Update Panel Type to Single Phase");
 
-                        //set FailureHandlingOptions to continue working despite disconnected circuits
-                        //FailureHandlingOptions failOpt = trac.GetFailureHandlingOptions();
-                        //failOpt.SetFailuresPreprocessor(new DisconnectCircuitFailure());
+                        //check for existing panelboard schedule
+                        IList<ElementId> previousSched = selElem.GetDependentElements(new ElementClassFilter(typeof(PanelScheduleView)));
 
-                        //trac.SetFailureHandlingOptions(failOpt);
+                        if (previousSched.Any())
+                        {
+                            doc.Delete(previousSched.First());
+                        }
+
+                        //check for existing branch circuits and disconnect if different distribution
+                        if (col_circuits.Any() && selFamSym.LookupParameter("Voltage Nominal").AsDouble() != selElem.Symbol.LookupParameter("Voltage Nominal").AsDouble())
+                        {
+                            foreach (ElectricalSystem cct in col_circuits)
+                            {
+                                cct.DisconnectPanel();
+                            }
+                        }
+
+                        doc.Regenerate();
 
                         //change selected Electrical Equipment Type Id
                         Parameter pnlTypeParam = selElem.get_Parameter(BuiltInParameter.ELEM_TYPE_PARAM);
-                        pnlTypeParam.Set(single_ph_type.Id);
+                        pnlTypeParam.Set(selFamSym.Id);
+
+                        output += $"Panel Type was updated to the following:\n{selFamSym.FamilyName}: {selFamSym.Name}\n\n";
 
                         trac.Commit();
 
-                        trac.Start("CMWElec-Reconnect Original Circuits");
+                        trac.Start("CMWElec-Reconnect Source");
 
                         //collect updated Electrical Equipment FamilyInstance
                         FamilyInstance updated_pnl = new FilteredElementCollector(doc)
@@ -173,48 +230,220 @@ namespace ChangePanelTypeToSinglePhase
                             .WhereElementIsNotElementType()
                             .Where(x => x.get_Parameter(bipPanelName).AsString() == pnlName).First() as FamilyInstance;
 
-                        //re-create panel circuit and reconnect to source
+                        //create ElectricalSystem if already previously connected
                         if (source_panel.Any())
                         {
-                            ConnectorSet connector_set = updated_pnl.MEPModel.ConnectorManager.UnusedConnectors;
-                            ElectricalSystem newcct;
-                            foreach (Connector conn in connector_set)
-                            {
-                                ElectricalSystemType conn_type = conn.ElectricalSystemType;
-                                newcct = ElectricalSystem.Create(conn, conn_type);
-                                newcct.SelectPanel(source_panel.First() as FamilyInstance);
+                            //check for source distribution system prior to connection
+                            bool reconnect = false;
+                            ElectricalSystem newCct = null;
 
-                                //update Rating and Frame parameters of selected panelboard
-                                newcct.get_Parameter(bipRating).Set(panelRating);
-                                newcct.get_Parameter(bipFrame).Set(panelFrame);
+                            ElementId pnl_distSys = updated_pnl.get_Parameter(bipDistSys).AsElementId();
+
+                            FamilyInstance sourceEquip = source_panel.First() as FamilyInstance;
+                            
+                            if (sourceEquip.Symbol.FamilyName.Contains("Transformer"))
+                            {
+                                if (sourceEquip.get_Parameter(BuiltInParameter.RBS_FAMILY_CONTENT_SECONDARY_DISTRIBSYS).AsElementId() == pnl_distSys)
+                                {
+                                    reconnect = true;
+                                }
+                            }
+                            else
+                            {
+                                if (sourceEquip.get_Parameter(bipDistSys).AsElementId() == pnl_distSys)
+                                {
+                                    reconnect = true;
+                                }
+                            }
+
+                            //reconnect if true
+                            if (reconnect)
+                            {
+                                newCct = new CreateEquipmentCircuit().CreateEquipCircuit(source_panel.First() as FamilyInstance, updated_pnl);
+
+                                output += "Selected Electrical Equipment reconnected to original source.\n\n";
+                            }
+                            else
+                            {
+                                string reconnectFormName = "Reconnect";
+                                string reconnectFormLblText = "The selected Electrical Equipment family is unable to reconnect to its original source. " +
+                                    "Would you like to select a new source now?";
+
+                                ReconnectForm reconnectForm = new ReconnectForm(reconnectFormName, reconnectFormLblText);
+                                reconnectForm.ShowDialog();
+
+                                if (reconnectForm.DialogResult == System.Windows.Forms.DialogResult.Yes)
+                                {
+                                    //collect ElectricalEquipment with same distribution system
+                                    List<FamilyInstance> sameDistEquipList = new FilteredElementCollector(doc)
+                                        .OfCategory(bic)
+                                        .OfClass(typeof(FamilyInstance))
+                                        .ToElements()
+                                        .Where(x => x.get_Parameter(bipDistSys).AsElementId() == pnl_distSys && x.Id != updated_pnl.Id)
+                                        .Cast<FamilyInstance>()
+                                        .ToList();
+
+                                    if (!sameDistEquipList.Any())
+                                    {
+                                        //continue operation of tool, but no new source can be selected
+                                        TaskDialog noReconnection = new TaskDialog("CMW-Elec - Can't Select Source")
+                                        {
+                                            TitleAutoPrefix = false,
+                                            CommonButtons = TaskDialogCommonButtons.Ok,
+                                            MainInstruction = "There are no Electrical Equipment families that match the updated Distribution System. " +
+                                            "The tool is unable to prompt a new source selection but the tool will continue."
+                                        };
+
+                                        noReconnection.Show();
+
+                                        output += "Electrical Circuit Reconnection:\nNo Electrical Equipment matched updated Distribution System. Process skipped.\n\n";
+                                    }
+                                    else
+                                    {
+                                        //order list by Panel Name
+                                        sameDistEquipList.OrderBy(x => x.get_Parameter(bipPanelName).ToString()).ToList();
+
+                                        string selectSourceFormName = "Select Source Equipment";
+
+                                        //start form for user selection of new ElectricalEquipment source
+                                        SelectNewSourceForm selectSourceForm = new SelectNewSourceForm(sameDistEquipList, selectSourceFormName);
+                                        selectSourceForm.ShowDialog();
+
+                                        if (selectSourceForm.DialogResult == System.Windows.Forms.DialogResult.OK)
+                                        {
+                                            //select FamilyInstance from list index
+                                            FamilyInstance newSource = sameDistEquipList[selectSourceForm.cboxSelectSource.SelectedIndex];
+
+                                            //generate new circuit
+                                            newCct = new CreateEquipmentCircuit()
+                                                .CreateEquipCircuit(newSource, updated_pnl);
+
+                                            output += $"Electrical Circuit Reconnection:\nElectrical Circuit connected to {newSource.get_Parameter(bipPanelName).AsString()}.\n\n";
+                                        }
+                                        else
+                                        {
+                                            //user canceled
+                                            TaskDialog userCanceled = new TaskDialog("CMW-Elec - New Source Canceled")
+                                            {
+                                                TitleAutoPrefix = false,
+                                                CommonButtons = TaskDialogCommonButtons.Ok,
+                                                MainInstruction = "User canceled operation. The tool will continue but a new source will not be selected."
+                                            };
+
+                                            userCanceled.Show();
+
+                                            output += "Electrical Circuit Reconnection:\nUser canceled reconnection process.\n\n";
+                                        }
+                                    }
+                                }
                             }
                         }
 
-                        List<ElectricalSystem> notConnected = new List<ElectricalSystem>();
+                        trac.Commit();
 
-                        //reconnect branch circuits to updated panel
+                        trac.Start("CMW-Elec - Reconnect Existing Branch Circuits");
+
+                        //process branch circuits of updated ElectricalEquipment
                         if (col_circuits.Any())
                         {
-                            foreach (ElectricalSystem ogcct in col_circuits)
+                            //check Voltage
+                            Parameter testCct = col_circuits.First().get_Parameter(BuiltInParameter.RBS_ELEC_VOLTAGE);
+                            string testVolt = UnitUtils.ConvertFromInternalUnits(testCct.AsDouble(), testCct.GetUnitTypeId()).ToString();
+
+                            DistributionSysType pnlDistSys = doc.GetElement(updated_pnl.get_Parameter(bipDistSys).AsElementId()) as DistributionSysType;
+                            string dtLLVolt = pnlDistSys.LookupParameter("Line to Line Voltage").AsValueString();
+                            string dtLGVolt = pnlDistSys.LookupParameter("Line to Ground Voltage").AsValueString();
+
+                            //check DistributionSysType info against existing circuits
+                            if (dtLLVolt.Contains(testVolt) || dtLGVolt.Contains(testVolt))
                             {
-                                try //try to reconnect circuits
+                                foreach (ElectricalSystem ogcct in col_circuits)
                                 {
                                     ogcct.SelectPanel(updated_pnl);
                                 }
-                                catch (Exception ex) //if distribution doesn't match, add items to list
+                            }
+                            else
+                            {
+                                string branchConnFormName = "Reconnect Branch Circuits";
+                                string branchConnLblText = $"The branch circuits of {pnlName} cannot be reconnected to the updated equipment family type. " +
+                                    $"Would you like to select a new source now?";
+
+                                ReconnectForm branchReconnectForm = new ReconnectForm(branchConnFormName, branchConnLblText);
+                                branchReconnectForm.ShowDialog();
+
+                                if (branchReconnectForm.DialogResult == System.Windows.Forms.DialogResult.No)
                                 {
-                                    notConnected.Add(ogcct);
+                                    output += "Branch Circuit Connections:" +
+                                            "\nBranch Circuits have been disconnected from the original equipment source. " +
+                                            "No Reconnection selected.\n\n";
+                                }
+                                else
+                                {
+                                    //collect ElectricalEquipment with same DistributionSystem as branch ElectricalSystems
+                                    List<FamilyInstance> availableBranchSources = new FilteredElementCollector(doc)
+                                        .OfCategory(bic)
+                                        .OfClass(typeof(FamilyInstance))
+                                        .ToElements()
+                                        .Cast<FamilyInstance>()
+                                        .Where(x => doc.GetElement(x.get_Parameter(bipDistSys).AsElementId()).LookupParameter("Line to Line Voltage").AsValueString().Contains(testVolt) 
+                                        || doc.GetElement(x.get_Parameter(bipDistSys).AsElementId()).LookupParameter("Line to Ground Voltage").AsValueString().Contains(testVolt)).ToList();
+
+                                    if (!availableBranchSources.Any())
+                                    {
+                                        TaskDialog branchConnectFailedDialog = new TaskDialog("CMW-Elec - Branch Connection")
+                                        {
+                                            TitleAutoPrefix = false,
+                                            CommonButtons = TaskDialogCommonButtons.Ok,
+                                            MainInstruction = "There are no instances of Electrical Equipment in the model that can be used to " +
+                                            "reconnect existing branch circuits. The tool will now cancel."
+                                        };
+
+                                        branchConnectFailedDialog.Show();
+
+                                        output += "Branch Circuit Connections:\nUnable to select source for existing branch circuits.\n\n";
+                                    }
+                                    else
+                                    {
+                                        string reconnectBranchSelectFormName = "Select New Branch Source";
+
+                                        availableBranchSources.OrderBy(x => x.get_Parameter(bipPanelName).ToString()).ToList();
+
+                                        SelectNewSourceForm branchSelectForm = new SelectNewSourceForm(
+                                            availableBranchSources, 
+                                            reconnectBranchSelectFormName);
+
+                                        branchSelectForm.ShowDialog();
+
+                                        if (branchSelectForm.DialogResult == System.Windows.Forms.DialogResult.Cancel)
+                                        {
+                                            output += "Branch Circuit Connections:\nBranch circuits have been disconnected from original source. " +
+                                                "User canceled selection of new source.\n\n";
+                                        }
+                                        else
+                                        {
+                                            foreach (ElectricalSystem cct in col_circuits)
+                                            {
+                                                cct.SelectPanel(availableBranchSources[branchSelectForm.cboxSelectSource.SelectedIndex]);
+                                            }
+
+                                            output += $"Branch Circuit Connections:" +
+                                                $"\nBranch circuits were connected to the newly selected equipment source: " +
+                                                $"{availableBranchSources[branchSelectForm.cboxSelectSource.SelectedIndex].get_Parameter(bipPanelName).AsString()}\n\n";
+                                        }
+                                    }
                                 }
                             }
                         }
 
-                        //update Panel Distribution System
-                        bool dist_sys = UpdateDistributionSystem(updated_pnl, doc);
+                        bool sched = UpdatePanelScheduleView(doc, updated_pnl);
 
-                        //update Panel Schedule Template of updated_pnl
-                        if (updated_pnl.GetDependentElements(new ElementClassFilter(typeof(PanelScheduleView))) != null)
+                        if (sched)
                         {
-                            bool sched = UpdatePanelScheduleView(doc, updated_pnl, pnlName);
+                            output += "Panel Schedule Update:\nA Panel Schedule has been updated for the selected Electrical Equipment.\n\n";
+                        }
+                        else
+                        {
+                            output += "Panel Schedule Update:\nA Panel Schedule could not be created for the selected Electrical Equipment.\n\n";
                         }
 
                         trac.Commit();
@@ -228,68 +457,98 @@ namespace ChangePanelTypeToSinglePhase
 
                 tracGroup.Assimilate();
 
-                //create Results dialog
-                TaskDialog results = new TaskDialog("CMW-Elec - Results")
-                {
-                    TitleAutoPrefix = false,
-                    MainInstruction = "The following changes were made to the selected panel:",
-                    MainContent = "1. Panel type changed to Single Phase.\n2. Panel reconnected to original source.\n3. All branch circuits reconnected to panel.",
-                    CommonButtons = TaskDialogCommonButtons.Ok
-                };
-
-                results.Show();
+                CreateOutputFile(output);
 
                 return Result.Succeeded;
             }
         }
 
-        public bool UpdateDistributionSystem(FamilyInstance panel, Document document)
+        //public bool UpdateDistributionSystem(FamilyInstance equip, Document document)
+        //{
+        //    bool confirmBool = false;
+        //    Parameter voltage = equip.Symbol.LookupParameter("Voltage Nominal");
+        //    double val = voltage.AsDouble();
+        //    ForgeTypeId ftId = voltage.GetUnitTypeId();
+
+        //    double eq_voltage = UnitUtils.ConvertFromInternalUnits(val, ftId);
+
+        //    //confirm Number of Phases parameter
+        //    Parameter numPhasesParam = equip.Symbol.LookupParameter("Number of Poles") ?? 
+        //        equip.Symbol.LookupParameter("Primary Number of Phases");
+
+        //    int numPhases = numPhasesParam.AsInteger();
+
+        //    //collect all DistributionSysTypes in document
+        //    DistributionSysType selDisType = null;
+        //    DistributionSysTypeSet distTypeSet = document.Settings.ElectricalSetting.DistributionSysTypes;
+
+        //    foreach (DistributionSysType dt in distTypeSet)
+        //    {
+        //        string dtLLVolt = dt.get_Parameter(BuiltInParameter.RBS_DISTRIBUTIONSYS_VLL_PARAM).AsValueString();
+        //        string dtLGVolt = dt.get_Parameter(BuiltInParameter.RBS_DISTRIBUTIONSYS_VLG_PARAM).AsValueString();
+        //        string dtPhase = dt.get_Parameter(BuiltInParameter.RBS_DISTRIBUTIONSYS_PHASE_PARAM).AsValueString();
+        //        int phase;
+
+        //        if (dtPhase == "Three")
+        //        {
+        //            phase = 3;
+        //        }
+        //        else
+        //        {
+        //            phase = 1;
+        //        }
+
+        //        //check if DistributionSysType can be used for equip
+        //        if (numPhases == 1 || numPhases == 2)
+        //        {
+        //            if (dtLGVolt == eq_voltage.ToString() && phase == 1)
+        //            {
+        //                selDisType = dt;
+        //            }
+        //        }
+        //        else
+        //        {
+        //            if (dtLLVolt == eq_voltage.ToString() && phase == numPhases)
+        //            {
+        //                selDisType = dt;
+        //            }
+        //        }
+        //    }
+
+        //    //set DistributionSysType of equip
+        //    if (selDisType != null)
+        //    {
+        //        equip.get_Parameter(BuiltInParameter.RBS_FAMILY_CONTENT_DISTRIBUTION_SYSTEM).Set(selDisType.Id);
+        //        confirmBool = true;
+        //    }
+
+        //    return confirmBool;
+        //}
+
+        #region SwitchboardTemplates
+        /// <summary>
+        /// Collect PanelScheduleTemplates of PanelScheduleType Switchboard.
+        /// </summary>
+        /// <param name="document"></param>
+        /// <returns>List of Switchboard type PanelScheduleTemplates in current document.</returns>
+        public List<PanelScheduleTemplate> SwitchboardTemplates(Document document)
         {
-            bool confirmBool = false;
-            //collect Panel DistributionSystem
-            Parameter pnl_dist = panel.get_Parameter(BuiltInParameter.RBS_FAMILY_CONTENT_DISTRIBUTION_SYSTEM);
-            //get all project DistributionSysTypes
-            List<Element> dist_types = new FilteredElementCollector(document).OfClass(typeof(DistributionSysType)).ToElements().ToList();
+            List<PanelScheduleTemplate> switchTemps = new FilteredElementCollector(document)
+                .OfClass(typeof(PanelScheduleTemplate))
+                .Cast<PanelScheduleTemplate>()
+                .Where(x => x.GetPanelScheduleType() == PanelScheduleType.Switchboard)
+                .ToList();
 
-            //verify voltage type
-            if (pnl_dist.AsValueString().Contains("208"))
-            {
-                foreach (Element dist in dist_types)
-                {
-                    if (dist.get_Parameter(BuiltInParameter.SYMBOL_NAME_PARAM).AsString().Contains("Single") & dist.get_Parameter(BuiltInParameter.SYMBOL_NAME_PARAM).AsString().Contains("208"))
-                    {
-                        pnl_dist.Set(dist.Id);
-                        confirmBool = true;
-                    }
-                }
-            }
-
-            else if (pnl_dist.AsValueString().Contains("240"))
-            {
-                foreach (Element dist in dist_types)
-                {
-                    if (dist.get_Parameter(BuiltInParameter.SYMBOL_NAME_PARAM).AsString().Contains("Single") & dist.get_Parameter(BuiltInParameter.SYMBOL_NAME_PARAM).AsString().Contains("240"))
-                    {
-                        pnl_dist.Set(dist.Id);
-                        confirmBool = true;
-                    }
-                }
-            }
-
-            else if (pnl_dist.AsValueString().Contains("480"))
-            {
-                foreach (Element dist in dist_types)
-                {
-                    if (dist.get_Parameter(BuiltInParameter.SYMBOL_NAME_PARAM).AsString().Contains("Single") & dist.get_Parameter(BuiltInParameter.SYMBOL_NAME_PARAM).AsString().Contains("480"))
-                    {
-                        pnl_dist.Set(dist.Id);
-                        confirmBool = true;
-                    }
-                }
-            }
-            return confirmBool;
+            return switchTemps;
         }
+        #endregion //SwitchboardTemplates
 
+        #region BranchScheduleTemplates
+        /// <summary>
+        /// Collect PanelScheduleTemplates of PanelScheduleType Branch
+        /// </summary>
+        /// <param name="document"></param>
+        /// <returns>List of Branch type PanelScheduleTemplates in current document.</returns>
         public List<PanelScheduleTemplate> BranchScheduleTemplates(Document document)
         {
             List<PanelScheduleTemplate> branchTemp = new FilteredElementCollector(document)
@@ -300,45 +559,105 @@ namespace ChangePanelTypeToSinglePhase
 
             return branchTemp;
         }
+        #endregion //BranchScheduleTemplates
 
-        public bool UpdatePanelScheduleView(Document document, FamilyInstance panel, string pnl_name)
+        #region UpdatePanelScheduleView
+        /// <summary>
+        /// Delete and recreate PanelScheduleView of selected ElectricalEquipment FamilyInstance.
+        /// </summary>
+        /// <param name="document"></param>
+        /// <param name="panel"></param>
+        /// <returns>True if schedule created otherwise false.</returns>
+        public bool UpdatePanelScheduleView(Document document, FamilyInstance panel)
         {
-            bool panel_bool = false;
-            ElementId tempId = null;
-            string cbStr = panel.LookupParameter("Max Number of Single Pole Breakers").AsInteger().ToString();
+            //collect information for new panel schedule
+            string famName = panel.Symbol.FamilyName;
 
-            //get all PanelScheduleViews in project
-            List<PanelScheduleView> pnlSchedViews = new FilteredElementCollector(document)
-                .OfClass(typeof(PanelScheduleView))
-                .WhereElementIsNotElementType()
-                .Cast<PanelScheduleView>()
-                .ToList();
-
-            foreach (PanelScheduleTemplate schTemp in BranchScheduleTemplates(document))
+            //cancel process if schedule could not be created
+            if (famName.Contains("Transformer") || famName.Contains("Cabinet"))
             {
-                string testSchName = $"ONE Branch Panel - {cbStr} Circuit";
-                string schTempName = schTemp.Name;
+                return false;
+            }
 
-                if (testSchName == schTempName)
+            //create PanelScheduleView
+            string testName;
+            int maxBreakers;
+            List<PanelScheduleTemplate> panTemps;
+
+            if (panel.get_Parameter(BuiltInParameter.RBS_ELEC_MAX_POLE_BREAKERS) != null)
+            {
+                maxBreakers = panel.get_Parameter(BuiltInParameter.RBS_ELEC_MAX_POLE_BREAKERS).AsInteger();
+                testName = $"ONE Branch Panel - {maxBreakers} Circuit";
+
+                //collect Branch PanelScheduleTemplates
+                panTemps = BranchScheduleTemplates(document);
+            }
+            else
+            {
+                maxBreakers = panel.get_Parameter(BuiltInParameter.RBS_ELEC_NUMBER_OF_CIRCUITS).AsInteger();
+
+                //collect Switchboard PanelScheduleTemplates
+                panTemps = SwitchboardTemplates(document);
+
+                string refStr;
+
+                if (famName.Contains("Switchboard"))
                 {
-                    tempId = schTemp.Id;
+                    refStr = "Switchboard";
+                }
+                else if (famName.Contains("Distribution") || famName.Contains("Automatic"))
+                {
+                    refStr = "Distribution Panel";
+                }
+                else
+                {
+                    refStr = "MCC";
+                }
+
+                testName = $"ONE {refStr} - {maxBreakers} Space";
+            }
+
+            ElementId newTempId = null;
+
+            //iterate through list of PanelScheduleTemplates for correct id
+            foreach (PanelScheduleTemplate pst in panTemps)
+            {
+                if (pst.Name == testName)
+                {
+                    newTempId = pst.Id;
                 }
             }
 
-            //filter out just the panel schedule of the selected panel
-            if (tempId != null)
+            //check if newTempId is null
+            if (newTempId == null)
             {
-                foreach (PanelScheduleView sched in pnlSchedViews)
-                {
-                    if (document.GetElement(sched.GetPanel()).LookupParameter("Panel Name").AsString() == pnl_name)
-                    {
-                        sched.GenerateInstanceFromTemplate(tempId);
-                        panel_bool = true;
-                    }
-                }
+                return false;
             }
 
-            return panel_bool;
+            PanelScheduleView.CreateInstanceView(document, newTempId, panel.Id);
+
+            return true;
         }
+        #endregion //UpdatePanelScheduleView
+
+        #region CreateOutputFile
+        /// <summary>
+        /// Create an output file based on an input string. Open Notepad to display file once complete.
+        /// </summary>
+        /// <param name="output"></param>
+        public void CreateOutputFile(string output)
+        {
+            string outputLocation = $"C:\\Users\\{Environment.UserName}\\AppData\\Local\\Temp\\CMWElec_DistributionChangeLog.txt";
+
+            //create text file
+            using (StreamWriter sw = File.CreateText(outputLocation))
+            {
+                sw.WriteLine(output);
+            }
+
+            //start a new process and open the created file in NotePad
+            Process.Start("notepad.exe", outputLocation);
+        }
+        #endregion //CreateOutputFile
     }
 }
