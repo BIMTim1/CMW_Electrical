@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using CMW_Electrical.GetCircuitsAndPlaceText;
 
 namespace GetCircuitsAndPlaceText
 {
@@ -87,9 +88,89 @@ namespace GetCircuitsAndPlaceText
             {
                 try
                 {
-                    trac.Start("CMW-Elec - Place Text of Selected Spaces");
+                    trac.Start("CMW-Elec - Place Circuit Text of Selected Spaces");
 
+                    //sort list of Spaces
+                    lvl_spaces = lvl_spaces.OrderBy(x => x.get_Parameter(BuiltInParameter.ROOM_NAME).AsString()).ToList();
 
+                    //create new instance and launch EnterSpaceNameForm
+                    EnterSpaceNameForm form = new EnterSpaceNameForm(lvl_spaces);
+                    form.ShowDialog();
+
+                    #region check form result
+                    //check result of form
+                    if (form.DialogResult == System.Windows.Forms.DialogResult.Cancel)
+                    {
+                        errorReport = "User canceled operation.";
+
+                        return Result.Cancelled;
+                    }
+                    #endregion //check form result
+
+                    List<ElementId> filSpaceIds = (from sp 
+                                                    in lvl_spaces 
+                                                    where sp.get_Parameter(BuiltInParameter.ROOM_NAME).AsString().ToLower().Contains(form.textBox1.Text.ToLower()) 
+                                                    select sp.Id).ToList();
+
+                    List<FamilyInstance> elecFixtures = new FilteredElementCollector(doc)
+                        .OfCategory(BuiltInCategory.OST_ElectricalFixtures)
+                        .OfClass(typeof(FamilyInstance))
+                        .Cast<FamilyInstance>()
+                        .Where(x => x.Space != null && filSpaceIds.Contains(x.Space.Id))
+                        .ToList();
+
+                    #region check for ElectricalFixtures
+                    //check if any elements were collected in elecFixtures
+                    if (!elecFixtures.Any())
+                    {
+                        errorReport = "There are no Electrical Fixtures that match the search criteria. The tool will now cancel.";
+
+                        return Result.Cancelled;
+                    }
+                    #endregion //check for ElectricalFixtures
+
+                    #region Create TextNote Information
+                    //create TextNote information
+                    ElementId tnType = doc.GetDefaultElementTypeId(ElementTypeGroup.TextNoteType);
+                    TextNoteOptions tnOptions = new TextNoteOptions()
+                    {
+                        HorizontalAlignment = HorizontalTextAlignment.Center,
+                        TypeId = tnType
+                    };
+                    #endregion //Create TextNote Information
+
+                    #region Create TextNotes at each Space
+                    //iterate through list of spaces and create TextNotes from associated ElectricalFixtures
+                    foreach (ElementId spId in filSpaceIds)
+                    {
+                        //collect Space info for TextNote creation
+                        Element sp = doc.GetElement(spId);
+                        XYZ loc = (sp.Location as LocationPoint).Point;
+
+                        //create blank list of strings to be sorted and joined
+                        List<string> cctValues = new List<string>();
+
+                        //iterate through ElectricalFixtures for space circuit information
+                        foreach (FamilyInstance ef in elecFixtures)
+                        {
+                            if (ef.Space.Id == spId)
+                            {
+                                cctValues.Add(
+                                    ef.get_Parameter(BuiltInParameter.RBS_ELEC_CIRCUIT_PANEL_PARAM).AsString() 
+                                    + "-" 
+                                    + ef.get_Parameter(BuiltInParameter.RBS_ELEC_CIRCUIT_NUMBER).AsString());
+                            }
+                        }
+
+                        //sort Circuit info from ElectricalFixtures
+                        cctValues.Sort();
+
+                        string output = string.Join("\n", cctValues);
+
+                        //create TextNote
+                        TextNote note = TextNote.Create(doc, activeView.Id, loc, output, tnOptions);
+                    }
+                    #endregion //Create TextNotes at each Space
 
                     trac.Commit();
                 }

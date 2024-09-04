@@ -114,6 +114,12 @@
     <Compile Include="FailureHandlers\CreateFailureAdvancedHandler.cs" />
     <Compile Include="FailureHandlers\DisconnectCircuitFailure.cs" />
     <Compile Include="FlipFacingOrientation\FlipFacingOrientationBySelection.cs" />
+    <Compile Include="GetCircuitsAndPlaceText\EnterSpaceNameForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GetCircuitsAndPlaceText\EnterSpaceNameForm.Designer.cs">
+      <DependentUpon>EnterSpaceNameForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="GetCircuitsAndPlaceText\GetCircuitsAndPlaceText.cs" />
     <Compile Include="MotorMOCPUpdate\UpdateMotorMOCP.cs" />
     <Compile Include="MotorUIDUpdate\MotorsUpdatedForm.cs">
@@ -338,6 +344,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="EquipNameUpdate\EquipNameUpdateForm.resx">
       <DependentUpon>EquipNameUpdateForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GetCircuitsAndPlaceText\EnterSpaceNameForm.resx">
+      <DependentUpon>EnterSpaceNameForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="MotorUIDUpdate\MotorsUpdatedForm.resx">
       <DependentUpon>MotorsUpdatedForm.cs</DependentUpon>
