@@ -114,6 +114,7 @@
     <Compile Include="FailureHandlers\CreateFailureAdvancedHandler.cs" />
     <Compile Include="FailureHandlers\DisconnectCircuitFailure.cs" />
     <Compile Include="FlipFacingOrientation\FlipFacingOrientationBySelection.cs" />
+    <Compile Include="GetCircuitsAndPlaceText\GetCircuitsAndPlaceText.cs" />
     <Compile Include="MotorMOCPUpdate\UpdateMotorMOCP.cs" />
     <Compile Include="MotorUIDUpdate\MotorsUpdatedForm.cs">
       <SubType>Form</SubType>
@@ -310,6 +311,8 @@
     <Resource Include="Resources\TagByRef32x32.png" />
     <Resource Include="Resources\OLClear16x16.png" />
     <Resource Include="Resources\OLClear32x32.png" />
+    <Resource Include="Resources\GetCircuitsAndPlaceText16x16.png" />
+    <Resource Include="Resources\GetCircuitsAndPlaceText32x32.png" />
     <Content Include="_Addin\CMW_Electrical.addin">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
