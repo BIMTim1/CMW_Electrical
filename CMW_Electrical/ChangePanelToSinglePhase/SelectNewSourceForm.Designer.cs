@@ -38,7 +38,7 @@
             // 
             this.btnCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.btnCancel.Location = new System.Drawing.Point(232, 75);
+            this.btnCancel.Location = new System.Drawing.Point(232, 105);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(75, 23);
             this.btnCancel.TabIndex = 0;
@@ -51,7 +51,7 @@
             this.btnOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnOK.DialogResult = System.Windows.Forms.DialogResult.OK;
             this.btnOK.Enabled = false;
-            this.btnOK.Location = new System.Drawing.Point(151, 75);
+            this.btnOK.Location = new System.Drawing.Point(151, 105);
             this.btnOK.Name = "btnOK";
             this.btnOK.Size = new System.Drawing.Size(75, 23);
             this.btnOK.TabIndex = 1;
@@ -61,13 +61,12 @@
             // 
             // lblSelectNewSource
             // 
-            this.lblSelectNewSource.AutoSize = true;
             this.lblSelectNewSource.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblSelectNewSource.Location = new System.Drawing.Point(12, 9);
             this.lblSelectNewSource.Name = "lblSelectNewSource";
-            this.lblSelectNewSource.Size = new System.Drawing.Size(150, 13);
+            this.lblSelectNewSource.Size = new System.Drawing.Size(295, 56);
             this.lblSelectNewSource.TabIndex = 2;
-            this.lblSelectNewSource.Text = "Select Source Equipment";
+            this.lblSelectNewSource.Text = "Select Source Equipment <input>";
             // 
             // cboxSelectSource
             // 
@@ -75,7 +74,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.cboxSelectSource.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cboxSelectSource.FormattingEnabled = true;
-            this.cboxSelectSource.Location = new System.Drawing.Point(15, 30);
+            this.cboxSelectSource.Location = new System.Drawing.Point(15, 73);
             this.cboxSelectSource.Name = "cboxSelectSource";
             this.cboxSelectSource.Size = new System.Drawing.Size(292, 21);
             this.cboxSelectSource.TabIndex = 3;
@@ -85,7 +84,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(319, 110);
+            this.ClientSize = new System.Drawing.Size(319, 140);
             this.Controls.Add(this.cboxSelectSource);
             this.Controls.Add(this.lblSelectNewSource);
             this.Controls.Add(this.btnOK);
@@ -95,7 +94,6 @@
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Select New Source";
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
 

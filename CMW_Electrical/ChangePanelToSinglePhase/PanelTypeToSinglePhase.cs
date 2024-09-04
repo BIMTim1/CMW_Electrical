@@ -28,16 +28,19 @@ namespace ChangePanelTypeToSinglePhase
     {
         public Result Execute(ExternalCommandData commandData, ref string errorReport, ElementSet elementSet)
         {
+            #region Autodesk Application and Document info
             //define background Revit information to reference
             UIApplication uiapp = commandData.Application;
             Document doc = uiapp.ActiveUIDocument.Document;
             Application app = uiapp.Application;
             UIDocument uidoc = uiapp.ActiveUIDocument;
+            #endregion //Autodesk Application and Document info
 
             View activeView = doc.ActiveView;
 
             string output = "";
 
+            #region check ActiveView ViewType
             //check view type
             if (activeView.ViewType != ViewType.FloorPlan && activeView.ViewType != ViewType.ThreeD)
             {
@@ -46,13 +49,15 @@ namespace ChangePanelTypeToSinglePhase
 
                 return Result.Cancelled;
             }
+            #endregion //check ActiveView ViewType
 
-            //BuiltInParameter references
+            #region BuiltInParameter references
             BuiltInParameter bipPanelName = BuiltInParameter.RBS_ELEC_PANEL_NAME;
             BuiltInParameter bipRating = BuiltInParameter.RBS_ELEC_CIRCUIT_RATING_PARAM;
             BuiltInParameter bipFrame = BuiltInParameter.RBS_ELEC_CIRCUIT_FRAME_PARAM;
             BuiltInParameter bipSupply = BuiltInParameter.RBS_ELEC_PANEL_SUPPLY_FROM_PARAM;
             BuiltInParameter bipDistSys = BuiltInParameter.RBS_FAMILY_CONTENT_DISTRIBUTION_SYSTEM;
+            #endregion //BuiltInParameter references
 
             //Reference selectPanel = null;
             BuiltInCategory bic = BuiltInCategory.OST_ElectricalEquipment;
@@ -162,7 +167,7 @@ namespace ChangePanelTypeToSinglePhase
             //cancel if Cancel button selected
             if (form.DialogResult == System.Windows.Forms.DialogResult.Cancel)
             {
-                errorReport = "User canceled operation,";
+                errorReport = "User canceled operation.";
 
                 return Result.Cancelled;
             }
@@ -193,7 +198,13 @@ namespace ChangePanelTypeToSinglePhase
                 {
                     try
                     {
-                        trac.Start("CMWElec-Update Panel Type to Single Phase");
+                        #region UpdateFamilyAndType
+                        trac.Start("CMWElec-Update Selected Equipment Family and Type");
+
+                        //define IFailureHandingProcessor
+                        FailureHandlingOptions failOpt = trac.GetFailureHandlingOptions();
+                        failOpt.SetFailuresPreprocessor(new DisconnectCircuitFailure());
+                        trac.SetFailureHandlingOptions(failOpt);
 
                         //check for existing panelboard schedule
                         IList<ElementId> previousSched = selElem.GetDependentElements(new ElementClassFilter(typeof(PanelScheduleView)));
@@ -212,16 +223,18 @@ namespace ChangePanelTypeToSinglePhase
                             }
                         }
 
-                        doc.Regenerate();
-
                         //change selected Electrical Equipment Type Id
                         Parameter pnlTypeParam = selElem.get_Parameter(BuiltInParameter.ELEM_TYPE_PARAM);
                         pnlTypeParam.Set(selFamSym.Id);
 
+                        doc.Regenerate();
+
                         output += $"Panel Type was updated to the following:\n{selFamSym.FamilyName}: {selFamSym.Name}\n\n";
 
                         trac.Commit();
+                        #endregion //UpdateFamilyAndType
 
+                        #region ReconnectSource
                         trac.Start("CMWElec-Reconnect Source");
 
                         //collect updated Electrical Equipment FamilyInstance
@@ -265,82 +278,76 @@ namespace ChangePanelTypeToSinglePhase
                             }
                             else
                             {
-                                string reconnectFormName = "Reconnect";
-                                string reconnectFormLblText = "The selected Electrical Equipment family is unable to reconnect to its original source. " +
-                                    "Would you like to select a new source now?";
+                                //collect ElectricalEquipment with same distribution system
+                                List<FamilyInstance> sameDistEquipList = new FilteredElementCollector(doc)
+                                    .OfCategory(bic)
+                                    .OfClass(typeof(FamilyInstance))
+                                    .ToElements()
+                                    .Where(x => x.get_Parameter(bipDistSys).AsElementId() == pnl_distSys && x.Id != updated_pnl.Id)
+                                    .Cast<FamilyInstance>()
+                                    .ToList();
 
-                                ReconnectForm reconnectForm = new ReconnectForm(reconnectFormName, reconnectFormLblText);
-                                reconnectForm.ShowDialog();
-
-                                if (reconnectForm.DialogResult == System.Windows.Forms.DialogResult.Yes)
+                                if (!sameDistEquipList.Any())
                                 {
-                                    //collect ElectricalEquipment with same distribution system
-                                    List<FamilyInstance> sameDistEquipList = new FilteredElementCollector(doc)
-                                        .OfCategory(bic)
-                                        .OfClass(typeof(FamilyInstance))
-                                        .ToElements()
-                                        .Where(x => x.get_Parameter(bipDistSys).AsElementId() == pnl_distSys && x.Id != updated_pnl.Id)
-                                        .Cast<FamilyInstance>()
-                                        .ToList();
-
-                                    if (!sameDistEquipList.Any())
+                                    //continue operation of tool, but no new source can be selected
+                                    TaskDialog noReconnection = new TaskDialog("CMW-Elec - Can't Select Source")
                                     {
-                                        //continue operation of tool, but no new source can be selected
-                                        TaskDialog noReconnection = new TaskDialog("CMW-Elec - Can't Select Source")
-                                        {
-                                            TitleAutoPrefix = false,
-                                            CommonButtons = TaskDialogCommonButtons.Ok,
-                                            MainInstruction = "There are no Electrical Equipment families that match the updated Distribution System. " +
-                                            "The tool is unable to prompt a new source selection but the tool will continue."
-                                        };
+                                        TitleAutoPrefix = false,
+                                        CommonButtons = TaskDialogCommonButtons.Ok,
+                                        MainInstruction = "There are no Electrical Equipment families that match the updated Distribution System. " +
+                                        "The tool is unable to prompt a new source selection but the tool will continue."
+                                    };
 
-                                        noReconnection.Show();
+                                    noReconnection.Show();
 
-                                        output += "Electrical Circuit Reconnection:\nNo Electrical Equipment matched updated Distribution System. Process skipped.\n\n";
+                                    output += "Electrical Circuit Reconnection:\nNo Electrical Equipment matched updated Distribution System. Process skipped.\n\n";
+                                }
+                                else
+                                {
+                                    //order list by Panel Name
+                                    sameDistEquipList.OrderBy(x => x.get_Parameter(bipPanelName).ToString()).ToList();
+
+                                    string ssFormName = "Select Source Equipment";
+                                    string ssLabelText = "The selected Electrical Equipment family is unable to reconnect to its original source. " +
+                                        "Would you like to select a new source now? Click Cancel to skip.";
+
+                                    //start form for user selection of new ElectricalEquipment source
+                                    SelectNewSourceForm selectSourceForm = new SelectNewSourceForm(sameDistEquipList, ssFormName, ssLabelText);
+                                    selectSourceForm.ShowDialog();
+
+                                    if (selectSourceForm.DialogResult == System.Windows.Forms.DialogResult.OK)
+                                    {
+                                        //select FamilyInstance from list index
+                                        FamilyInstance newSource = sameDistEquipList[selectSourceForm.cboxSelectSource.SelectedIndex];
+
+                                        //generate new circuit
+                                        newCct = new CreateEquipmentCircuit()
+                                            .CreateEquipCircuit(newSource, updated_pnl);
+
+                                        output += $"Electrical Circuit Reconnection:\nElectrical Circuit connected to {newSource.get_Parameter(bipPanelName).AsString()}.\n\n";
                                     }
                                     else
                                     {
-                                        //order list by Panel Name
-                                        sameDistEquipList.OrderBy(x => x.get_Parameter(bipPanelName).ToString()).ToList();
-
-                                        string selectSourceFormName = "Select Source Equipment";
-
-                                        //start form for user selection of new ElectricalEquipment source
-                                        SelectNewSourceForm selectSourceForm = new SelectNewSourceForm(sameDistEquipList, selectSourceFormName);
-                                        selectSourceForm.ShowDialog();
-
-                                        if (selectSourceForm.DialogResult == System.Windows.Forms.DialogResult.OK)
+                                        //user canceled
+                                        TaskDialog userCanceled = new TaskDialog("CMW-Elec - New Source Canceled")
                                         {
-                                            //select FamilyInstance from list index
-                                            FamilyInstance newSource = sameDistEquipList[selectSourceForm.cboxSelectSource.SelectedIndex];
+                                            TitleAutoPrefix = false,
+                                            CommonButtons = TaskDialogCommonButtons.Ok,
+                                            MainInstruction = "User canceled operation. The tool will continue but a new source will not be selected."
+                                        };
 
-                                            //generate new circuit
-                                            newCct = new CreateEquipmentCircuit()
-                                                .CreateEquipCircuit(newSource, updated_pnl);
+                                        userCanceled.Show();
 
-                                            output += $"Electrical Circuit Reconnection:\nElectrical Circuit connected to {newSource.get_Parameter(bipPanelName).AsString()}.\n\n";
-                                        }
-                                        else
-                                        {
-                                            //user canceled
-                                            TaskDialog userCanceled = new TaskDialog("CMW-Elec - New Source Canceled")
-                                            {
-                                                TitleAutoPrefix = false,
-                                                CommonButtons = TaskDialogCommonButtons.Ok,
-                                                MainInstruction = "User canceled operation. The tool will continue but a new source will not be selected."
-                                            };
-
-                                            userCanceled.Show();
-
-                                            output += "Electrical Circuit Reconnection:\nUser canceled reconnection process.\n\n";
-                                        }
+                                        output += "Electrical Circuit Reconnection:\nUser canceled reconnection process.\n\n";
                                     }
                                 }
                             }
                         }
 
                         trac.Commit();
+                        #endregion //ReconnectSource
 
+                        #region ReconnectBranchCircuits
                         trac.Start("CMW-Elec - Reconnect Existing Branch Circuits");
 
                         //process branch circuits of updated ElectricalEquipment
@@ -364,72 +371,70 @@ namespace ChangePanelTypeToSinglePhase
                             }
                             else
                             {
-                                string branchConnFormName = "Reconnect Branch Circuits";
-                                string branchConnLblText = $"The branch circuits of {pnlName} cannot be reconnected to the updated equipment family type. " +
-                                    $"Would you like to select a new source now?";
+                                //collect ElectricalEquipment with same DistributionSystem as branch ElectricalSystems
+                                List<FamilyInstance> availableBranchSources = new FilteredElementCollector(doc)
+                                    .OfCategory(bic)
+                                    .OfClass(typeof(FamilyInstance))
+                                    .ToElements()
+                                    .Cast<FamilyInstance>()
+                                    .Where(x => doc.GetElement(x.get_Parameter(bipDistSys).AsElementId()).LookupParameter("Line to Line Voltage").AsValueString().Contains(testVolt) 
+                                    || doc.GetElement(x.get_Parameter(bipDistSys).AsElementId()).LookupParameter("Line to Ground Voltage").AsValueString().Contains(testVolt)).ToList();
 
-                                ReconnectForm branchReconnectForm = new ReconnectForm(branchConnFormName, branchConnLblText);
-                                branchReconnectForm.ShowDialog();
-
-                                if (branchReconnectForm.DialogResult == System.Windows.Forms.DialogResult.No)
+                                if (!availableBranchSources.Any())
                                 {
-                                    output += "Branch Circuit Connections:" +
-                                            "\nBranch Circuits have been disconnected from the original equipment source. " +
-                                            "No Reconnection selected.\n\n";
+                                    TaskDialog branchConnectFailedDialog = new TaskDialog("CMW-Elec - Branch Connection")
+                                    {
+                                        TitleAutoPrefix = false,
+                                        CommonButtons = TaskDialogCommonButtons.Ok,
+                                        MainInstruction = "There are no instances of Electrical Equipment in the model that can be used to " +
+                                        "reconnect existing branch circuits. The tool will now cancel."
+                                    };
+
+                                    branchConnectFailedDialog.Show();
+
+                                    output += "Branch Circuit Connections:\nUnable to select source for existing branch circuits.\n\n";
                                 }
                                 else
                                 {
-                                    //collect ElectricalEquipment with same DistributionSystem as branch ElectricalSystems
-                                    List<FamilyInstance> availableBranchSources = new FilteredElementCollector(doc)
-                                        .OfCategory(bic)
-                                        .OfClass(typeof(FamilyInstance))
-                                        .ToElements()
-                                        .Cast<FamilyInstance>()
-                                        .Where(x => doc.GetElement(x.get_Parameter(bipDistSys).AsElementId()).LookupParameter("Line to Line Voltage").AsValueString().Contains(testVolt) 
-                                        || doc.GetElement(x.get_Parameter(bipDistSys).AsElementId()).LookupParameter("Line to Ground Voltage").AsValueString().Contains(testVolt)).ToList();
+                                    string recFormName = "Select New Branch Source";
+                                    string recLabelText = $"The branch circuits of {pnlName} cannot be reconnected to the updated equipment family type. " +
+                                        $"Would you like to select a new source now? Click Cancel to skip.";
 
-                                    if (!availableBranchSources.Any())
+                                    availableBranchSources.OrderBy(x => x.get_Parameter(bipPanelName).ToString()).ToList();
+
+                                    SelectNewSourceForm branchSelectForm = new SelectNewSourceForm(
+                                        availableBranchSources, 
+                                        recFormName, recLabelText);
+
+                                    branchSelectForm.ShowDialog();
+
+                                    if (branchSelectForm.DialogResult == System.Windows.Forms.DialogResult.Cancel)
                                     {
-                                        TaskDialog branchConnectFailedDialog = new TaskDialog("CMW-Elec - Branch Connection")
+                                        TaskDialog recResults = new TaskDialog("CMW-Elec - Branch Circuit Reconnection")
                                         {
                                             TitleAutoPrefix = false,
                                             CommonButtons = TaskDialogCommonButtons.Ok,
-                                            MainInstruction = "There are no instances of Electrical Equipment in the model that can be used to " +
-                                            "reconnect existing branch circuits. The tool will now cancel."
+                                            MainInstruction = "A new source for branch circuits was not selected. " +
+                                            "Tool will continue, but branch circuits will have to be connected to a new source manually."
                                         };
 
-                                        branchConnectFailedDialog.Show();
+                                        recResults.Show();
 
-                                        output += "Branch Circuit Connections:\nUnable to select source for existing branch circuits.\n\n";
+                                        output += "Branch Circuit Connections:\nBranch circuits have been disconnected from original source. " +
+                                            "User canceled selection of new source.\n\n";
                                     }
                                     else
                                     {
-                                        string reconnectBranchSelectFormName = "Select New Branch Source";
+                                        FamilyInstance selectBranchSource = availableBranchSources[branchSelectForm.cboxSelectSource.SelectedIndex];
 
-                                        availableBranchSources.OrderBy(x => x.get_Parameter(bipPanelName).ToString()).ToList();
-
-                                        SelectNewSourceForm branchSelectForm = new SelectNewSourceForm(
-                                            availableBranchSources, 
-                                            reconnectBranchSelectFormName);
-
-                                        branchSelectForm.ShowDialog();
-
-                                        if (branchSelectForm.DialogResult == System.Windows.Forms.DialogResult.Cancel)
+                                        foreach (ElectricalSystem cct in col_circuits)
                                         {
-                                            output += "Branch Circuit Connections:\nBranch circuits have been disconnected from original source. " +
-                                                "User canceled selection of new source.\n\n";
+                                            cct.SelectPanel(selectBranchSource);
                                         }
-                                        else
-                                        {
-                                            foreach (ElectricalSystem cct in col_circuits)
-                                            {
-                                                cct.SelectPanel(availableBranchSources[branchSelectForm.cboxSelectSource.SelectedIndex]);
-                                            }
 
-                                            output += $"Branch Circuit Connections:" +
-                                                $"\nBranch circuits were connected to the newly selected equipment source: " +
-                                                $"{availableBranchSources[branchSelectForm.cboxSelectSource.SelectedIndex].get_Parameter(bipPanelName).AsString()}\n\n";
-                                        }
+                                        output += $"Branch Circuit Connections:" +
+                                            $"\nBranch circuits were connected to the newly selected equipment source: " +
+                                            $"{selectBranchSource.get_Parameter(bipPanelName).AsString()}\n\n";
                                     }
                                 }
                             }
@@ -447,6 +452,7 @@ namespace ChangePanelTypeToSinglePhase
                         }
 
                         trac.Commit();
+                        #endregion //ReconnectBranchCircuits
                     }
                     catch (Exception ex)
                     {

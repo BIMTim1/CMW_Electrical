@@ -12,13 +12,13 @@ namespace CMW_Electrical.ChangePanelToSinglePhase
 {
     public partial class SelectNewSourceForm : Form
     {
-        public SelectNewSourceForm(List<Autodesk.Revit.DB.FamilyInstance> elemList, string formName)
+        public SelectNewSourceForm(List<Autodesk.Revit.DB.FamilyInstance> elemList, string formName, string lblText)
         {
             InitializeComponent();
 
             this.Text = formName;
 
-            lblSelectNewSource.Text = formName + ":";
+            lblSelectNewSource.Text = lblText;
 
             //collect string information from elemList
             string[] equipInfo = (from fi 
