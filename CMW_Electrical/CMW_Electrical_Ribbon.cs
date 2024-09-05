@@ -28,7 +28,7 @@ namespace CMW_Electrical
 
             //add ribbon panels
             RibbonPanel aboutPanel = application.CreateRibbonPanel(tabName, "About");
-            //RibbonPanel circuitPanel = application.CreateRibbonPanel(tabName, "Circuits");
+            RibbonPanel circuitPanel = application.CreateRibbonPanel(tabName, "Circuits");
             RibbonPanel devicePanel = application.CreateRibbonPanel(tabName, "Devices");
             RibbonPanel equipPanel = application.CreateRibbonPanel(tabName, "Equipment");
             RibbonPanel schedulePanel = application.CreateRibbonPanel(tabName, "Panel Schedules");
@@ -714,6 +714,16 @@ namespace CMW_Electrical
             //PushButton panelLegendUpdateBtn = schedulePanel.AddItem(panelLegendUpdateData) as PushButton;
 
             //------------create push button for <button name>------------
+
+            PushButtonData getCircuitsPlaceTextData = new PushButtonData("getCircuitsPlaceTextButton", "Place Typ" + System.Environment.NewLine + " Circuit Text", thisAssemblyPath, "GetCircuitsAndPlaceText.GetCircuitsAndPlaceText")
+            {
+                LargeImage = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/GetCircuitsAndPlaceText32x32.png")),
+                Image = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/GetCircuitsAndPlaceText16x16.png")),
+                ToolTip = "Create Text Notes in Selected Spaces from Electrical Circuits."
+            };
+
+            PushButton getCircuitsPlaceTextBtn = circuitPanel.AddItem(getCircuitsPlaceTextData) as PushButton;
+            //set ContextualHelp for PushButton
         }
 
         public Result OnShutdown(UIControlledApplication application)
