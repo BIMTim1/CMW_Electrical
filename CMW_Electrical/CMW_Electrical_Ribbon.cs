@@ -715,7 +715,11 @@ namespace CMW_Electrical
 
             //------------create push button for <button name>------------
 
-            PushButtonData getCircuitsPlaceTextData = new PushButtonData("getCircuitsPlaceTextButton", "Place Typ" + System.Environment.NewLine + " Circuit Text", thisAssemblyPath, "GetCircuitsAndPlaceText.GetCircuitsAndPlaceText")
+            PushButtonData getCircuitsPlaceTextData = new PushButtonData(
+                "getCircuitsPlaceTextButton", 
+                "Place Typ" + System.Environment.NewLine + " Circuit Text", 
+                thisAssemblyPath, 
+                "GetCircuitsAndPlaceText.GetCircuitsAndPlaceText")
             {
                 LargeImage = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/GetCircuitsAndPlaceText32x32.png")),
                 Image = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/GetCircuitsAndPlaceText16x16.png")),

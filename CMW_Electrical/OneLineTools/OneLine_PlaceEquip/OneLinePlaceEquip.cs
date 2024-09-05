@@ -13,6 +13,7 @@ using Autodesk.Revit.DB.Events;
 using System.Net;
 using OneLineTools;
 using System.Windows.Media.Imaging;
+using OLUpdatePhaseInfo;
 
 namespace OneLinePlaceEquip
 {
@@ -28,14 +29,17 @@ namespace OneLinePlaceEquip
         readonly BuiltInParameter bipEquipName = BuiltInParameter.RBS_ELEC_PANEL_NAME;
         public Result Execute(ExternalCommandData commandData, ref string errorReport, ElementSet elementSet)
         {
+            #region Autodesk Information
             //define background Revit information to reference
             UIApplication uiapp = commandData.Application;
             Document doc = uiapp.ActiveUIDocument.Document;
             Application app = uiapp.Application;
             UIDocument uidoc = uiapp.ActiveUIDocument;
+            #endregion //Autodesk Information
 
             View activeView = doc.ActiveView;
 
+            #region EqConId Check
             //check for EqConId Current Value parameter
             EqConIdCheck eqConIdCheck = new EqConIdCheck();
             bool eqConIdExists = eqConIdCheck.EqConIdCurrentValueExists(doc);
@@ -46,17 +50,18 @@ namespace OneLinePlaceEquip
 
                 return Result.Cancelled;
             }
+            #endregion //EqConId Check
 
             string refCategory = "";
-            string refErrorCat = "";
+            string panNameParam = "";
             List<Element> filteredRefElements = new List<Element>();
-            List<string> formNameInfo = new List<string>();
+            //List<string> formNameInfo = new List<string>();
             List<string> formTypeInfo = new List<string>();
 
+            #region ActiveView Viewtype equals FloorPlan
             if (activeView.ViewType == ViewType.FloorPlan)
             {
                 refCategory = "Detail Item";
-                refErrorCat = "Electrical Equipment";
 
                 //check active Workset for E_Panels
                 Workset panelWorkset = new FilteredWorksetCollector(doc)
@@ -90,16 +95,16 @@ namespace OneLinePlaceEquip
                     return Result.Cancelled;
                 }
 
-                foreach (Element di in filteredRefElements)
-                {
-                    string input = di.LookupParameter("Panel Name - Detail").AsString() 
-                        + ", " 
-                        + di.get_Parameter(bipFamily).AsValueString() 
-                        + ": " 
-                        + di.get_Parameter(bipType).AsValueString();
+                //foreach (Element di in filteredRefElements)
+                //{
+                //    string input = di.LookupParameter("Panel Name - Detail").AsString() 
+                //        + ", " 
+                //        + di.get_Parameter(bipFamily).AsValueString() 
+                //        + ": " 
+                //        + di.get_Parameter(bipType).AsValueString();
 
-                    formNameInfo.Add(input);
-                }
+                //    formNameInfo.Add(input);
+                //}
 
                 List<string> detailItemTypes = new List<string>()
                 {
@@ -115,11 +120,15 @@ namespace OneLinePlaceEquip
                 {
                     formTypeInfo.Add(item);
                 }
+
+                panNameParam = "Panel Name - Detail";
             }
+            #endregion //ActiveView Viewtype equals FloorPlan
+
+            #region ActiveView ViewType equals DraftingView
             else if (activeView.ViewType == ViewType.DraftingView)
             {
                 refCategory = "Electrical Equipment";
-                refErrorCat = "Detail Item";
 
                 filteredRefElements = new FilteredElementCollector(doc)
                     .OfCategory(BuiltInCategory.OST_ElectricalEquipment)
@@ -137,16 +146,16 @@ namespace OneLinePlaceEquip
                     return Result.Cancelled;
                 }
 
-                foreach (Element eq in filteredRefElements)
-                {
-                    string input = eq.get_Parameter(bipEquipName).AsString() 
-                        + ", " 
-                        + eq.get_Parameter(bipFamily).AsValueString() 
-                        + ": " 
-                        + eq.get_Parameter(bipType).AsValueString();
+                //foreach (Element eq in filteredRefElements)
+                //{
+                //    string input = eq.get_Parameter(bipEquipName).AsString() 
+                //        + ", " 
+                //        + eq.get_Parameter(bipFamily).AsValueString() 
+                //        + ": " 
+                //        + eq.get_Parameter(bipType).AsValueString();
 
-                    formNameInfo.Add(input);
-                }
+                //    formNameInfo.Add(input);
+                //}
 
                 List<string> equipTypes = new List<string>()
                 {
@@ -161,7 +170,10 @@ namespace OneLinePlaceEquip
                 {
                     formTypeInfo.Add(item);
                 }
+
+                panNameParam = "Panel Name";
             }
+            #endregion //ActiveView ViewType equals DraftingView
             else
             {
                 //TaskDialog.Show("Incorrect Active View", "Change your active view to a Floor Plan and then rerun the tool.");
@@ -171,7 +183,9 @@ namespace OneLinePlaceEquip
                 return Result.Cancelled;
             }
 
-            OLSelectDetItemForm form = new OLSelectDetItemForm(formNameInfo, formTypeInfo, refCategory);
+            filteredRefElements = filteredRefElements.OrderBy(x => x.LookupParameter(panNameParam).AsString()).ToList();
+
+            OLSelectDetItemForm form = new OLSelectDetItemForm(filteredRefElements, panNameParam, formTypeInfo, refCategory);
             form.ShowDialog();
 
             //cancel tool if user canceled form
@@ -313,6 +327,8 @@ namespace OneLinePlaceEquip
                         detItemInfo = new DetailItemInfo(placedItem);
 
                         detItemInfo.Name = equipInfo.Name;
+
+                        new OLUpdatePhaseInfoClass().SetDetailItemPhaseInfo(detItemInfo, equipInfo);
                     }
 
                     //update EqConId values of selected elements

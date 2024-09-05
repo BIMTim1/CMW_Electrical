@@ -24,7 +24,7 @@ namespace CMW_Electrical.OneLineTools.OneLine_PlaceEquip
         //    int nWidthEllipse, 
         //    int nHeightEllipse
         //    );
-        public OLSelectDetItemForm(List<string> itemNames, List<string> typeNames, string refCat)
+        public OLSelectDetItemForm(List<Autodesk.Revit.DB.Element> elements, string nameRef, List<string> typeNames, string refCat)
         {
             InitializeComponent();
 
@@ -34,7 +34,31 @@ namespace CMW_Electrical.OneLineTools.OneLine_PlaceEquip
 
             lblHeader.Text = "Select " + refCat + " Name";
 
-            cboxDetailItemList.Items.AddRange(itemNames.ToArray());
+            //collect element name information
+            Autodesk.Revit.DB.BuiltInParameter bipFamily = Autodesk.Revit.DB.BuiltInParameter.ELEM_FAMILY_PARAM;
+            Autodesk.Revit.DB.BuiltInParameter bipType = Autodesk.Revit.DB.BuiltInParameter.ELEM_TYPE_PARAM;
+
+            string[] elementNames = (from el 
+                                     in elements 
+                                     select el.LookupParameter(nameRef).AsString() 
+                                     + ", " 
+                                     + el.get_Parameter(bipFamily).AsValueString() 
+                                     + ": " 
+                                     + el.get_Parameter(bipType).AsValueString())
+                                     .ToArray();
+
+            cboxDetailItemList.Items.AddRange(elementNames);
+            cboxDetailItemList.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
+            cboxDetailItemList.AutoCompleteSource = AutoCompleteSource.CustomSource;
+
+            AutoCompleteStringCollection autoComplete = new AutoCompleteStringCollection();
+
+            foreach (var item in cboxDetailItemList.Items)
+            {
+                autoComplete.Add(item.ToString());
+            }
+
+            cboxDetailItemList.AutoCompleteCustomSource = autoComplete;
 
             cboxFamilyTypeSelection.Items.AddRange(typeNames.ToArray());
             cboxFamilyTypeSelection.SelectedIndex = 0;

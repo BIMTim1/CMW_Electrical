@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace CMW_Electrical
 {
-    internal class DetailItemInfo
+    public class DetailItemInfo
     {
         private readonly FamilyInstance DIFamInst;
         private readonly Parameter DIName;

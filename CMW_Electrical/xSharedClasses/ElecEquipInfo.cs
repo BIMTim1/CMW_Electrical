@@ -12,7 +12,7 @@ using System.Runtime.CompilerServices;
 
 namespace CMW_Electrical
 {
-    internal class ElecEquipInfo
+    public class ElecEquipInfo
     {
         private readonly FamilyInstance EEFamInst;
         private readonly Parameter EEName;
@@ -22,6 +22,8 @@ namespace CMW_Electrical
         private FamilySymbol EEFamilyType;
         private readonly double EEActualVoltage;
         private readonly PanelScheduleView EEScheduleView;
+        private readonly Parameter EEExisting;
+        private readonly Parameter EEPhaseDemo;
 
         public ElecEquipInfo(Element elecEquip)
         {
@@ -63,6 +65,10 @@ namespace CMW_Electrical
             {
                 EEScheduleView = null;
             }
+
+            //collect Phasing information
+            EEExisting = EEFamInst.LookupParameter("ONE_Existing");
+            EEPhaseDemo = EEFamInst.get_Parameter(BuiltInParameter.PHASE_DEMOLISHED);
         }
 
         /// <summary>
@@ -133,6 +139,23 @@ namespace CMW_Electrical
         public PanelScheduleView GetScheduleView
         {
             get { return EEScheduleView;  }
+        }
+
+        /// <summary>
+        /// Get or set the ONE_Existing parameter of the ElectricalEquipment FamilyInstance
+        /// </summary>
+        public int IsExisting
+        {
+            get { return EEExisting.AsInteger(); }
+            set { EEExisting.Set(value); }
+        }
+
+        /// <summary>
+        /// Get the string value of the Phase Demolished parameter of the ElectricalEquipment FamilyInstance
+        /// </summary>
+        public string IsDemoed
+        {
+            get { return EEPhaseDemo.AsValueString(); }
         }
     }
 }

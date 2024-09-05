@@ -130,6 +130,7 @@
     </Compile>
     <Compile Include="MotorUIDUpdate\UpdateMotorUID.cs" />
     <Compile Include="MultiLegSwitchIdUpdate\MultiLegSwitchIdUpdate.cs" />
+    <Compile Include="OneLineTools\OLUpdatePhaseInfo.cs" />
     <Compile Include="OneLineTools\EqConIdCheck.cs" />
     <Compile Include="OneLineTools\ExentsionMethods.cs" />
     <Compile Include="OneLineTools\OneLine_Clear\OneLineClearForm.cs">
