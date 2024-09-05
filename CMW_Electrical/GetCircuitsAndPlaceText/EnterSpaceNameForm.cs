@@ -17,6 +17,9 @@ namespace CMW_Electrical.GetCircuitsAndPlaceText
             InitializeComponent();
 
             this.Width = 277;
+            this.Height = 160;
+
+            splitContainer1.Height = 77;
 
             string[] spaceInfo = (from sp 
                                   in ordered_spaces 
@@ -46,10 +49,16 @@ namespace CMW_Electrical.GetCircuitsAndPlaceText
             if (splitContainer1.Panel2Collapsed)
             {
                 this.Width = 277;
+                this.Height = 160;
+
+                splitContainer1.Height = 77;
             }
             else
             {
                 this.Width = 567;
+                this.Height = 320;
+
+                splitContainer1.Height = 221;
             }
         }
     }

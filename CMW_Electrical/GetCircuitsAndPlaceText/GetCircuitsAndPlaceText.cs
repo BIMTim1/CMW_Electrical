@@ -153,7 +153,7 @@ namespace GetCircuitsAndPlaceText
                         //iterate through ElectricalFixtures for space circuit information
                         foreach (FamilyInstance ef in elecFixtures)
                         {
-                            if (ef.Space.Id == spId)
+                            if (ef.Space.Id == spId && ef.get_Parameter(BuiltInParameter.RBS_ELEC_CIRCUIT_PANEL_PARAM).AsString() != "")
                             {
                                 cctValues.Add(
                                     ef.get_Parameter(BuiltInParameter.RBS_ELEC_CIRCUIT_PANEL_PARAM).AsString() 

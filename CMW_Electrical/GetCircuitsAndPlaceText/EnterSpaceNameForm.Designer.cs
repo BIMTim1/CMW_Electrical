@@ -32,9 +32,9 @@
             this.btnOK = new System.Windows.Forms.Button();
             this.lblPrompt = new System.Windows.Forms.Label();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.btnShowSpaces = new System.Windows.Forms.Button();
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.listBox1 = new System.Windows.Forms.ListBox();
-            this.btnShowSpaces = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -95,6 +95,16 @@
             this.splitContainer1.SplitterDistance = 245;
             this.splitContainer1.TabIndex = 3;
             // 
+            // btnShowSpaces
+            // 
+            this.btnShowSpaces.Location = new System.Drawing.Point(140, 49);
+            this.btnShowSpaces.Name = "btnShowSpaces";
+            this.btnShowSpaces.Size = new System.Drawing.Size(90, 23);
+            this.btnShowSpaces.TabIndex = 4;
+            this.btnShowSpaces.Text = "Show Spaces";
+            this.btnShowSpaces.UseVisualStyleBackColor = true;
+            this.btnShowSpaces.Click += new System.EventHandler(this.Show_Spaces);
+            // 
             // textBox1
             // 
             this.textBox1.Location = new System.Drawing.Point(7, 23);
@@ -110,16 +120,6 @@
             this.listBox1.Name = "listBox1";
             this.listBox1.Size = new System.Drawing.Size(272, 212);
             this.listBox1.TabIndex = 0;
-            // 
-            // btnShowSpaces
-            // 
-            this.btnShowSpaces.Location = new System.Drawing.Point(140, 49);
-            this.btnShowSpaces.Name = "btnShowSpaces";
-            this.btnShowSpaces.Size = new System.Drawing.Size(90, 23);
-            this.btnShowSpaces.TabIndex = 4;
-            this.btnShowSpaces.Text = "Show Spaces";
-            this.btnShowSpaces.UseVisualStyleBackColor = true;
-            this.btnShowSpaces.Click += new System.EventHandler(this.Show_Spaces);
             // 
             // EnterSpaceNameForm
             // 
