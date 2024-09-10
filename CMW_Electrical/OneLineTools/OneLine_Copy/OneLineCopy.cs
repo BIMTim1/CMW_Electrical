@@ -23,14 +23,17 @@ namespace OneLineCopy
     {
         public Result Execute(ExternalCommandData commandData, ref string errorReport, ElementSet elementSet)
         {
+            #region Autodesk Info
             //define background Revit information to reference
             UIApplication uiapp = commandData.Application;
             Document doc = uiapp.ActiveUIDocument.Document;
             Application app = uiapp.Application;
             UIDocument uidoc = uiapp.ActiveUIDocument;
+            #endregion //Autodesk Info
 
             View activeView = doc.ActiveView;
 
+            #region EqConId check
             //check for EqConId Current Value parameter
             EqConIdCheck eqConIdCheck = new EqConIdCheck();
             bool eqConIdExists = eqConIdCheck.EqConIdCurrentValueExists(doc);
@@ -40,7 +43,9 @@ namespace OneLineCopy
                 errorReport = "The EqConId Current Value parameter does not exist in the current Document. Contact the BIM team for assistance.";
                 return Result.Failed;
             }
+            #endregion //EqConId check
 
+            #region ActiveView type check
             //cancel tool if Current View is not a DraftingView
             if (activeView.ViewType != ViewType.DraftingView)
             {
@@ -49,6 +54,7 @@ namespace OneLineCopy
 
                 return Result.Cancelled;
             }
+            #endregion //ActiveView type check
 
             ICollection<ElementId> selectedIds = uidoc.Selection.GetElementIds();
             ICollection<Element> selectedElems = new List<Element>();
@@ -137,12 +143,14 @@ namespace OneLineCopy
                         .Where(x => x.LookupParameter("EqConId").AsString() == null || x.LookupParameter("EqConId").AsString() == "")
                         .ToList();
 
-                    List<string> equipNames = (from pnl 
-                                               in filteredEquip 
-                                               select pnl.LookupParameter("Panel Name").AsString())
-                                               .ToList();
+                    filteredEquip = filteredEquip.OrderBy(x => x.get_Parameter(BuiltInParameter.RBS_ELEC_PANEL_NAME).AsString()).ToList();
 
-                    CopySelectionReferenceForm copyForm = new CopySelectionReferenceForm(equipNames);
+                    //List<string> equipNames = (from pnl 
+                    //                           in filteredEquip 
+                    //                           select pnl.LookupParameter("Panel Name").AsString())
+                    //                           .ToList();
+
+                    CopySelectionReferenceForm copyForm = new CopySelectionReferenceForm(filteredEquip);
                     copyForm.ShowDialog();
 
                     //result if canceled by user
@@ -181,14 +189,14 @@ namespace OneLineCopy
                     }
 
                     //result if not completed by user
-                    Element selEquip = (from pnl 
-                                        in filteredEquip 
-                                        where pnl.LookupParameter("Panel Name").AsString() == copyForm.cBoxEquipSelect.Text 
-                                        select pnl)
-                                        .ToList()
-                                        .First();
+                    //Element selEquip = (from pnl 
+                    //                    in filteredEquip 
+                    //                    where pnl.LookupParameter("Panel Name").AsString() == copyForm.cBoxEquipSelect.Text 
+                    //                    select pnl)
+                    //                    .ToList()
+                    //                    .First();
 
-                    ElecEquipInfo selEquipInfo = new ElecEquipInfo(selEquip);
+                    ElecEquipInfo selEquipInfo = new ElecEquipInfo(filteredEquip[copyForm.cBoxEquipSelect.SelectedIndex]);
 
                     List<Element> copiedElems = (from id in copiedElemIds select doc.GetElement(id)).ToList();
                     Element mainDetItem = (from el in copiedElems where !el.LookupParameter("Family").AsValueString().Contains("Feeder") select el).ToList().First();

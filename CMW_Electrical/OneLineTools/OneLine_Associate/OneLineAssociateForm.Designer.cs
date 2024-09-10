@@ -38,7 +38,7 @@
             // 
             this.btnCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.btnCancel.Location = new System.Drawing.Point(262, 70);
+            this.btnCancel.Location = new System.Drawing.Point(327, 66);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(75, 23);
             this.btnCancel.TabIndex = 1;
@@ -51,7 +51,7 @@
             this.btnOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnOK.DialogResult = System.Windows.Forms.DialogResult.OK;
             this.btnOK.Enabled = false;
-            this.btnOK.Location = new System.Drawing.Point(181, 70);
+            this.btnOK.Location = new System.Drawing.Point(246, 66);
             this.btnOK.Name = "btnOK";
             this.btnOK.Size = new System.Drawing.Size(75, 23);
             this.btnOK.TabIndex = 2;
@@ -61,12 +61,13 @@
             // 
             // cBoxEquipSelection
             // 
-            this.cBoxEquipSelection.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cBoxEquipSelection.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.cBoxEquipSelection.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.cBoxEquipSelection.FormattingEnabled = true;
             this.cBoxEquipSelection.Location = new System.Drawing.Point(12, 34);
             this.cBoxEquipSelection.Name = "cBoxEquipSelection";
-            this.cBoxEquipSelection.Size = new System.Drawing.Size(326, 21);
+            this.cBoxEquipSelection.Size = new System.Drawing.Size(391, 21);
             this.cBoxEquipSelection.TabIndex = 3;
             this.cBoxEquipSelection.SelectedIndexChanged += new System.EventHandler(this.SelectedIndex_Changed);
             // 
@@ -84,7 +85,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(349, 105);
+            this.ClientSize = new System.Drawing.Size(414, 101);
             this.Controls.Add(this.lblInstruction);
             this.Controls.Add(this.cBoxEquipSelection);
             this.Controls.Add(this.btnOK);

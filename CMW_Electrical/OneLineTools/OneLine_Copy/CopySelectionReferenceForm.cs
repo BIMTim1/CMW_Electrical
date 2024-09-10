@@ -23,13 +23,35 @@ namespace CMW_Electrical.OneLineTools.OneLine_Copy
         //    int nWidthEllipse,
         //    int nHeightEllipse
         //    );
-        public CopySelectionReferenceForm(List<string> equipNames)
+        public CopySelectionReferenceForm(List<Autodesk.Revit.DB.Element> elementList)
         {
             InitializeComponent();
 
             //Region = System.Drawing.Region.FromHrgn(CreateRoundRectRgn(0, 0, Width, Height, 20, 20));
+            string[] elemArray = (from el 
+                                  in elementList 
+                                  select el.get_Parameter(Autodesk.Revit.DB.BuiltInParameter.RBS_ELEC_PANEL_NAME).AsString() 
+                                  + ", " 
+                                  + el.LookupParameter("Family").AsValueString() 
+                                  + ": " 
+                                  + el.LookupParameter("Type").AsValueString())
+                                  .ToArray();
 
-            cBoxEquipSelect.Items.AddRange(equipNames.ToArray());
+            //assign elements to ComboBox
+            cBoxEquipSelect.Items.AddRange(elemArray);
+
+            //create autocomplete information
+            cBoxEquipSelect.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
+            cBoxEquipSelect.AutoCompleteSource = AutoCompleteSource.CustomSource;
+
+            AutoCompleteStringCollection autoComplete = new AutoCompleteStringCollection();
+
+            foreach (var item in cBoxEquipSelect.Items)
+            {
+                autoComplete.Add(item.ToString());
+            }
+
+            cBoxEquipSelect.AutoCompleteCustomSource = autoComplete;
         }
 
         public void BtnClick(object sender, EventArgs eventArgs)

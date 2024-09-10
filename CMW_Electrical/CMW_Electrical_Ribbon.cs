@@ -746,6 +746,9 @@ namespace CMW_Electrical
 
             PushButton nestedFamilyFontUpdateBtn = devicePanel.AddItem(nestedFamilyFontUpdateData) as PushButton;
             //set ContextualHelp for PushButton
+            ContextualHelp nestedFamFontContextHelp = new ContextualHelp(ContextualHelpType.Url, 
+                "https://wearelegence.sharepoint.com/:v:/r/sites/CMTAMidwestBIM/Shared%20Documents/Video/Electrical%20Drafting%20Whiteboard/Electrical%20Drafting%20Whiteboard%20-%20240909.mov?csf=1&web=1&e=V7nRxq");
+            nestedFamilyFontUpdateBtn.SetContextualHelp(nestedFamFontContextHelp);
         }
 
         public Result OnShutdown(UIControlledApplication application)
