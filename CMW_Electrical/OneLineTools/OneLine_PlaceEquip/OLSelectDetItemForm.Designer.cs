@@ -40,7 +40,7 @@
             // 
             this.btnCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.btnCancel.Location = new System.Drawing.Point(228, 119);
+            this.btnCancel.Location = new System.Drawing.Point(357, 119);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(75, 23);
             this.btnCancel.TabIndex = 0;
@@ -53,7 +53,7 @@
             this.btnOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnOK.DialogResult = System.Windows.Forms.DialogResult.OK;
             this.btnOK.Enabled = false;
-            this.btnOK.Location = new System.Drawing.Point(147, 119);
+            this.btnOK.Location = new System.Drawing.Point(276, 119);
             this.btnOK.Name = "btnOK";
             this.btnOK.Size = new System.Drawing.Size(75, 23);
             this.btnOK.TabIndex = 1;
@@ -63,14 +63,12 @@
             // 
             // cboxDetailItemList
             // 
-            this.cboxDetailItemList.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cboxDetailItemList.FormattingEnabled = true;
             this.cboxDetailItemList.Location = new System.Drawing.Point(15, 30);
             this.cboxDetailItemList.Name = "cboxDetailItemList";
-            this.cboxDetailItemList.Size = new System.Drawing.Size(278, 21);
+            this.cboxDetailItemList.Size = new System.Drawing.Size(417, 21);
             this.cboxDetailItemList.TabIndex = 3;
             this.cboxDetailItemList.SelectedIndexChanged += new System.EventHandler(this.ItemSelected);
-            this.cboxDetailItemList.TextChanged += new System.EventHandler(this.ItemSelected);
             // 
             // lblHeader
             // 
@@ -105,7 +103,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(315, 154);
+            this.ClientSize = new System.Drawing.Size(444, 154);
             this.Controls.Add(this.cboxFamilyTypeSelection);
             this.Controls.Add(this.lblSelectType);
             this.Controls.Add(this.lblHeader);

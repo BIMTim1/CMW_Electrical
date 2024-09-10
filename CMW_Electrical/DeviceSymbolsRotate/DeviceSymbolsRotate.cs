@@ -84,7 +84,7 @@ namespace RotateDeviceSymbols
             //create list of BuiltInCategory type
             List<BuiltInCategory> catList = new List<BuiltInCategory> {BuiltInCategory.OST_CommunicationDevices, BuiltInCategory.OST_DataDevices,
                 BuiltInCategory.OST_ElectricalFixtures, BuiltInCategory.OST_FireAlarmDevices, BuiltInCategory.OST_LightingDevices,
-                BuiltInCategory.OST_SecurityDevices};
+                BuiltInCategory.OST_NurseCallDevices, BuiltInCategory.OST_SecurityDevices};
 
             ElementMulticategoryFilter filter = new ElementMulticategoryFilter(catList);
 

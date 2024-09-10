@@ -715,7 +715,11 @@ namespace CMW_Electrical
 
             //------------create push button for <button name>------------
 
-            PushButtonData getCircuitsPlaceTextData = new PushButtonData("getCircuitsPlaceTextButton", "Place Typ" + System.Environment.NewLine + " Circuit Text", thisAssemblyPath, "GetCircuitsAndPlaceText.GetCircuitsAndPlaceText")
+            PushButtonData getCircuitsPlaceTextData = new PushButtonData(
+                "getCircuitsPlaceTextButton", 
+                "Place Typ" + System.Environment.NewLine + " Circuit Text", 
+                thisAssemblyPath, 
+                "GetCircuitsAndPlaceText.GetCircuitsAndPlaceText")
             {
                 LargeImage = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/GetCircuitsAndPlaceText32x32.png")),
                 Image = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/GetCircuitsAndPlaceText16x16.png")),
@@ -723,6 +727,24 @@ namespace CMW_Electrical
             };
 
             PushButton getCircuitsPlaceTextBtn = circuitPanel.AddItem(getCircuitsPlaceTextData) as PushButton;
+            //set ContextualHelp for PushButton
+
+
+            PushButtonData nestedFamilyFontUpdateData = new PushButtonData(
+                "updateNestedFamilyFontButton", 
+                "Font" + System.Environment.NewLine + " Refresh ", 
+                thisAssemblyPath, 
+                "NestedFontUpdate.UpdateNestedFamilyFont")
+            {
+                LargeImage = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/NestedFontUpdate32x32.png")),
+                Image = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/NestedFontUpdate16x16.png")),
+                ToolTip = "Update the nested Font of a Family.",
+                LongDescription = "This tool will update the nested annotation font of a selected family to be default ARchitxt. " +
+                "This tool helps speed up the process of correcting families from an error that can occur after " +
+                "a project is upgraded to a later version of Revit."
+            };
+
+            PushButton nestedFamilyFontUpdateBtn = devicePanel.AddItem(nestedFamilyFontUpdateData) as PushButton;
             //set ContextualHelp for PushButton
         }
 

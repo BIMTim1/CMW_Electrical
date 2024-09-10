@@ -130,6 +130,8 @@
     </Compile>
     <Compile Include="MotorUIDUpdate\UpdateMotorUID.cs" />
     <Compile Include="MultiLegSwitchIdUpdate\MultiLegSwitchIdUpdate.cs" />
+    <Compile Include="NestedFontUpdate\UpdateNestedFamilyFont.cs" />
+    <Compile Include="OneLineTools\OLUpdatePhaseInfo.cs" />
     <Compile Include="OneLineTools\EqConIdCheck.cs" />
     <Compile Include="OneLineTools\ExentsionMethods.cs" />
     <Compile Include="OneLineTools\OneLine_Clear\OneLineClearForm.cs">
@@ -319,6 +321,8 @@
     <Resource Include="Resources\OLClear32x32.png" />
     <Resource Include="Resources\GetCircuitsAndPlaceText16x16.png" />
     <Resource Include="Resources\GetCircuitsAndPlaceText32x32.png" />
+    <Resource Include="Resources\NestedFontUpdate16x16.png" />
+    <Resource Include="Resources\NestedFontUpdate32x32.png" />
     <Content Include="_Addin\CMW_Electrical.addin">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

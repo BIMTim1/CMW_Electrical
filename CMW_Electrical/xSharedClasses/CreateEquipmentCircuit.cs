@@ -131,7 +131,9 @@ namespace CMW_Electrical
                     {
                         createCircuit = true;
                     }
-                    else if (elecSys.BaseEquipment.Name != fedToEquipment.LookupParameter("Panel Name").AsString()) //check if connector is connected with a different source
+                    //check if connector is the current equipment or already circuited to the correct ElectricalEquipment
+                    else if (elecSys.BaseEquipment.Name != fedToEquipment.LookupParameter("Panel Name").AsString() 
+                        && elecSys.BaseEquipment.Name != sourceEquipment.get_Parameter(BuiltInParameter.RBS_ELEC_PANEL_NAME).AsString())
                     {
                         elecSys.DisconnectPanel(); //attempt to disconnect previous connection
 
