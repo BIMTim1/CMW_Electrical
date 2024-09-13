@@ -16,8 +16,8 @@ namespace CMW_Electrical
 {
     public class CMW_Electrical_Ribbon : IExternalApplication
     {
-        public const string versionNumber = "1.0.0";
-        public const string releaseDate = "August 2024";
+        public const string versionNumber = "0.1.4";
+        public const string releaseDate = "September 2024";
         public const string bimProjectUrl = "https://wearelegence.sharepoint.com/:l:/r/sites/CMTAMidwestBIM/Lists/CMW%20Electrical%20Tools?e=e8U3xA";
 
         static void AddRibbonPanel(UIControlledApplication application)

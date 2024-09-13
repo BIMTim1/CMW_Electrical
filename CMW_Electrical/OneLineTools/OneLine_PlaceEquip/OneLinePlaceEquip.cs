@@ -55,7 +55,6 @@ namespace OneLinePlaceEquip
             string refCategory = "";
             string panNameParam = "";
             List<Element> filteredRefElements = new List<Element>();
-            //List<string> formNameInfo = new List<string>();
             List<string> formTypeInfo = new List<string>();
 
             #region ActiveView Viewtype equals FloorPlan
@@ -94,17 +93,6 @@ namespace OneLinePlaceEquip
 
                     return Result.Cancelled;
                 }
-
-                //foreach (Element di in filteredRefElements)
-                //{
-                //    string input = di.LookupParameter("Panel Name - Detail").AsString() 
-                //        + ", " 
-                //        + di.get_Parameter(bipFamily).AsValueString() 
-                //        + ": " 
-                //        + di.get_Parameter(bipType).AsValueString();
-
-                //    formNameInfo.Add(input);
-                //}
 
                 List<string> detailItemTypes = new List<string>()
                 {
@@ -145,17 +133,6 @@ namespace OneLinePlaceEquip
 
                     return Result.Cancelled;
                 }
-
-                //foreach (Element eq in filteredRefElements)
-                //{
-                //    string input = eq.get_Parameter(bipEquipName).AsString() 
-                //        + ", " 
-                //        + eq.get_Parameter(bipFamily).AsValueString() 
-                //        + ": " 
-                //        + eq.get_Parameter(bipType).AsValueString();
-
-                //    formNameInfo.Add(input);
-                //}
 
                 List<string> equipTypes = new List<string>()
                 {

@@ -24,8 +24,8 @@ namespace CMW_Electrical.AddinInformation
         {
             InitializeComponent();
 
-            this.lblVersionNumberDisplay.Text = CMW_Electrical_Ribbon.versionNumber;
-            this.lblReleaseDateDisplay.Text = CMW_Electrical_Ribbon.releaseDate;
+            lblVersionNumberDisplay.Text = CMW_Electrical_Ribbon.versionNumber;
+            lblReleaseDateDisplay.Text = CMW_Electrical_Ribbon.releaseDate;
 
             //BitmapImage logoSource = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/CMTALogo.jpg"));
             
