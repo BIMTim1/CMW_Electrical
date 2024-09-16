@@ -754,6 +754,20 @@ namespace CMW_Electrical
             ContextualHelp nestedFamFontContextHelp = new ContextualHelp(ContextualHelpType.Url, 
                 "https://wearelegence.sharepoint.com/:v:/r/sites/CMTAMidwestBIM/Shared%20Documents/Video/Electrical%20Drafting%20Whiteboard/Electrical%20Drafting%20Whiteboard%20-%20240909.mov?csf=1&web=1&e=V7nRxq");
             nestedFamilyFontUpdateBtn.SetContextualHelp(nestedFamFontContextHelp);
+
+
+            PushButtonData changeWorksetFromSelectionData = new PushButtonData(
+                "changeWorksetFromSelectionButton", 
+                "Make Workset" + System.Environment.NewLine + " Current ", 
+                thisAssemblyPath, 
+                "ChangeWorksetFromSelection.ChangeWorksetFromSelection")
+            {
+                LargeImage = new BitmapImage(new Uri($"{uriPath}WorksetChange32x32.png")),
+                Image = new BitmapImage(new Uri($"{uriPath}WorksetChange16x16.png")),
+                ToolTip = "Change active Workset to the Workset of a Selected Element."
+            };
+
+            PushButton changeWorksetFromSelectionBtn = devicePanel.AddItem(changeWorksetFromSelectionData) as PushButton;
         }
 
         public Result OnShutdown(UIControlledApplication application)
