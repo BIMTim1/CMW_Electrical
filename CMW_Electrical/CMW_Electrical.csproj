@@ -228,6 +228,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="xSharedClasses\ViewCollector.cs" />
     <Compile Include="xSharedClasses\XFMRInfo.cs" />
     <Compile Include="xSharedClasses\CreateEquipmentCircuit.cs" />
     <Compile Include="xSharedClasses\ElecDistributionSystem.cs" />
@@ -323,6 +324,8 @@
     <Resource Include="Resources\GetCircuitsAndPlaceText32x32.png" />
     <Resource Include="Resources\NestedFontUpdate16x16.png" />
     <Resource Include="Resources\NestedFontUpdate32x32.png" />
+    <Resource Include="Resources\WorksetChange16x16.png" />
+    <Resource Include="Resources\WorksetChange32x32.png" />
     <Content Include="_Addin\CMW_Electrical.addin">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

@@ -16,7 +16,6 @@ using CMW_Electrical;
 using Autodesk.Revit.UI.Events;
 using System.Diagnostics;
 using CMW_Electrical.OneLineTools.OneLine_Find;
-using System.Windows.Forms;
 
 namespace OneLineFind
 {
@@ -98,7 +97,7 @@ namespace OneLineFind
                     //    MessageBox.Show($"Selected Element Id:\n{form.outputElementId}");
                     //}
 
-                    if (form.DialogResult == DialogResult.Cancel)
+                    if (form.DialogResult == System.Windows.Forms.DialogResult.Cancel)
                     {
                         return Result.Cancelled;
                     }
@@ -112,7 +111,25 @@ namespace OneLineFind
 
                     if (!views.Any()) return Result.Failed;
 
-                    Autodesk.Revit.DB.View selView = views.First();
+                    List<ElementId> colViewIds = (from v in views select v.Id).ToList();
+
+                    //View selView = views.First();
+                    View selView = null;
+
+                    List<View> openViews = new ViewCollector().GetOpenViews(doc);
+
+                    foreach (View ov in openViews)
+                    {
+                        if (colViewIds.Contains(ov.Id))
+                        {
+                            selView = ov;
+                        }
+                    }
+
+                    if (selView == null)
+                    {
+                        selView = views.First();
+                    }
 
                     trac.Commit();
 

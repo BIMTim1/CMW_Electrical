@@ -177,7 +177,28 @@ namespace OneLineSelect
             //if (null == views) throw new ArgumentNullException("no views");
             if (!views.Any()) return Result.Failed;
 
-            View selView = views.First();
+            //check if any open view contains the selected element
+            List<ElementId> colViewIds = (from v in views select v.Id).ToList();
+
+            //View selView = views.First();
+            View selView = null;
+
+            List<View> openViews = new ViewCollector().GetOpenViews(doc);
+
+            foreach (View ov in openViews)
+            {
+                ElementId vId = ov.Id;
+
+                if (colViewIds.Contains(vId))
+                {
+                    selView = ov;
+                }
+            }
+
+            if (selView == null)
+            {
+                selView = views.First();
+            }
 
             uidoc.RequestViewChange(selView);
 
