@@ -103,6 +103,8 @@
     </Compile>
     <Compile Include="DeviceSymbolsRotate\DeviceSymbolsRotate.cs" />
     <Compile Include="EquipCircuitUpdate\EquipCircuitUpdate.cs" />
+    <Compile Include="EquipmentTreeView\EquipmentReference.cs" />
+    <Compile Include="EquipmentTreeView\EquipmentTreeViewClass.cs" />
     <Compile Include="EquipNameUpdate\EquipNameUpdate.cs" />
     <Compile Include="EquipNameUpdate\EquipNameUpdateForm.cs">
       <SubType>Form</SubType>
@@ -323,6 +325,8 @@
     <Resource Include="Resources\GetCircuitsAndPlaceText32x32.png" />
     <Resource Include="Resources\NestedFontUpdate16x16.png" />
     <Resource Include="Resources\NestedFontUpdate32x32.png" />
+    <Resource Include="Resources\EquipTreeView16x16.png" />
+    <Resource Include="Resources\EquipTreeView32x32.png" />
     <Content Include="_Addin\CMW_Electrical.addin">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

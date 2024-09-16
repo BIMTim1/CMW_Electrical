@@ -749,6 +749,20 @@ namespace CMW_Electrical
             ContextualHelp nestedFamFontContextHelp = new ContextualHelp(ContextualHelpType.Url, 
                 "https://wearelegence.sharepoint.com/:v:/r/sites/CMTAMidwestBIM/Shared%20Documents/Video/Electrical%20Drafting%20Whiteboard/Electrical%20Drafting%20Whiteboard%20-%20240909.mov?csf=1&web=1&e=V7nRxq");
             nestedFamilyFontUpdateBtn.SetContextualHelp(nestedFamFontContextHelp);
+
+
+            PushButtonData equipTreeViewData = new PushButtonData(
+                "equipTreeViewButton", 
+                "Equipment" + System.Environment.NewLine + " Tree ", 
+                thisAssemblyPath, 
+                "EquipmentTreeView.EquipmentTreeViewClass")
+            {
+                LargeImage = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/EquipTreeView32x32.png")),
+                Image = new BitmapImage(new Uri("pack://application:,,,/CMW_Electrical;component/Resources/EquipTreeView16x16.png")),
+                ToolTip = ""
+            };
+
+            PushButton equipTreeViewBtn = equipPanel.AddItem(equipTreeViewData) as PushButton;
         }
 
         public Result OnShutdown(UIControlledApplication application)
