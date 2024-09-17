@@ -768,6 +768,10 @@ namespace CMW_Electrical
             };
 
             PushButton changeWorksetFromSelectionBtn = devicePanel.AddItem(changeWorksetFromSelectionData) as PushButton;
+            //set ContextualHelp for PushButton
+            ContextualHelp changeWorksetFromSelectionContextHelp = new ContextualHelp(ContextualHelpType.Url, 
+                "https://wearelegence.sharepoint.com/:v:/r/sites/CMTAMidwestBIM/Shared%20Documents/Video/CMW%20Electrical%20Add-in/Make%20Workset%20Current.mov?csf=1&web=1&e=xeNzYE");
+            changeWorksetFromSelectionBtn.SetContextualHelp(changeWorksetFromSelectionContextHelp);
         }
 
         public Result OnShutdown(UIControlledApplication application)
