@@ -768,6 +768,16 @@ namespace CMW_Electrical
             };
 
             PushButton changeWorksetFromSelectionBtn = devicePanel.AddItem(changeWorksetFromSelectionData) as PushButton;
+
+
+            PushButtonData circuitByAreaData = new PushButtonData("circuitByAreaButton", "Circuit" + System.Environment.NewLine + "By Area", thisAssemblyPath, "CircuitByArea.CircuitByArea")
+            {
+                LargeImage = new BitmapImage(new Uri($"{uriPath}CircuitByArea32x32.png")),
+                Image = new BitmapImage(new Uri($"{uriPath}CircuitByArea16x16.png")),
+                ToolTip = "Select an area to create circuits to selected panelboard."
+            };
+
+            PushButton circuitByAreaBtn = devicePanel.AddItem(circuitByAreaData) as PushButton;
         }
 
         public Result OnShutdown(UIControlledApplication application)
