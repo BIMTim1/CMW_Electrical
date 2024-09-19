@@ -18,6 +18,7 @@ using System.IO;
 using System.Diagnostics;
 using Autodesk.Revit.DB.Mechanical;
 using System.Net;
+using PanelSchedFormatting;
 
 namespace ChangePanelTypeToSinglePhase
 {
@@ -141,7 +142,7 @@ namespace ChangePanelTypeToSinglePhase
 
             //get existing circuits of selected Electrical Equipment
             List<ElectricalSystem> col_circuits = new FilteredElementCollector(doc).OfClass(typeof(ElectricalSystem))
-                .Where(x => x.get_Parameter(BuiltInParameter.RBS_ELEC_CIRCUIT_PANEL_PARAM).AsString() == pnlName)
+                .Where(x => x.get_Parameter(BuiltInParameter.RBS_ELEC_CIRCUIT_PANEL_PARAM).AsString() == pnlName && x.LookupParameter("Load Name").AsString() != "SPARE")
                 .Cast<ElectricalSystem>().ToList();
 
             //get Electrical Equipment source of selected Panel
@@ -211,7 +212,13 @@ namespace ChangePanelTypeToSinglePhase
 
                         if (previousSched.Any())
                         {
-                            doc.Delete(previousSched.First());
+                            //remove any previously created Spares from Panelboard for successful reconnection of circuits
+                            ElementId previousSchedId = previousSched.First();
+
+                            //delete Spares from equipment
+                            RemoveSpares(doc, previousSchedId);
+
+                            doc.Delete(previousSchedId);
                         }
 
                         //check for existing branch circuits and disconnect if different distribution
@@ -645,6 +652,47 @@ namespace ChangePanelTypeToSinglePhase
             return true;
         }
         #endregion //UpdatePanelScheduleView
+
+        #region RemoveSpares
+        public bool RemoveSpares(Document document, ElementId panViewId)
+        {
+            //collect PanelScheduleView
+            PanelScheduleView panView = document.GetElement(panViewId) as PanelScheduleView;
+
+            //Get TableData to interact with specific cells of the PanelScheduleView
+            TableData tableData = panView.GetTableData();
+            TableSectionData sectionData = tableData.GetSectionData(SectionType.Body);
+
+            PanelScheduleType templateTypeName = (document.GetElement(panView.GetTemplate()) as PanelScheduleTemplate).GetPanelScheduleType();
+
+            GetScheduleFormatting schedFormat = new GetScheduleFormatting();
+            List<Int32> columns = schedFormat.GetPanelScheduleColumns(templateTypeName, panView, document);
+            Int32 rows = schedFormat.GetPanelScheduleRows(templateTypeName, panView);
+
+            for (Int32 rowNum = 2; rowNum <= rows; rowNum++)
+            {
+                foreach (Int32 colNum in columns)
+                {
+                    ElectricalSystem cct = panView.GetCircuitByCell(rowNum, colNum);
+
+                    if (cct != null)
+                    {
+                        //check if slot is a Spare and has a modified name
+                        bool isSpare = panView.IsSpare(rowNum, colNum);
+                        string cctName = cct.LookupParameter("Load Name").AsString();
+
+                        if (isSpare && cctName == "SPARE")
+                        {
+                            //delete blank Spares
+                            panView.RemoveSpare(rowNum, colNum);
+                        }
+                    }
+                }
+            }
+
+            return true;
+        }
+        #endregion //RemoveSpares
 
         #region CreateOutputFile
         /// <summary>
