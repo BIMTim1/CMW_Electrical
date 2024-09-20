@@ -103,7 +103,7 @@ namespace PanelSchedFormatting
                         }
                     }
 
-                    for (Int32 rowNum = 2; rowNum <= rows; rowNum++)
+                    for (Int32 rowNum = 2; rowNum <= rows - 1; rowNum++)
                     {
                         foreach (Int32 colNum in columns)
                         {

@@ -30,21 +30,5 @@ namespace OneLineTools
             //update Project Information parameter
             EqConIdParam.Set(nextEqConIdVal);
         }
-
-        public void OneLineEqConIdValueUpdateTemporary(ElecEquipInfo elecEquipClass, Document document)
-        {
-            //update ElecEquipInfo item
-            string famInstVal = "not assigned";
-
-            elecEquipClass.EqConId = famInstVal;
-        }
-
-        public void OneLineEqConIdValueUpdateTemporary(DetailItemInfo detailItemClass, Document document)
-        {
-            //update DetailItemInfo item
-            string famInstVal = "not assigned";
-
-            detailItemClass.EqConId = famInstVal;
-        }
     }
 }

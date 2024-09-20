@@ -21,12 +21,13 @@ namespace CMWElec_FailureHandlers
                 //prevent Revit from showing Disconnected Circuit warnings
                 if (failId == BuiltInFailures.ElectricalFailures.FamilyMismatchCircuit)
                 {
-                    //failureAccessor.ResolveFailure(failure);
-                    IList<FailureResolutionType> fail_types = failureAccessor.GetAttemptedResolutionTypes(failure);
-                }
-                else if (failId == BuiltInFailures.MechanicalFailures.PanelDoesntMatchCircuitProperties)
-                {
                     failureAccessor.ResolveFailure(failure);
+
+                    return FailureProcessingResult.ProceedWithCommit;
+                }
+                else if (failId == BuiltInFailures.ConnectorFailures.AllElementsRemovedFromCircuitGroup)
+                {
+                    failureAccessor.DeleteWarning(failure);
                 }
             }
 

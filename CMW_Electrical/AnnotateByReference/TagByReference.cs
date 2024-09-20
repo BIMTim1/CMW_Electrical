@@ -52,7 +52,15 @@ namespace AnnotateByReference
 
                 //prompt user to select objects based on selected tags
                 string tagCat = selTags.First().Category.Name;
-                tagCat = tagCat.Replace(" Tags", "s");
+
+                if (tagCat == "Electrical Equipment Tags")
+                {
+                    tagCat = tagCat.Replace(" Tags", "");
+                }
+                else
+                {
+                    tagCat = tagCat.Replace(" Tags", "s");
+                }
 
                 //collect ISelectionFilter from method, cancel if null
                 ISelectionFilter elemSelFilter = GetSelectionFilter(tagCat) ?? throw new OperationCanceledException();

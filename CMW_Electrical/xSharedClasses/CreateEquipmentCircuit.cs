@@ -119,17 +119,30 @@ namespace CMW_Electrical
             }
 
             //check if equipment is already circuited
-            BuiltInParameter supplyFrom = BuiltInParameter.RBS_ELEC_PANEL_SUPPLY_FROM_PARAM;
-            if (fedToEquipment.get_Parameter(supplyFrom).AsString() != "")
+            ISet<ElectricalSystem> electricalSystems = fedToEquipment.MEPModel.GetElectricalSystems();
+
+            if (electricalSystems.Any())
             {
-                ISet<ElectricalSystem> electricalSystems = fedToEquipment.MEPModel.GetElectricalSystems();
+                bool createCircuit = false;
 
                 foreach (ElectricalSystem elecSys in electricalSystems)
                 {
-                    if (elecSys.BaseEquipment.Name != fedToEquipment.LookupParameter("Panel Name").AsString()) //check through all circuits to avoid non-equipment
+                    if (elecSys.BaseEquipment == null) //check if connector doesn't have a source
                     {
-                        elecSys.DisconnectPanel(); //disconnect previous connection
+                        createCircuit = true;
+                    }
+                    //check if connector is the current equipment or already circuited to the correct ElectricalEquipment
+                    else if (elecSys.BaseEquipment.Name != fedToEquipment.LookupParameter("Panel Name").AsString() 
+                        && elecSys.BaseEquipment.Name != sourceEquipment.get_Parameter(BuiltInParameter.RBS_ELEC_PANEL_NAME).AsString())
+                    {
+                        elecSys.DisconnectPanel(); //attempt to disconnect previous connection
 
+                        createCircuit = true;
+                    }
+
+                    //verify connection of circuit (existing connector)
+                    if (createCircuit)
+                    {
                         elecSys.SelectPanel(sourceEquipment); //reconnect panel to new source
 
                         createdCircuit = elecSys; //assign ElectricalSystem information for parameter values

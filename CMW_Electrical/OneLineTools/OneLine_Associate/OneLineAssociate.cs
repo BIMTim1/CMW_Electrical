@@ -23,13 +23,16 @@ namespace OneLine_Associate
     {
         public Result Execute(ExternalCommandData commandData, ref string errorReport, ElementSet elementSet)
         {
+            #region Autodesk Info
             UIApplication uiapp = commandData.Application;
             Document doc = uiapp.ActiveUIDocument.Document;
             Application app = uiapp.Application;
             UIDocument uidoc = uiapp.ActiveUIDocument;
+            #endregion //Autodesk Info
 
             View activeView = doc.ActiveView;
 
+            #region EqConId check
             //check for EqConId Current Value parameter
             EqConIdCheck eqConIdCheck = new EqConIdCheck();
             bool eqConIdExists = eqConIdCheck.EqConIdCurrentValueExists(doc);
@@ -42,9 +45,9 @@ namespace OneLine_Associate
 
                 return Result.Cancelled;
             }
+            #endregion //EqConId check
 
             //collect names in array to add to selection form
-            List<string> formInfo = new List<string>();
             List<Element> allRefElements = null;
             BuiltInCategory selBic;
             string paramRef = "";
@@ -65,17 +68,6 @@ namespace OneLine_Associate
                     .Where(x=>x.LookupParameter("Panel Name - Detail") != null)
                     .ToList();
 
-                foreach (FamilyInstance di in allRefElements)
-                {
-                    string input = di.LookupParameter("Panel Name - Detail").AsString()
-                        + ", "
-                        + di.LookupParameter("Family").AsValueString()
-                        + ": "
-                        + di.LookupParameter("Type").AsValueString();
-
-                    formInfo.Add(input);
-                }
-
                 paramRef = "Panel Name - Detail";
                 selFilter = new CMWElecSelectionFilter.EquipmentSelectionFilter();
                 selectionStatus = "Select an Electrical Equipment instance to reference";
@@ -89,19 +81,8 @@ namespace OneLine_Associate
                     .OfCategory(selBic)
                     .OfClass(typeof(FamilyInstance))
                     .ToElements()
-                    .Where(x => x.LookupParameter("EqConId").AsString() == null)
+                    .Where(x => x.LookupParameter("EqConId").AsString() == null || x.LookupParameter("EqConId").AsString() == "")
                     .ToList();
-
-                foreach (FamilyInstance eq in allRefElements)
-                {
-                    string input = eq.LookupParameter("Panel Name").AsString()
-                        + ", "
-                        + eq.Symbol.LookupParameter("Family Name").AsString()
-                        + ": "
-                        + eq.Symbol.LookupParameter("Type Name").AsString();
-
-                    formInfo.Add(input);
-                }
 
                 paramRef = "Panel Name";
                 selFilter = new CMWElecSelectionFilter.DetailItemSelectionFilter();
@@ -139,8 +120,11 @@ namespace OneLine_Associate
                 return Result.Cancelled;
             }
 
+            //sort collected elements
+            allRefElements = allRefElements.OrderBy(x => x.LookupParameter(paramRef).AsString()).ToList();
+
             //launch form to select Equipment Family
-            OneLineAssociateForm form = new OneLineAssociateForm(formInfo, paramRef);
+            OneLineAssociateForm form = new OneLineAssociateForm(allRefElements, paramRef);
             form.ShowDialog();
 
             if (form.DialogResult == System.Windows.Forms.DialogResult.Cancel)
@@ -157,16 +141,11 @@ namespace OneLine_Associate
                     ElecEquipInfo elecEquipInfo;
                     DetailItemInfo detItemInfo;
 
+                    Element selFormElem = allRefElements[form.cBoxEquipSelection.SelectedIndex];
+
                     if (paramRef == "Panel Name")
                     {
-                        //collect Electrical Equipment selected by user
-                        elecEquipInfo =
-                            new ElecEquipInfo(
-                                (from eq
-                                 in allRefElements
-                                 where form.cBoxEquipSelection.SelectedItem.ToString().Contains(eq.LookupParameter(paramRef).AsString())
-                                 select eq)
-                                 .First());
+                        elecEquipInfo = new ElecEquipInfo(selFormElem);
 
                         detItemInfo = new DetailItemInfo(doc.GetElement(userSelection));
 
@@ -174,13 +153,7 @@ namespace OneLine_Associate
                     }
                     else
                     {
-                        //collect Detail Item selected by user
-                        detItemInfo = new DetailItemInfo(
-                            (from di 
-                             in allRefElements 
-                             where form.cBoxEquipSelection.SelectedItem.ToString().Contains(di.LookupParameter(paramRef).AsString()) 
-                             select di)
-                             .First());
+                        detItemInfo = new DetailItemInfo(selFormElem);
 
                         elecEquipInfo = new ElecEquipInfo(doc.GetElement(userSelection))
                         {

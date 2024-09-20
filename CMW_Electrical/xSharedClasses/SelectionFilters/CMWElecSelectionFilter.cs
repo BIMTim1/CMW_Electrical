@@ -209,5 +209,36 @@ namespace CMW_Electrical
                 return false;
             }
         }
+
+        public class ElectricalCategoryFilter : ISelectionFilter
+        {
+            public bool AllowElement(Element element)
+            {
+                List<string> elecCatNames = new List<string>()
+                {
+                    "Communication Devices",
+                    "Data Devices",
+                    "Electrical Fixtures",
+                    "Fire Alarm Devices",
+                    "Lighting Devices",
+                    "Nurse Call Devices",
+                    "Telephone Devices",
+                    "Security Devices"
+                };
+
+                string elName = element.Category.Name;
+
+                if (elecCatNames.Contains(elName))
+                {
+                    return true;
+                }
+                return false;
+            }
+
+            public bool AllowReference(Reference refer, XYZ point)
+            {
+                return false;
+            }
+        }
     }
 }

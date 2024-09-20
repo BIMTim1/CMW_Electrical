@@ -23,11 +23,19 @@ namespace OneLine_Associate
         //    int nWidthEllipse,
         //    int nHeightEllipse
         //    );
-        public OneLineAssociateForm(List<string> equipNames, string labelInput)
+        public OneLineAssociateForm(List<Autodesk.Revit.DB.Element> elementList, string labelInput)
         {
             InitializeComponent();
 
             //Region = System.Drawing.Region.FromHrgn(CreateRoundRectRgn(0, 0, Width, Height, 20, 20));
+            string[] elementArray = (from el 
+                                     in elementList 
+                                     select el.LookupParameter(labelInput).AsString() 
+                                     + ", " 
+                                     + el.LookupParameter("Family").AsValueString() 
+                                     + ": " 
+                                     + el.LookupParameter("Type").AsValueString())
+                                     .ToArray();
 
             //set lblInstruction Text based on model input
             if (labelInput == "Panel Name - Detail")
@@ -40,7 +48,20 @@ namespace OneLine_Associate
             }
 
             //update ComboBox with Electrical Equipment Names
-            cBoxEquipSelection.Items.AddRange(equipNames.ToArray());
+            cBoxEquipSelection.Items.AddRange(elementArray);
+            
+            //add information for AutoCompletion
+            cBoxEquipSelection.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
+            cBoxEquipSelection.AutoCompleteSource = AutoCompleteSource.CustomSource;
+
+            AutoCompleteStringCollection autoComplete = new AutoCompleteStringCollection();
+
+            foreach (var item in cBoxEquipSelection.Items)
+            {
+                autoComplete.Add(item.ToString());
+            }
+
+            cBoxEquipSelection.AutoCompleteCustomSource = autoComplete;
 
             ToolTip toolTip = new ToolTip();
             toolTip.SetToolTip(cBoxEquipSelection, 

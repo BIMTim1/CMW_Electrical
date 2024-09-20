@@ -98,46 +98,51 @@ namespace OneLineConnect
                         .Where(x => x.LookupParameter("Family").AsValueString() == "E_DI_Feeder-Line Based" && x.LookupParameter("EqConId").AsString() == detItemInfo.EqConId)
                         .ToList();
 
-                    if (!createdFeederLines.Any())
+                    if (createdFeederLines.Any())
                     {
-                        //collect E_DI_Feeder-Line Based Detail Item
-                        FamilySymbol feederLine = (new FilteredElementCollector(doc)
-                            .OfCategory(BuiltInCategory.OST_DetailComponents)
-                            .WhereElementIsElementType()
-                            .ToElements()
-                            .Where(x => x.LookupParameter("Family Name").AsString() == "E_DI_Feeder-Line Based")
-                            .ToList())
-                            .First()
-                            as FamilySymbol;
-
-                        //create feeder lines
-                        List<FamilyInstance> feederLines = new OLCreateFeeder().CreateFeeder(
-                            sourceDetailItem as FamilyInstance,
-                            fedToDetailItem as FamilyInstance,
-                            (fedToDetailItem.Location as LocationPoint).Point,
-                            activeView,
-                            doc,
-                            feederLine);
-
-                        //check if detItemInfo has an EqConId value to apply to created Feeder Lines
-                        if (detItemInfo.EqConId != null || detItemInfo.EqConId != "")
+                        foreach (Element exFeeder in createdFeederLines)
                         {
-                            foreach (FamilyInstance feeder in feederLines)
-                            {
-                                feeder.LookupParameter("EqConId").Set(detItemInfo.EqConId);
-                            }
+                            doc.Delete(exFeeder.Id);
                         }
+                    }
 
-                        //check if sourceDetailItem has an EqConId to assign connected information
-                        if (sourceDetailItem.LookupParameter("EqConId").AsString() != null &&
-                            sourceDetailItem.LookupParameter("EqConId").AsString() != "")
+                    //collect E_DI_Feeder-Line Based Detail Item
+                    FamilySymbol feederLine = (new FilteredElementCollector(doc)
+                        .OfCategory(BuiltInCategory.OST_DetailComponents)
+                        .WhereElementIsElementType()
+                        .ToElements()
+                        .Where(x => x.LookupParameter("Family Name").AsString() == "E_DI_Feeder-Line Based")
+                        .ToList())
+                        .First()
+                        as FamilySymbol;
+
+                    //create feeder lines
+                    List<FamilyInstance> feederLines = new OLCreateFeeder().CreateFeeder(
+                        sourceDetailItem as FamilyInstance,
+                        fedToDetailItem as FamilyInstance,
+                        (fedToDetailItem.Location as LocationPoint).Point,
+                        activeView,
+                        doc,
+                        feederLine);
+
+                    //check if detItemInfo has an EqConId value to apply to created Feeder Lines
+                    if (detItemInfo.EqConId != null || detItemInfo.EqConId != "")
+                    {
+                        foreach (FamilyInstance feeder in feederLines)
                         {
-                            detItemInfo.EqConIdConnectedSource = sourceDetailItem.LookupParameter("EqConId").AsString();
+                            feeder.LookupParameter("EqConId").Set(detItemInfo.EqConId);
+                        }
+                    }
 
-                            foreach (FamilyInstance feeder in feederLines)
-                            {
-                                feeder.LookupParameter("EqConId Connection Source").Set(detItemInfo.EqConIdConnectedSource);
-                            }
+                    //check if sourceDetailItem has an EqConId to assign connected information
+                    if (sourceDetailItem.LookupParameter("EqConId").AsString() != null &&
+                        sourceDetailItem.LookupParameter("EqConId").AsString() != "")
+                    {
+                        detItemInfo.EqConIdConnectedSource = sourceDetailItem.LookupParameter("EqConId").AsString();
+
+                        foreach (FamilyInstance feeder in feederLines)
+                        {
+                            feeder.LookupParameter("EqConId Connection Source").Set(detItemInfo.EqConIdConnectedSource);
                         }
                     }
 

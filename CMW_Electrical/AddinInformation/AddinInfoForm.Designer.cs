@@ -35,7 +35,9 @@
             this.lblReleaseDateDisplay = new System.Windows.Forms.Label();
             this.btnReportBug = new System.Windows.Forms.Button();
             this.btnBIMSite = new System.Windows.Forms.Button();
+            this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
             ((System.ComponentModel.ISupportInitialize)(this.picBoxLogo)).BeginInit();
+            this.flowLayoutPanel1.SuspendLayout();
             this.SuspendLayout();
             // 
             // picBoxLogo
@@ -70,25 +72,27 @@
             // 
             // lblVersionNumberDisplay
             // 
-            this.lblVersionNumberDisplay.AutoSize = true;
+            this.lblVersionNumberDisplay.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.lblVersionNumberDisplay.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblVersionNumberDisplay.Location = new System.Drawing.Point(236, 117);
+            this.lblVersionNumberDisplay.Location = new System.Drawing.Point(11, 0);
             this.lblVersionNumberDisplay.Name = "lblVersionNumberDisplay";
-            this.lblVersionNumberDisplay.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.lblVersionNumberDisplay.Size = new System.Drawing.Size(36, 16);
+            this.lblVersionNumberDisplay.Padding = new System.Windows.Forms.Padding(0, 0, 0, 12);
+            this.lblVersionNumberDisplay.RightToLeft = System.Windows.Forms.RightToLeft.No;
+            this.lblVersionNumberDisplay.Size = new System.Drawing.Size(130, 28);
             this.lblVersionNumberDisplay.TabIndex = 3;
             this.lblVersionNumberDisplay.Text = "x.x.x";
+            this.lblVersionNumberDisplay.TextAlign = System.Drawing.ContentAlignment.TopRight;
             // 
             // lblReleaseDateDisplay
             // 
-            this.lblReleaseDateDisplay.AutoSize = true;
             this.lblReleaseDateDisplay.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblReleaseDateDisplay.Location = new System.Drawing.Point(187, 146);
+            this.lblReleaseDateDisplay.Location = new System.Drawing.Point(11, 28);
             this.lblReleaseDateDisplay.Name = "lblReleaseDateDisplay";
-            this.lblReleaseDateDisplay.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.lblReleaseDateDisplay.Size = new System.Drawing.Size(85, 16);
+            this.lblReleaseDateDisplay.RightToLeft = System.Windows.Forms.RightToLeft.No;
+            this.lblReleaseDateDisplay.Size = new System.Drawing.Size(130, 16);
             this.lblReleaseDateDisplay.TabIndex = 4;
-            this.lblReleaseDateDisplay.Text = "March 2024";
+            this.lblReleaseDateDisplay.Text = "March 2025";
+            this.lblReleaseDateDisplay.TextAlign = System.Drawing.ContentAlignment.TopRight;
             // 
             // btnReportBug
             // 
@@ -112,15 +116,24 @@
             this.btnBIMSite.UseVisualStyleBackColor = true;
             this.btnBIMSite.Click += new System.EventHandler(this.BtnClicked);
             // 
+            // flowLayoutPanel1
+            // 
+            this.flowLayoutPanel1.Controls.Add(this.lblVersionNumberDisplay);
+            this.flowLayoutPanel1.Controls.Add(this.lblReleaseDateDisplay);
+            this.flowLayoutPanel1.FlowDirection = System.Windows.Forms.FlowDirection.RightToLeft;
+            this.flowLayoutPanel1.Location = new System.Drawing.Point(125, 118);
+            this.flowLayoutPanel1.Name = "flowLayoutPanel1";
+            this.flowLayoutPanel1.Size = new System.Drawing.Size(144, 53);
+            this.flowLayoutPanel1.TabIndex = 7;
+            // 
             // cmwElecAddinInfo
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(284, 237);
+            this.Controls.Add(this.flowLayoutPanel1);
             this.Controls.Add(this.btnBIMSite);
             this.Controls.Add(this.btnReportBug);
-            this.Controls.Add(this.lblReleaseDateDisplay);
-            this.Controls.Add(this.lblVersionNumberDisplay);
             this.Controls.Add(this.lblReleaseDate);
             this.Controls.Add(this.lblVersionNum);
             this.Controls.Add(this.picBoxLogo);
@@ -131,6 +144,7 @@
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "CMW - Electrical Add-in";
             ((System.ComponentModel.ISupportInitialize)(this.picBoxLogo)).EndInit();
+            this.flowLayoutPanel1.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -145,5 +159,6 @@
         private System.Windows.Forms.Label lblReleaseDateDisplay;
         private System.Windows.Forms.Button btnReportBug;
         private System.Windows.Forms.Button btnBIMSite;
+        private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
     }
 }

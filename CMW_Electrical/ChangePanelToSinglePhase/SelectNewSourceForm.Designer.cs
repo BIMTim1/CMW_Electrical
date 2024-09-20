@@ -1,6 +1,6 @@
-﻿namespace OneLine_Associate
+﻿namespace CMW_Electrical.ChangePanelToSinglePhase
 {
-    partial class OneLineAssociateForm
+    partial class SelectNewSourceForm
     {
         /// <summary>
         /// Required designer variable.
@@ -30,79 +30,78 @@
         {
             this.btnCancel = new System.Windows.Forms.Button();
             this.btnOK = new System.Windows.Forms.Button();
-            this.cBoxEquipSelection = new System.Windows.Forms.ComboBox();
-            this.lblInstruction = new System.Windows.Forms.Label();
+            this.lblSelectNewSource = new System.Windows.Forms.Label();
+            this.cboxSelectSource = new System.Windows.Forms.ComboBox();
             this.SuspendLayout();
             // 
             // btnCancel
             // 
             this.btnCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.btnCancel.Location = new System.Drawing.Point(327, 66);
+            this.btnCancel.Location = new System.Drawing.Point(232, 105);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(75, 23);
-            this.btnCancel.TabIndex = 1;
+            this.btnCancel.TabIndex = 0;
             this.btnCancel.Text = "Cancel";
             this.btnCancel.UseVisualStyleBackColor = true;
-            this.btnCancel.Click += new System.EventHandler(this.Btn_Click);
+            this.btnCancel.Click += new System.EventHandler(this.Button_Click);
             // 
             // btnOK
             // 
             this.btnOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnOK.DialogResult = System.Windows.Forms.DialogResult.OK;
             this.btnOK.Enabled = false;
-            this.btnOK.Location = new System.Drawing.Point(246, 66);
+            this.btnOK.Location = new System.Drawing.Point(151, 105);
             this.btnOK.Name = "btnOK";
             this.btnOK.Size = new System.Drawing.Size(75, 23);
-            this.btnOK.TabIndex = 2;
+            this.btnOK.TabIndex = 1;
             this.btnOK.Text = "OK";
             this.btnOK.UseVisualStyleBackColor = true;
-            this.btnOK.Click += new System.EventHandler(this.Btn_Click);
+            this.btnOK.Click += new System.EventHandler(this.Button_Click);
             // 
-            // cBoxEquipSelection
+            // lblSelectNewSource
             // 
-            this.cBoxEquipSelection.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.lblSelectNewSource.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblSelectNewSource.Location = new System.Drawing.Point(12, 9);
+            this.lblSelectNewSource.Name = "lblSelectNewSource";
+            this.lblSelectNewSource.Size = new System.Drawing.Size(295, 56);
+            this.lblSelectNewSource.TabIndex = 2;
+            this.lblSelectNewSource.Text = "Select Source Equipment <input>";
+            // 
+            // cboxSelectSource
+            // 
+            this.cboxSelectSource.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.cBoxEquipSelection.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.cBoxEquipSelection.FormattingEnabled = true;
-            this.cBoxEquipSelection.Location = new System.Drawing.Point(12, 34);
-            this.cBoxEquipSelection.Name = "cBoxEquipSelection";
-            this.cBoxEquipSelection.Size = new System.Drawing.Size(391, 21);
-            this.cBoxEquipSelection.TabIndex = 3;
-            this.cBoxEquipSelection.SelectedIndexChanged += new System.EventHandler(this.SelectedIndex_Changed);
+            this.cboxSelectSource.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cboxSelectSource.FormattingEnabled = true;
+            this.cboxSelectSource.Location = new System.Drawing.Point(15, 73);
+            this.cboxSelectSource.Name = "cboxSelectSource";
+            this.cboxSelectSource.Size = new System.Drawing.Size(292, 21);
+            this.cboxSelectSource.TabIndex = 3;
+            this.cboxSelectSource.SelectedIndexChanged += new System.EventHandler(this.Selection_Changed);
             // 
-            // lblInstruction
-            // 
-            this.lblInstruction.AutoSize = true;
-            this.lblInstruction.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblInstruction.Location = new System.Drawing.Point(12, 9);
-            this.lblInstruction.Name = "lblInstruction";
-            this.lblInstruction.Size = new System.Drawing.Size(91, 13);
-            this.lblInstruction.TabIndex = 4;
-            this.lblInstruction.Text = "Select Reference";
-            // 
-            // OneLineAssociateForm
+            // SelectNewSourceForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(414, 101);
-            this.Controls.Add(this.lblInstruction);
-            this.Controls.Add(this.cBoxEquipSelection);
+            this.ClientSize = new System.Drawing.Size(319, 140);
+            this.Controls.Add(this.cboxSelectSource);
+            this.Controls.Add(this.lblSelectNewSource);
             this.Controls.Add(this.btnOK);
             this.Controls.Add(this.btnCancel);
-            this.Name = "OneLineAssociateForm";
+            this.Name = "SelectNewSourceForm";
             this.ShowIcon = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Select Reference";
+            this.Text = "Select New Source";
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
 
         #endregion
+
         private System.Windows.Forms.Button btnCancel;
         private System.Windows.Forms.Button btnOK;
-        public System.Windows.Forms.ComboBox cBoxEquipSelection;
-        private System.Windows.Forms.Label lblInstruction;
+        private System.Windows.Forms.Label lblSelectNewSource;
+        public System.Windows.Forms.ComboBox cboxSelectSource;
     }
 }

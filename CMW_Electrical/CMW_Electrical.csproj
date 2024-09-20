@@ -73,7 +73,26 @@
     <Compile Include="AlignTagTools\TagAlign.cs" />
     <Compile Include="AlignTagTools\TagAlignTop.cs" />
     <Compile Include="AnnotateByReference\TagByReference.cs" />
+    <Compile Include="ChangePanelToSinglePhase\DistributionSelectionForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ChangePanelToSinglePhase\DistributionSelectionForm.Designer.cs">
+      <DependentUpon>DistributionSelectionForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ChangePanelToSinglePhase\SelectNewSourceForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ChangePanelToSinglePhase\SelectNewSourceForm.Designer.cs">
+      <DependentUpon>SelectNewSourceForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ChangePanelToSinglePhase\ReconnectForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ChangePanelToSinglePhase\ReconnectForm.Designer.cs">
+      <DependentUpon>ReconnectForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="ChangePanelToSinglePhase\PanelTypeToSinglePhase.cs" />
+    <Compile Include="ChangeWorksetFromSelection\ChangeWorksetFromSelection.cs" />
     <Compile Include="CMW_Electrical_Ribbon.cs" />
     <Compile Include="CorrectLightFixtures\CorrectLightFixtures.cs" />
     <Compile Include="CreatePanelSchedules\CreatePanelSchedules.cs" />
@@ -96,6 +115,13 @@
     <Compile Include="FailureHandlers\CreateFailureAdvancedHandler.cs" />
     <Compile Include="FailureHandlers\DisconnectCircuitFailure.cs" />
     <Compile Include="FlipFacingOrientation\FlipFacingOrientationBySelection.cs" />
+    <Compile Include="GetCircuitsAndPlaceText\EnterSpaceNameForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GetCircuitsAndPlaceText\EnterSpaceNameForm.Designer.cs">
+      <DependentUpon>EnterSpaceNameForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="GetCircuitsAndPlaceText\GetCircuitsAndPlaceText.cs" />
     <Compile Include="MotorMOCPUpdate\UpdateMotorMOCP.cs" />
     <Compile Include="MotorUIDUpdate\MotorsUpdatedForm.cs">
       <SubType>Form</SubType>
@@ -105,6 +131,8 @@
     </Compile>
     <Compile Include="MotorUIDUpdate\UpdateMotorUID.cs" />
     <Compile Include="MultiLegSwitchIdUpdate\MultiLegSwitchIdUpdate.cs" />
+    <Compile Include="NestedFontUpdate\UpdateNestedFamilyFont.cs" />
+    <Compile Include="OneLineTools\OLUpdatePhaseInfo.cs" />
     <Compile Include="OneLineTools\EqConIdCheck.cs" />
     <Compile Include="OneLineTools\ExentsionMethods.cs" />
     <Compile Include="OneLineTools\OneLine_Clear\OneLineClearForm.cs">
@@ -201,6 +229,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="xSharedClasses\ViewCollector.cs" />
     <Compile Include="xSharedClasses\XFMRInfo.cs" />
     <Compile Include="xSharedClasses\CreateEquipmentCircuit.cs" />
     <Compile Include="xSharedClasses\ElecDistributionSystem.cs" />
@@ -292,6 +321,12 @@
     <Resource Include="Resources\TagByRef32x32.png" />
     <Resource Include="Resources\OLClear16x16.png" />
     <Resource Include="Resources\OLClear32x32.png" />
+    <Resource Include="Resources\GetCircuitsAndPlaceText16x16.png" />
+    <Resource Include="Resources\GetCircuitsAndPlaceText32x32.png" />
+    <Resource Include="Resources\NestedFontUpdate16x16.png" />
+    <Resource Include="Resources\NestedFontUpdate32x32.png" />
+    <Resource Include="Resources\WorksetChange16x16.png" />
+    <Resource Include="Resources\WorksetChange32x32.png" />
     <Content Include="_Addin\CMW_Electrical.addin">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -303,11 +338,23 @@
     <EmbeddedResource Include="AddinInformation\AddinInfoForm.resx">
       <DependentUpon>AddinInfoForm.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="ChangePanelToSinglePhase\DistributionSelectionForm.resx">
+      <DependentUpon>DistributionSelectionForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ChangePanelToSinglePhase\ReconnectForm.resx">
+      <DependentUpon>ReconnectForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ChangePanelToSinglePhase\SelectNewSourceForm.resx">
+      <DependentUpon>SelectNewSourceForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="CreatePanelSchedules\PanelSchedCreatedForm.resx">
       <DependentUpon>PanelSchedCreatedForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="EquipNameUpdate\EquipNameUpdateForm.resx">
       <DependentUpon>EquipNameUpdateForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GetCircuitsAndPlaceText\EnterSpaceNameForm.resx">
+      <DependentUpon>EnterSpaceNameForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="MotorUIDUpdate\MotorsUpdatedForm.resx">
       <DependentUpon>MotorsUpdatedForm.cs</DependentUpon>
