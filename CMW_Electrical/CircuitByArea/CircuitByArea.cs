@@ -1,7 +1,6 @@
 ﻿using Autodesk.Revit.Attributes;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
-using Autodesk.Revit.ApplicationServices;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,6 +10,7 @@ using Autodesk.Revit.UI.Selection;
 using CMW_Electrical;
 using CMW_Electrical.CircuitByArea;
 using Autodesk.Revit.DB.Electrical;
+using System.Windows;
 
 namespace CircuitByArea
 {
@@ -24,7 +24,7 @@ namespace CircuitByArea
             //define background Revit information to reference
             UIApplication uiapp = commandData.Application;
             Document doc = uiapp.ActiveUIDocument.Document;
-            Application app = uiapp.Application;
+            Autodesk.Revit.ApplicationServices.Application app = uiapp.Application;
             UIDocument uidoc = uiapp.ActiveUIDocument;
             #endregion //Autodesk Info
 
@@ -78,14 +78,20 @@ namespace CircuitByArea
                 return Result.Cancelled;
             }
 
-            all_equip = all_equip.OrderBy(x => x.get_Parameter(BuiltInParameter.RBS_ELEC_PANEL_NAME).AsString()).ToList();
+            //all_equip = all_equip.OrderBy(x => x.get_Parameter(BuiltInParameter.RBS_ELEC_PANEL_NAME).AsString()).ToList();
+            List<EquipmentSelectionData> equipData = new List<EquipmentSelectionData>();
 
-            //start form
-            SelectPanelForm selectForm = new SelectPanelForm(all_equip);
-            selectForm.ShowDialog();
+            foreach (Element equip in all_equip)
+            {
+                equipData.Add(new EquipmentSelectionData(equip));
+            }
 
-            //cancel tool if form canceled
-            if (selectForm.DialogResult == System.Windows.Forms.DialogResult.Cancel)
+            //start WPF
+            SelectPanel wpf = new SelectPanel(equipData);
+            wpf.ShowDialog();
+
+            //cancel tool if wpf canceled
+            if (wpf.DialogResult == false)
             {
                 errorReport = "User canceled source selection. Tool will now cancel.";
 
@@ -93,7 +99,7 @@ namespace CircuitByArea
             }
 
             //collect FamilyInstance from user selected element
-            FamilyInstance selEquip = all_equip[selectForm.comboBox1.SelectedIndex] as FamilyInstance;
+            FamilyInstance selEquip = wpf.cboxPanels.SelectedValue as FamilyInstance;
 
             using (Transaction trac = new Transaction(doc))
             {

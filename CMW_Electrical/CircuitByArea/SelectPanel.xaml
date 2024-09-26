@@ -1,0 +1,40 @@
+﻿<Window x:Class="CMW_Electrical.CircuitByArea.SelectPanel"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+        xmlns:local="clr-namespace:CMW_Electrical.CircuitByArea"
+        mc:Ignorable="d"
+        Title="CMW-Elec - Select Panel" SizeToContent="WidthAndHeight" ResizeMode="NoResize"
+        Topmost="True" WindowStartupLocation="CenterScreen"  FontSize="14" FontFamily="GlobalUserInterface">
+    
+    <Border Padding="10">
+        <StackPanel>
+            <TextBlock Margin="0,0,0,10" Text="Select Panel:"
+                       FontWeight="Bold" TextWrapping="Wrap"/>
+            
+            <ComboBox Name="cboxPanels" 
+                Margin="0,0,0,10" Width="434" 
+                IsEditable="True" PreviewTextInput="cbox_PreviewTextInput" SelectionChanged="Selection_Changed" 
+                      IsTextSearchEnabled="True" DisplayMemberPath="PanelInformation" SelectedValuePath="AsFamilyInstance"/>
+
+            <Grid Margin="0,10,0,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="auto"/>
+                    <ColumnDefinition Width="8"/>
+                    <ColumnDefinition Width="auto"/>
+                </Grid.ColumnDefinitions>
+                
+                <Button Content="OK" 
+                    Name="btnOK" Height ="23" Width="75" Grid.Column="1"
+                        IsEnabled="False" Click="btnOK_Click" IsDefault="True"/>
+                
+                <Button Content="Cancel" 
+                    Name ="btnCancel" Height="23" Width="75" Grid.Column="3" IsCancel="True"/>
+
+            </Grid>
+        </StackPanel>
+        
+    </Border>
+</Window>

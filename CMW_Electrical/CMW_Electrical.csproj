@@ -97,14 +97,9 @@
     <Compile Include="ChangePanelToSinglePhase\PanelTypeToSinglePhase.cs" />
     <Compile Include="ChangeWorksetFromSelection\ChangeWorksetFromSelection.cs" />
     <Compile Include="CircuitByArea\CircuitByArea.cs" />
-    <Compile Include="CircuitByArea\SelectPanelForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="CircuitByArea\SelectPanelForm.Designer.cs">
-      <DependentUpon>SelectPanelForm.cs</DependentUpon>
-    </Compile>
-    <Compile Include="CircuitByArea\UserControl1.xaml.cs">
-      <DependentUpon>UserControl1.xaml</DependentUpon>
+    <Compile Include="CircuitByArea\EquipmentSelectionData.cs" />
+    <Compile Include="CircuitByArea\SelectPanel.xaml.cs">
+      <DependentUpon>SelectPanel.xaml</DependentUpon>
     </Compile>
     <Compile Include="CMW_Electrical_Ribbon.cs" />
     <Compile Include="CorrectLightFixtures\CorrectLightFixtures.cs" />
@@ -362,9 +357,6 @@
     <EmbeddedResource Include="ChangePanelToSinglePhase\SelectNewSourceForm.resx">
       <DependentUpon>SelectNewSourceForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="CircuitByArea\SelectPanelForm.resx">
-      <DependentUpon>SelectPanelForm.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="CreatePanelSchedules\PanelSchedCreatedForm.resx">
       <DependentUpon>PanelSchedCreatedForm.cs</DependentUpon>
     </EmbeddedResource>
@@ -413,7 +405,7 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <Page Include="CircuitByArea\UserControl1.xaml">
+    <Page Include="CircuitByArea\SelectPanel.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
