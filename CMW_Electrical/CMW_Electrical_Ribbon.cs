@@ -16,7 +16,7 @@ namespace CMW_Electrical
 {
     public class CMW_Electrical_Ribbon : IExternalApplication
     {
-        public const string versionNumber = "0.1.4";
+        public const string versionNumber = "0.1.5";
         public const string releaseDate = "September 2024";
         public const string bimProjectUrl = "https://wearelegence.sharepoint.com/:l:/r/sites/CMTAMidwestBIM/Lists/CMW%20Electrical%20Tools?e=e8U3xA";
 
@@ -733,6 +733,9 @@ namespace CMW_Electrical
 
             PushButton getCircuitsPlaceTextBtn = circuitPanel.AddItem(getCircuitsPlaceTextData) as PushButton;
             //set ContextualHelp for PushButton
+            ContextualHelp getCircuitsPlaceTextContextHelp = new ContextualHelp(ContextualHelpType.Url,
+                "https://wearelegence.sharepoint.com/:v:/r/sites/CMTAMidwestBIM/Shared%20Documents/Video/CMW%20Electrical%20Add-in/Place%20Typ%20Circuit%20Text.mov?csf=1&web=1&e=ZoPFXH");
+            getCircuitsPlaceTextBtn.SetContextualHelp(getCircuitsPlaceTextContextHelp);
 
 
             PushButtonData nestedFamilyFontUpdateData = new PushButtonData(
