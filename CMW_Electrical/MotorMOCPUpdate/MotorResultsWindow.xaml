@@ -7,27 +7,30 @@
         mc:Ignorable="d" 
         d:DesignHeight="450" d:DesignWidth="800" Title="CMW-Elec MOCP Update Results" MaxHeight="450" SizeToContent="WidthAndHeight" ResizeMode="NoResize" 
         Topmost="True" WindowStartupLocation="CenterOwner" FontSize="14" FontFamily="GlobalUserInterface">
-    
-    <StackPanel>
-        <DataGrid AutoGenerateColumns="False">
-            <DataGrid.Columns>
-                <DataGridTextColumn Header="UID"/>
-                <DataGridTextColumn Header="Level"/>
-                <DataGridTextColumn Header="MOCP"/>
-            </DataGrid.Columns>
-            
-        </DataGrid>
-        
-        <Grid Margin="10">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="75"/>
-            </Grid.ColumnDefinitions>
 
-            <Button Content="Close" Name="btnClose" IsEnabled="True" Width="75" Grid.Column="3" IsDefault="True" Click="btnClose_Click"/>
+    <Border Padding="10">
+        <StackPanel>
+            <DataGrid AutoGenerateColumns="False">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="UID"/>
+                    <DataGridTextColumn Header="Level"/>
+                    <DataGridTextColumn Header="MOCP"/>
+                </DataGrid.Columns>
 
-        </Grid>
+            </DataGrid>
+
+            <Grid Margin="0,10,0,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="auto"/>
+                </Grid.ColumnDefinitions>
+
+                <Button Content="Close" Name="btnClose" IsEnabled="True" Width="75" Grid.Column="3" IsDefault="True" Click="btnClose_Click"/>
+
+            </Grid>
+
+        </StackPanel>
         
-    </StackPanel>
+    </Border>
 
 </Window>
