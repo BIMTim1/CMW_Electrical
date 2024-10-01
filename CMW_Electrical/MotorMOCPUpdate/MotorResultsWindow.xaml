@@ -5,16 +5,43 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
         xmlns:local="clr-namespace:CMW_Electrical.MotorMOCPUpdate"
         mc:Ignorable="d" 
-        d:DesignHeight="450" d:DesignWidth="800" Title="CMW-Elec MOCP Update Results" MaxHeight="450" SizeToContent="WidthAndHeight" ResizeMode="NoResize" 
+        d:DesignHeight="450" d:DesignWidth="800" Title="CMW-Elec - MOCP Update Results" MaxHeight="450" SizeToContent="WidthAndHeight" ResizeMode="NoResize" 
         Topmost="True" WindowStartupLocation="CenterOwner" FontSize="14" FontFamily="GlobalUserInterface">
 
     <Border Padding="10">
         <StackPanel>
-            <DataGrid AutoGenerateColumns="False">
+            <DataGrid Name="dataGridMotors" AutoGenerateColumns="False">
+                <DataGrid.ColumnHeaderStyle>
+                    <Style TargetType="{x:Type DataGridColumnHeader}">
+                        <Setter Property="HorizontalContentAlignment" Value="Center"/>
+                    </Style>
+                </DataGrid.ColumnHeaderStyle>
+                
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="UID"/>
-                    <DataGridTextColumn Header="Level"/>
-                    <DataGridTextColumn Header="MOCP"/>
+                    <DataGridTemplateColumn Header="UID" MinWidth="150">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding GetMotorUID}" TextAlignment="Center"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+
+                    <DataGridTemplateColumn Header="Level" MinWidth="150">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding GetLevelName}" TextAlignment="Center"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+
+                    <DataGridTemplateColumn Header="MOCP" MinWidth="150">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding GetMOCP}" TextAlignment="Center"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    
                 </DataGrid.Columns>
 
             </DataGrid>

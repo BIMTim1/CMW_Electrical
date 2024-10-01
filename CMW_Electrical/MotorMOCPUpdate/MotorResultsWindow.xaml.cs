@@ -22,10 +22,14 @@ namespace CMW_Electrical.MotorMOCPUpdate
     /// </summary>
     public partial class MotorResultsWindow : Window
     {
-        //public ObservableCollection<> MotorElements = new ObservableCollection<>();
+        public ObservableCollection<MotorInfoData> _motorInfo;
         public MotorResultsWindow(List<MotorInfoData> motorInfoData)
         {
             InitializeComponent();
+
+            _motorInfo = new ObservableCollection<MotorInfoData>(motorInfoData);
+
+            dataGridMotors.ItemsSource = _motorInfo.OrderBy(x => x.GetMotorUID);
         }
 
         private void btnClose_Click(object sender, RoutedEventArgs e)
