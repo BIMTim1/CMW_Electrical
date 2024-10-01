@@ -11,6 +11,7 @@ using Autodesk.Revit.ApplicationServices;
 using Autodesk.Revit.DB.Electrical;
 using Autodesk.Revit.UI;
 using Autodesk.Revit.UI.Selection;
+using CMW_Electrical.MotorMOCPUpdate;
 
 namespace MotorMOCPUpdate
 {
@@ -60,6 +61,8 @@ namespace MotorMOCPUpdate
                 {
                     trac.Start("CMWElec-Update Motor Circuit Load Name from MOCP");
 
+                    List<MotorInfoData> motorInfoData = new List<MotorInfoData>();
+
                     foreach (FamilyInstance motor in all_motors)
                     {
                         //collect ElectricalSystem element from motor FamilyInstance
@@ -80,21 +83,25 @@ namespace MotorMOCPUpdate
                             }
 
                             motorCircuit.LookupParameter("Rating").Set(motor_mocp);
-                            count++;
+                            //count++;
+                            motorInfoData.Add(new MotorInfoData(motor));
                         }
                     }
 
                     trac.Commit();
 
-                    TaskDialog results = new TaskDialog("CMW-Elec - Results")
-                    {
-                        TitleAutoPrefix = false,
-                        CommonButtons = TaskDialogCommonButtons.Ok,
-                        MainInstruction = "Results:",
-                        MainContent = $"{count} Motor Circuits have been updated to display the most up to date MOCP information."
-                    };
+                    MotorResultsWindow resultsWindow = new MotorResultsWindow(motorInfoData);
+                    resultsWindow.ShowDialog();
 
-                    results.Show();
+                    //TaskDialog results = new TaskDialog("CMW-Elec - Results")
+                    //{
+                    //    TitleAutoPrefix = false,
+                    //    CommonButtons = TaskDialogCommonButtons.Ok,
+                    //    MainInstruction = "Results:",
+                    //    MainContent = $"{count} Motor Circuits have been updated to display the most up to date MOCP information."
+                    //};
+
+                    //results.Show();
 
                     return Result.Succeeded;
                 }
