@@ -44,6 +44,19 @@ namespace CreatePanelSchedules
             }
             #endregion //Any Equipment Check
 
+            //get Phases of ActiveDocument
+            PhaseArray phaseArray = doc.Phases;
+            List<PhaseInformation> phaseInfo = new List<PhaseInformation>();
+
+            foreach (Phase ph in phaseArray)
+            {
+                phaseInfo.Add(new PhaseInformation(ph));
+            }
+
+            //start Window PhaseSelection
+            PhaseSelectWindow phaseSelectWindow = new PhaseSelectWindow(phaseInfo);
+            phaseSelectWindow.ShowDialog();
+
             //get Revit version number (default string)
             int revNum = int.Parse(uiapp.Application.VersionNumber);
 
