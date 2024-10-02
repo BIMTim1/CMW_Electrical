@@ -105,6 +105,9 @@
     <Compile Include="CreatePanelSchedules\PanelSchedCreatedForm.Designer.cs">
       <DependentUpon>PanelSchedCreatedForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="CreatePanelSchedules\PhaseSelectWindow.xaml.cs">
+      <DependentUpon>PhaseSelectWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="DeviceSymbolsRotate\DeviceSymbolsRotate.cs" />
     <Compile Include="EquipCircuitUpdate\EquipCircuitUpdate.cs" />
     <Compile Include="EquipNameUpdate\EquipNameUpdate.cs" />
@@ -402,6 +405,10 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <Page Include="CreatePanelSchedules\PhaseSelectWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="MotorMOCPUpdate\MotorResultsWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
