@@ -53,9 +53,27 @@ namespace CreatePanelSchedules
                 phaseInfo.Add(new PhaseInformation(ph));
             }
 
+            #region User Phase Select
             //start Window PhaseSelection
             PhaseSelectWindow phaseSelectWindow = new PhaseSelectWindow(phaseInfo);
             phaseSelectWindow.ShowDialog();
+
+            //check if Window canceled
+            if (phaseSelectWindow.DialogResult == false)
+            {
+                errorReport = "User canceled Phase selection. Tool will now cancel.";
+
+                return Result.Cancelled;
+            }
+
+            ElementId selPhaseId = phaseSelectWindow.cboxPhaseSelect.SelectedValue as ElementId;
+
+            elecEquip = (from eq 
+                         in elecEquip 
+                         where eq.get_Parameter(BuiltInParameter.PHASE_CREATED).AsElementId() == selPhaseId 
+                         select eq)
+                         .ToList();
+            #endregion //User Phase Select
 
             //get Revit version number (default string)
             int revNum = int.Parse(uiapp.Application.VersionNumber);

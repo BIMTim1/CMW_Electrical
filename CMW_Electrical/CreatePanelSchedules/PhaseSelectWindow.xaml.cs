@@ -40,10 +40,5 @@ namespace CMW_Electrical.CreatePanelSchedules
         {
             btnOK.IsEnabled = true;
         }
-
-        public void cbox_PreviewTextInput(object sender, TextCompositionEventArgs e)
-        {
-            cboxPhaseSelect.IsDropDownOpen = true;
-        }
     }
 }
