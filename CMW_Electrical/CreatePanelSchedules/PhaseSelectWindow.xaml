@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:CMW_Electrical.CreatePanelSchedules"
         mc:Ignorable="d" 
         Title="CMW-Elec - Select Phase" SizeToContent="WidthAndHeight" ResizeMode="NoResize"
-        FontFamily="GlobalUserInterface" FontSize="14" Topmost="True" WindowStartupLocation="CenterOwner">
+        FontFamily="GlobalUserInterface" FontSize="14" Topmost="True" WindowStartupLocation="CenterScreen">
 
     <Border Padding="10">
         <StackPanel>

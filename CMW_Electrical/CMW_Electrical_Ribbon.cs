@@ -124,7 +124,8 @@ namespace CMW_Electrical
                 };
 
             PushButton pnlTypeToSingleBtn = equipPanel.AddItem(pnlTypeToSingleData) as PushButton;
-            ContextualHelp changeDistContextHelp = new ContextualHelp(ContextualHelpType.Url, "https://wearelegence.sharepoint.com/:v:/r/sites/CMTAMidwestBIM/Shared%20Documents/Video/CMW%20Electrical%20Add-in/Panel%20Type%20to%201-Ph.mov?csf=1&web=1&e=JmoRiV");
+            ContextualHelp changeDistContextHelp = new ContextualHelp(ContextualHelpType.Url, 
+                "https://wearelegence.sharepoint.com/:v:/r/sites/CMTAMidwestBIM/Shared%20Documents/Video/CMW%20Electrical%20Add-in/Change%20Distribution.mov?csf=1&web=1&e=2cjJRY");
             pnlTypeToSingleBtn.SetContextualHelp(changeDistContextHelp);
 
 

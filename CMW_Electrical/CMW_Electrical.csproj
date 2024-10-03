@@ -67,6 +67,9 @@
     <Compile Include="AddinInformation\AddinInfoForm.Designer.cs">
       <DependentUpon>AddinInfoForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="AddinInformation\AddinInfoWindow.xaml.cs">
+      <DependentUpon>AddinInfoWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="AlignTagTools\TagAlignCenter.cs" />
     <Compile Include="AlignTagTools\TagAlignBottomAndCenter.cs" />
     <Compile Include="AlignTagTools\TagAlignTopAndCenter.cs" />
@@ -406,6 +409,10 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <Page Include="AddinInformation\AddinInfoWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="CreatePanelSchedules\PhaseSelectWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

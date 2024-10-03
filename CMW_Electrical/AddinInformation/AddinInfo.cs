@@ -19,8 +19,12 @@ namespace AddinInformation
         public Result Execute(ExternalCommandData commandData, ref string errorReport, ElementSet elementSet)
         {
             //start Windows.Form AddinInfoForm
-            cmwElecAddinInfo form = new cmwElecAddinInfo();
-            form.ShowDialog();
+            //cmwElecAddinInfo form = new cmwElecAddinInfo();
+            //form.ShowDialog();
+
+            //start WPF Window
+            AddinInfoWindow window = new AddinInfoWindow();
+            window.ShowDialog();
 
             return Result.Succeeded;
         }
