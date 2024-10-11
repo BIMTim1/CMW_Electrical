@@ -18,14 +18,17 @@ namespace AnnotateByReference
     {
         public Result Execute(ExternalCommandData commandData, ref string errorReport, ElementSet elementSet)
         {
+            #region Autodesk Info
             //define background Revit information to reference
             UIApplication uiapp = commandData.Application;
             Document doc = uiapp.ActiveUIDocument.Document;
             Application app = uiapp.Application;
             UIDocument uidoc = uiapp.ActiveUIDocument;
+            #endregion //Autodesk Info
 
             View activeView = doc.ActiveView;
 
+            #region ViewType Check
             //check ActiveView ViewType
             if (activeView.ViewType != ViewType.FloorPlan)
             {
@@ -34,10 +37,12 @@ namespace AnnotateByReference
 
                 return Result.Cancelled;
             }
+            #endregion //ViewType Check
 
             IList<Element> selTags;
             IList<Reference> selObjReferences;
 
+            #region User Selection
             //begin selection process
             try
             {
@@ -86,7 +91,9 @@ namespace AnnotateByReference
 
                 return Result.Failed;
             }
+            #endregion //User Selection
 
+            #region Transaction / Main Code
             //begin Transaction information
             using (Transaction trac = new Transaction(doc))
             {
@@ -100,7 +107,9 @@ namespace AnnotateByReference
 
                         ElementId tagType = tag.LookupParameter("Type").AsElementId();
                         XYZ tagHeadPosition = tag.TagHeadPosition;
-                        XYZ elementLoc = (tag.GetTaggedLocalElements().First().Location as LocationPoint).Point;
+
+                        Element taggedElem = tag.GetTaggedLocalElements().First();
+                        XYZ elementLoc = GetElementPoint(taggedElem);
                         //bool hasLeader = tag.HasLeader;
                         //bool tagLeaderLanding = tag.HasLeaderElbow(tag.GetTaggedReferences().First());
 
@@ -111,7 +120,7 @@ namespace AnnotateByReference
                         foreach (Reference selRef in selObjReferences)
                         {
                             Element selElem = doc.GetElement(selRef);
-                            XYZ selElemLoc = (selElem.Location as LocationPoint).Point;
+                            XYZ selElemLoc = GetElementPoint(selElem);
 
                             //CreateNewTagHeadPosition
                             XYZ newTagHeadLoc = CreateNewTagHeadPosition(tagHeadOffset, selElemLoc);
@@ -140,6 +149,7 @@ namespace AnnotateByReference
                     return Result.Failed;
                 }
             }
+            #endregion //Transaction / Main Code
         }
 
         public XYZ GetTagHeadOffset(XYZ refTagHeadPos, XYZ refElemPos)
@@ -164,6 +174,24 @@ namespace AnnotateByReference
             XYZ newTagHeadPos = new XYZ(newX, newY, currentElemLoc.Z);
 
             return newTagHeadPos;
+        }
+
+        public XYZ GetElementPoint(Element element)
+        {
+            XYZ elementPoint = new XYZ(0, 0, 0);
+
+            LocationPoint elementLocation = element.Location as LocationPoint;
+
+            if (elementLocation == null)
+            {
+                elementPoint = ((element.Location as LocationCurve).Curve as Line).Origin;
+            }
+            else
+            {
+                elementPoint = elementLocation.Point;
+            }
+
+            return elementPoint;
         }
 
         #region GetSelectionFilters
