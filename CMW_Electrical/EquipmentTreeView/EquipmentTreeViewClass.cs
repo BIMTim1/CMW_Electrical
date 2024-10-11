@@ -37,6 +37,7 @@ namespace EquipmentTreeView
                 .Where(x => x.get_Parameter(bipSupply).AsString() == "")
                 .ToList();
 
+            #region Elements Exist Check
             //cancel if no elements
             if (!source_equip.Any())
             {
@@ -44,6 +45,7 @@ namespace EquipmentTreeView
 
                 return Result.Cancelled;
             }
+            #endregion //Elements Exist Check
 
             //itereate through list of collected equipment
             List<FamilyInstance> filteredEquip = new List<FamilyInstance>();
