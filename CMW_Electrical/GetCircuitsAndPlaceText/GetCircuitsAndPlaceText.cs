@@ -161,11 +161,15 @@ namespace GetCircuitsAndPlaceText
                                     + ef.get_Parameter(BuiltInParameter.RBS_ELEC_CIRCUIT_NUMBER).AsString());
                             }
                         }
+                        
+                        //convert list to HashSet to remove duplicates
+                        HashSet<string> unique_strings = new HashSet<string>(cctValues);
 
                         //sort Circuit info from ElectricalFixtures
-                        cctValues.Sort();
+                        List<string> unique_list = new List<string>(unique_strings);
+                        unique_list.Sort();
 
-                        string output = string.Join("\n", cctValues);
+                        string output = string.Join("\n", unique_list);
 
                         //create TextNote
                         TextNote note = TextNote.Create(doc, activeView.Id, loc, output, tnOptions);

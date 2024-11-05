@@ -11,6 +11,7 @@ using Autodesk.Revit.ApplicationServices;
 using Autodesk.Revit.DB.Electrical;
 using Autodesk.Revit.UI;
 using Autodesk.Revit.UI.Selection;
+using CMW_Electrical.MotorMOCPUpdate;
 
 namespace MotorMOCPUpdate
 {
@@ -21,13 +22,13 @@ namespace MotorMOCPUpdate
     {
         public Result Execute(ExternalCommandData commandData, ref string errorReport, ElementSet elementSet)
         {
+            #region Autodesk Info
             //define background Revit information to reference
             UIApplication uiapp = commandData.Application;
             Document doc = uiapp.ActiveUIDocument.Document;
             Application app = uiapp.Application;
             UIDocument uidoc = uiapp.ActiveUIDocument;
-
-            int count = 0;
+            #endregion //Autodesk Info
 
             //get ActiveDocument RevitVersion
             int rev_version = Int32.Parse(app.VersionNumber);
@@ -44,21 +45,24 @@ namespace MotorMOCPUpdate
                 .Cast<FamilyInstance>()
                 .ToList();
 
+            #region Check Motors Any
             //check if the tool collected any Motor Elements
-            //if no, close the tool.
-            if (all_motors.Count == 0)
+            if (!all_motors.Any())
             {
                 //TaskDialog.Show("No Motors in Project", "There are no Motor Families placed in the Active Project. The tool will now close.");
                 errorReport = "There are no Motor Families placed in the Active Project. The tool will now close.";
 
                 return Result.Cancelled;
             }
+            #endregion //Check Motors Any
 
             using (Transaction trac = new Transaction(doc))
             {
                 try
                 {
                     trac.Start("CMWElec-Update Motor Circuit Load Name from MOCP");
+
+                    List<MotorInfoData> motorInfoData = new List<MotorInfoData>();
 
                     foreach (FamilyInstance motor in all_motors)
                     {
@@ -80,21 +84,16 @@ namespace MotorMOCPUpdate
                             }
 
                             motorCircuit.LookupParameter("Rating").Set(motor_mocp);
-                            count++;
+                            
+                            //add FamilyInstance to code-behind for WPF
+                            motorInfoData.Add(new MotorInfoData(motor));
                         }
                     }
 
                     trac.Commit();
 
-                    TaskDialog results = new TaskDialog("CMW-Elec - Results")
-                    {
-                        TitleAutoPrefix = false,
-                        CommonButtons = TaskDialogCommonButtons.Ok,
-                        MainInstruction = "Results:",
-                        MainContent = $"{count} Motor Circuits have been updated to display the most up to date MOCP information."
-                    };
-
-                    results.Show();
+                    MotorResultsWindow resultsWindow = new MotorResultsWindow(motorInfoData);
+                    resultsWindow.ShowDialog();
 
                     return Result.Succeeded;
                 }

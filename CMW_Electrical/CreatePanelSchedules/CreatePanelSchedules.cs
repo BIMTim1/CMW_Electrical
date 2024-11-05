@@ -21,21 +21,59 @@ namespace CreatePanelSchedules
     {
         public Result Execute(ExternalCommandData commandData, ref string errorReport, ElementSet elementSet)
         {
+            #region Autodesk Info
             UIApplication uiapp = commandData.Application;
             Document doc = uiapp.ActiveUIDocument.Document;
+            #endregion //Autodesk Info
 
             //BuiltInCategory value for Electrical Equipment
             BuiltInCategory bic = BuiltInCategory.OST_ElectricalEquipment;
 
             //collect all Electrical Equipment families
-            List<Element> elecEquip = new FilteredElementCollector(doc).OfCategory(bic).WhereElementIsNotElementType().ToList();
+            List<Element> elecEquip = new FilteredElementCollector(doc)
+                .OfCategory(bic)
+                .WhereElementIsNotElementType()
+                .ToList();
 
+            #region Any Equipment Check
             //cancel tool if no applicable elements
             if (!elecEquip.Any())
             {
                 errorReport = "There are no Electrical Equipment families to create Panelboard Schedules from.";
                 return Result.Cancelled;
             }
+            #endregion //Any Equipment Check
+
+            //get Phases of ActiveDocument
+            PhaseArray phaseArray = doc.Phases;
+            List<PhaseInformation> phaseInfo = new List<PhaseInformation>();
+
+            foreach (Phase ph in phaseArray)
+            {
+                phaseInfo.Add(new PhaseInformation(ph));
+            }
+
+            #region User Phase Select
+            //start Window PhaseSelection
+            PhaseSelectWindow phaseSelectWindow = new PhaseSelectWindow(phaseInfo);
+            phaseSelectWindow.ShowDialog();
+
+            //check if Window canceled
+            if (phaseSelectWindow.DialogResult == false)
+            {
+                errorReport = "User canceled Phase selection. Tool will now cancel.";
+
+                return Result.Cancelled;
+            }
+
+            ElementId selPhaseId = phaseSelectWindow.cboxPhaseSelect.SelectedValue as ElementId;
+
+            elecEquip = (from eq 
+                         in elecEquip 
+                         where eq.get_Parameter(BuiltInParameter.PHASE_CREATED).AsElementId() == selPhaseId 
+                         select eq)
+                         .ToList();
+            #endregion //User Phase Select
 
             //get Revit version number (default string)
             int revNum = int.Parse(uiapp.Application.VersionNumber);
@@ -97,12 +135,16 @@ namespace CreatePanelSchedules
                 catch (Exception ex)
                 {
                     errorReport = ex.Message;
-                    TaskDialog.Show("Panel Schedule Creation Failed", "Panel Schedules failed to create. Contact the BIM Team for assistance.");
+
+                    TaskDialog.Show("Panel Schedule Creation Failed", 
+                        "Panel Schedules failed to create. Contact the BIM Team for assistance.");
+                    
                     return Result.Failed;
                 }
             }
         }
 
+        #region GetCircuitBreakersNum
         public int GetCircuitBreakersNum(Element elem, int revVer)
         {
             int circuitBreakerNum = new int();
@@ -128,7 +170,9 @@ namespace CreatePanelSchedules
 
             return circuitBreakerNum;
         }
+        #endregion //GetCircuitBreakersNum
 
+        #region Panelboard Template Collections
         public List<PanelScheduleTemplate> BranchScheduleTemplates(Document document)
         {
             List<PanelScheduleTemplate> branchTemp = new FilteredElementCollector(document)
@@ -150,7 +194,9 @@ namespace CreatePanelSchedules
 
             return swbdTemp;
         }
+        #endregion //Panelboard Template Collections
 
+        #region CheckExistingSchedule
         public bool CheckExistingSchedule(Element equip)
         {
             bool schedExists = false;
@@ -168,7 +214,9 @@ namespace CreatePanelSchedules
 
             return schedExists;
         }
+        #endregion //CheckExistingSchedule
 
+        #region GetScheduleId
         public ElementId GetScheduleId(string panelName, string phase, string elemName, string electricalData, Document document, int revVer, int cbNumber)
         {
             //create invalid ElementId to compare
@@ -178,80 +226,83 @@ namespace CreatePanelSchedules
 
             if (panelName != null && panelName != "Do Not Use" && panelName != "DO NOT USE" && phase == "None")
             {
-                if (elemName.Contains("Branch"))
+                if (cbNumber != 0)
                 {
-                    //get applicable Branch Panelboard Schedule ElementId
-                    if (Char.GetNumericValue(electricalData[6]) == 3)
+                    if (elemName.Contains("Branch"))
                     {
-                        foreach (PanelScheduleTemplate schTemp in BranchScheduleTemplates(document))
+                        //get applicable Branch Panelboard Schedule ElementId
+                        if (Char.GetNumericValue(electricalData[6]) == 3)
                         {
-                            string testSchName = $"ONE Branch Panel - {cbStr} Circuit";
-                            string schTempName = schTemp.Name;
-
-                            if (testSchName == schTempName)
+                            foreach (PanelScheduleTemplate schTemp in BranchScheduleTemplates(document))
                             {
-                                tempId = schTemp.Id;
+                                string testSchName = $"ONE Branch Panel - {cbStr} Circuit";
+                                string schTempName = schTemp.Name;
+
+                                if (testSchName == schTempName)
+                                {
+                                    tempId = schTemp.Id;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            foreach (PanelScheduleTemplate schTemp in BranchScheduleTemplates(document))
+                            {
+                                string testSchName = "ONE Branch Panel - Single Phase";
+                                string schTempName = schTemp.Name;
+
+                                if (testSchName == schTempName)
+                                {
+                                    tempId = schTemp.Id;
+                                }
                             }
                         }
                     }
                     else
                     {
-                        foreach (PanelScheduleTemplate schTemp in BranchScheduleTemplates(document))
+                        foreach (PanelScheduleTemplate schTemp in SwbdScheduleTemplates(document))
                         {
-                            string testSchName = "ONE Branch Panel - Single Phase";
+                            string testSchName;
+
+                            //set empty int for circuit breaker values
+                            int maxPoles;
+
+                            //divide by 3 or remain as is depending on Revit version
+                            if (revVer < 2022)
+                            {
+                                maxPoles = cbNumber / 3;
+                            }
+                            else
+                            {
+                                maxPoles = cbNumber;
+                            }
+
+                            string maxPolesString = maxPoles.ToString();
                             string schTempName = schTemp.Name;
 
-                            if (testSchName == schTempName)
+                            if (elemName.Contains("Distribution"))
                             {
-                                tempId = schTemp.Id;
+                                testSchName = $"ONE Distribution Panel - {maxPolesString} Space";
+                                if (testSchName == schTempName)
+                                {
+                                    tempId = schTemp.Id;
+                                }
                             }
-                        }
-                    }
-                }
-                else
-                {
-                    foreach (PanelScheduleTemplate schTemp in SwbdScheduleTemplates(document))
-                    {
-                        string testSchName;
-
-                        //set empty int for circuit breaker values
-                        int maxPoles;
-
-                        //divide by 3 or remain as is depending on Revit version
-                        if (revVer < 2022)
-                        {
-                            maxPoles = cbNumber / 3;
-                        }
-                        else
-                        {
-                            maxPoles = cbNumber;
-                        }
-
-                        string maxPolesString = maxPoles.ToString();
-                        string schTempName = schTemp.Name;
-
-                        if (elemName.Contains("Distribution"))
-                        {
-                            testSchName = $"ONE Distribution Panel - {maxPolesString} Space";
-                            if (testSchName == schTempName)
+                            else if (elemName.Contains("MCC"))
                             {
-                                tempId = schTemp.Id;
+                                testSchName = $"ONE MCC - {maxPolesString} Space";
+                                if (testSchName == schTempName)
+                                {
+                                    tempId = schTemp.Id;
+                                }
                             }
-                        }
-                        else if (elemName.Contains("MCC"))
-                        {
-                            testSchName = $"ONE MCC - {maxPolesString} Space";
-                            if (testSchName == schTempName)
+                            else if (elemName.Contains("Switchboard"))
                             {
-                                tempId = schTemp.Id;
-                            }
-                        }
-                        else if (elemName.Contains("Switchboard"))
-                        {
-                            testSchName = $"ONE Switchboard - {maxPolesString} Space";
-                            if (testSchName == schTempName)
-                            {
-                                tempId = schTemp.Id;
+                                testSchName = $"ONE Switchboard - {maxPolesString} Space";
+                                if (testSchName == schTempName)
+                                {
+                                    tempId = schTemp.Id;
+                                }
                             }
                         }
                     }
@@ -260,5 +311,6 @@ namespace CreatePanelSchedules
 
             return tempId;
         }
+        #endregion //GetScheduleId
     }
 }

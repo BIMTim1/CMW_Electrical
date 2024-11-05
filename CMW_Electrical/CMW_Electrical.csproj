@@ -37,6 +37,7 @@
       <Private>False</Private>
     </Reference>
     <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
     <Reference Include="RevitAPI">
       <HintPath>..\..\..\..\..\..\..\Program Files\Autodesk\Revit 2023\RevitAPI.dll</HintPath>
       <Private>False</Private>
@@ -49,12 +50,14 @@
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xaml" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
+    <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AddinInformation\AddinInfo.cs" />
@@ -63,6 +66,9 @@
     </Compile>
     <Compile Include="AddinInformation\AddinInfoForm.Designer.cs">
       <DependentUpon>AddinInfoForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="AddinInformation\AddinInfoWindow.xaml.cs">
+      <DependentUpon>AddinInfoWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="AlignTagTools\TagAlignCenter.cs" />
     <Compile Include="AlignTagTools\TagAlignBottomAndCenter.cs" />
@@ -95,12 +101,16 @@
     <Compile Include="ChangeWorksetFromSelection\ChangeWorksetFromSelection.cs" />
     <Compile Include="CMW_Electrical_Ribbon.cs" />
     <Compile Include="CorrectLightFixtures\CorrectLightFixtures.cs" />
+    <Compile Include="CreatePanelSchedules\PhaseInformation.cs" />
     <Compile Include="CreatePanelSchedules\CreatePanelSchedules.cs" />
     <Compile Include="CreatePanelSchedules\PanelSchedCreatedForm.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="CreatePanelSchedules\PanelSchedCreatedForm.Designer.cs">
       <DependentUpon>PanelSchedCreatedForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="CreatePanelSchedules\PhaseSelectWindow.xaml.cs">
+      <DependentUpon>PhaseSelectWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="DeviceSymbolsRotate\DeviceSymbolsRotate.cs" />
     <Compile Include="EquipCircuitUpdate\EquipCircuitUpdate.cs" />
@@ -122,7 +132,11 @@
       <DependentUpon>EnterSpaceNameForm.cs</DependentUpon>
     </Compile>
     <Compile Include="GetCircuitsAndPlaceText\GetCircuitsAndPlaceText.cs" />
+    <Compile Include="MotorMOCPUpdate\MotorInfoData.cs" />
     <Compile Include="MotorMOCPUpdate\UpdateMotorMOCP.cs" />
+    <Compile Include="MotorMOCPUpdate\MotorResultsWindow.xaml.cs">
+      <DependentUpon>MotorResultsWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="MotorUIDUpdate\MotorsUpdatedForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -393,6 +407,20 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Include="AddinInformation\AddinInfoWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="CreatePanelSchedules\PhaseSelectWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="MotorMOCPUpdate\MotorResultsWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

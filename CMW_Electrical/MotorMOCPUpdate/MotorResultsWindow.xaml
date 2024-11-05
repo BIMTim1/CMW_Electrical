@@ -1,0 +1,63 @@
+﻿<Window x:Class="CMW_Electrical.MotorMOCPUpdate.MotorResultsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+        xmlns:local="clr-namespace:CMW_Electrical.MotorMOCPUpdate"
+        mc:Ignorable="d" 
+        d:DesignHeight="450" d:DesignWidth="800" Title="CMW-Elec - MOCP Update Results" MaxHeight="450" SizeToContent="WidthAndHeight" ResizeMode="NoResize" 
+        Topmost="True" WindowStartupLocation="CenterOwner" FontSize="14" FontFamily="GlobalUserInterface">
+
+    <Border Padding="10">
+        <StackPanel>
+            <DataGrid Name="dataGridMotors" AutoGenerateColumns="False">
+                <DataGrid.ColumnHeaderStyle>
+                    <Style TargetType="{x:Type DataGridColumnHeader}">
+                        <Setter Property="HorizontalContentAlignment" Value="Center"/>
+                    </Style>
+                </DataGrid.ColumnHeaderStyle>
+                
+                <DataGrid.Columns>
+                    <DataGridTemplateColumn Header="UID" MinWidth="150">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding GetMotorUID}" TextAlignment="Center"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+
+                    <DataGridTemplateColumn Header="Level" MinWidth="150">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding GetLevelName}" TextAlignment="Center"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+
+                    <DataGridTemplateColumn Header="MOCP" MinWidth="150">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding GetMOCP}" TextAlignment="Center"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    
+                </DataGrid.Columns>
+
+            </DataGrid>
+
+            <Grid Margin="0,10,0,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="auto"/>
+                </Grid.ColumnDefinitions>
+
+                <Button Content="Close" Name="btnClose" IsEnabled="True" Width="75" Grid.Column="3" IsDefault="True" Click="btnClose_Click"/>
+
+            </Grid>
+
+        </StackPanel>
+        
+    </Border>
+
+</Window>
