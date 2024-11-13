@@ -776,6 +776,23 @@ namespace CMW_Electrical
             ContextualHelp changeWorksetFromSelectionContextHelp = new ContextualHelp(ContextualHelpType.Url, 
                 "https://wearelegence.sharepoint.com/:v:/r/sites/CMTAMidwestBIM/Shared%20Documents/Video/CMW%20Electrical%20Add-in/Make%20Workset%20Current.mov?csf=1&web=1&e=xeNzYE");
             changeWorksetFromSelectionBtn.SetContextualHelp(changeWorksetFromSelectionContextHelp);
+
+
+            PushButtonData createFeederInfoData = new PushButtonData(
+                "createFeederInfo",
+                "Add to" + System.Environment.NewLine + " Feeder ",
+                thisAssemblyPath,
+                "CreateFeederInfo.CreateFeederInformation")
+            {
+                LargeImage = new BitmapImage(new Uri($"{uriPath}CreateFeederInfo32x32.png")),
+                Image = new BitmapImage(new Uri($"{uriPath}CreateFeederInfo16x16.png")),
+                ToolTip = "Add an Electrical Equipment Electrical Circuit to the CMTA Midwest feeder schedule."
+            };
+
+            PushButton createFeederInfoBtn = circuitPanel.AddItem(createFeederInfoData) as PushButton;
+            //set Contextual Help for PushButton
+            //ContextualHelp createFeederInfoContextHelp = new ContextualHelp(ContextualHelpType.Url, "");
+            //createFeederInfoBtn.SetContextualHelp(createFeederInfoContextHelp);
         }
 
         public Result OnShutdown(UIControlledApplication application)
