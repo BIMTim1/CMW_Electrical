@@ -239,7 +239,7 @@ namespace CMW_Electrical
             PushButtonData flipFacingOrientData =
                 new PushButtonData(
                     "cmdFlipFacingOrientation",
-                "Flip Lighting" + System.Environment.NewLine + " Host Plane ",
+                "Flip Host" + System.Environment.NewLine + " Plane ",
                 thisAssemblyPath,
                 "FlipFacingOrientation.FlipFacingOrientationBySelection")
                 {
