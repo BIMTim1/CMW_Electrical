@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Autodesk.Revit.DB.Electrical;
+using CMW_Electrical.EquipmentTreeView;
 
 namespace EquipmentTreeView
 {
@@ -29,17 +30,25 @@ namespace EquipmentTreeView
             BuiltInParameter bipSupply = BuiltInParameter.RBS_ELEC_PANEL_SUPPLY_FROM_PARAM;
             BuiltInParameter bipPanName = BuiltInParameter.RBS_ELEC_PANEL_NAME;
 
-            //collect source equipment
-            List<FamilyInstance> source_equip = new FilteredElementCollector(doc)
+            //collect all Electrical Equipment in model
+            List<FamilyInstance> all_equip = 
+                new FilteredElementCollector(doc)
                 .OfCategory(bic)
                 .OfClass(typeof(FamilyInstance))
-                .ToElements().Cast<FamilyInstance>()
-                .Where(x => x.get_Parameter(bipSupply).AsString() == "")
+                .Cast<FamilyInstance>()
                 .ToList();
+
+            //collect source equipment
+            //List<FamilyInstance> source_equip = new FilteredElementCollector(doc)
+            //    .OfCategory(bic)
+            //    .OfClass(typeof(FamilyInstance))
+            //    .ToElements().Cast<FamilyInstance>()
+            //    .Where(x => x.get_Parameter(bipSupply).AsString() == "")
+            //    .ToList();
 
             #region Elements Exist Check
             //cancel if no elements
-            if (!source_equip.Any())
+            if (!all_equip.Any())
             {
                 errorReport = "There are no elements to be referenced by the tool. The tool will now cancel.";
 
@@ -50,32 +59,27 @@ namespace EquipmentTreeView
             //itereate through list of collected equipment
             List<FamilyInstance> filteredEquip = new List<FamilyInstance>();
 
-            foreach (FamilyInstance eq in source_equip)
-            {
-                ISet<ElectricalSystem> elecSys = eq.MEPModel.GetElectricalSystems();
+            //foreach (FamilyInstance eq in source_equip)
+            //{
+            //    ISet<ElectricalSystem> elecSys = eq.MEPModel.GetElectricalSystems();
 
-                foreach (ElectricalSystem cct in elecSys)
-                {
-                    if (cct.BaseEquipment != null && cct.BaseEquipment.Name == eq.get_Parameter(bipPanName).AsString() && cct.Elements.Size == 1)
-                    {
-                        foreach (Element elem in cct.Elements)
-                        {
-                            if (elem.Category.Name == "Electrical Equipment")
-                            {
-                                filteredEquip.Add(eq);
-                            }
-                        }
-                    }
-                }
-            }
+            //    foreach (ElectricalSystem cct in elecSys)
+            //    {
+            //        if (cct.BaseEquipment != null && cct.BaseEquipment.Name == eq.get_Parameter(bipPanName).AsString() && cct.Elements.Size == 1)
+            //        {
+            //            foreach (Element elem in cct.Elements)
+            //            {
+            //                if (elem.Category.Name == "Electrical Equipment")
+            //                {
+            //                    filteredEquip.Add(eq);
+            //                }
+            //            }
+            //        }
+            //    }
+            //}
 
-            //check if any elements match criteria
-            if (!filteredEquip.Any())
-            {
-                errorReport = "There are no elements to be referenced by the tool. The tool will now cancel.";
-
-                return Result.Cancelled;
-            }
+            EquipmentTreeForm equipForm = new EquipmentTreeForm(all_equip);
+            equipForm.ShowDialog();
 
             return Result.Succeeded;
         }

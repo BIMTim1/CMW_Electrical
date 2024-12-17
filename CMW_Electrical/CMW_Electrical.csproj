@@ -105,6 +105,12 @@
     <Compile Include="EquipCircuitUpdate\EquipCircuitUpdate.cs" />
     <Compile Include="EquipmentTreeView\EquipmentReference.cs" />
     <Compile Include="EquipmentTreeView\EquipmentTreeViewClass.cs" />
+    <Compile Include="EquipmentTreeView\EquipmentTreeForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="EquipmentTreeView\EquipmentTreeForm.Designer.cs">
+      <DependentUpon>EquipmentTreeForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="EquipNameUpdate\EquipNameUpdate.cs" />
     <Compile Include="EquipNameUpdate\EquipNameUpdateForm.cs">
       <SubType>Form</SubType>
@@ -349,6 +355,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="CreatePanelSchedules\PanelSchedCreatedForm.resx">
       <DependentUpon>PanelSchedCreatedForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="EquipmentTreeView\EquipmentTreeForm.resx">
+      <DependentUpon>EquipmentTreeForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="EquipNameUpdate\EquipNameUpdateForm.resx">
       <DependentUpon>EquipNameUpdateForm.cs</DependentUpon>
