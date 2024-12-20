@@ -239,7 +239,7 @@ namespace CMW_Electrical
             PushButtonData flipFacingOrientData =
                 new PushButtonData(
                     "cmdFlipFacingOrientation",
-                "Flip Lighting" + System.Environment.NewLine + " Host Plane ",
+                "Flip Host" + System.Environment.NewLine + " Plane ",
                 thisAssemblyPath,
                 "FlipFacingOrientation.FlipFacingOrientationBySelection")
                 {
@@ -247,7 +247,7 @@ namespace CMW_Electrical
                         $"{uriPath}FlipFacingOrientation32x32.png")),
                     Image = new BitmapImage(new Uri(
                         $"{uriPath}FlipFacingOrientation16x16.png")),
-                    ToolTip = "Using a Selection Window, select multiple Lighting Fixtures to Flip the Facing Orientation."
+                    ToolTip = "Using a Selection Window, select multiple electrical Devices or Fixtures to Flip the Facing Orientation."
                 };
             PushButton flipFacingOrientBtn = devicePanel.AddItem(flipFacingOrientData) as PushButton;
             //set ContextualHelp for PushButton
