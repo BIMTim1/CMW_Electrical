@@ -21,6 +21,7 @@ namespace CMW_Electrical
         private readonly Parameter DICurrent;
         private readonly Parameter DIPhasing;
         private readonly Parameter DIEqConIdConnSource;
+        //private readonly Parameter DISCCR;
 
         public DetailItemInfo(Element detailItem)
         {
@@ -32,7 +33,7 @@ namespace CMW_Electrical
             DICurrent = DIFamInst.LookupParameter("Current - Detail");
             DIPhasing = DIFamInst.LookupParameter("New, Existing, Demo (1,2,3)");
             DIEqConIdConnSource = DIFamInst.LookupParameter("EqConId Connection Source");
-
+            //DISCCR = DIFamInst.LookupParameter("Short Circuit Rating - Detail");
             //collect converted voltage information
             string paramName;
 
@@ -142,5 +143,14 @@ namespace CMW_Electrical
             get { return DIPhasing.AsInteger(); }
             set { DIPhasing.Set(value); }
         }
+
+        ///// <summary>
+        ///// Get or set the Short Circuit Rating - Detail parameter of this DetailItem.
+        ///// </summary>
+        //public double SCCR
+        //{
+        //    get { return DISCCR.AsDouble(); }
+        //    set { DISCCR.Set(value); }
+        //}
     }
 }

@@ -14,7 +14,7 @@
 
             <ComboBox Name="cboxPhaseSelect" Width="250" HorizontalAlignment="Left"
                       SelectionChanged="Selection_Changed"
-                      DisplayMemberPath="GetPhaseName" SelectedValuePath="GetPhaseElementId"/>
+                      DisplayMemberPath="Name" SelectedValuePath="Id"/>
             
             <Grid Margin="0,10,0,0">
                 <Grid.ColumnDefinitions>
