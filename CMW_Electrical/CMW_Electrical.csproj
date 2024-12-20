@@ -102,7 +102,6 @@
     <Compile Include="CMW_Electrical_Ribbon.cs" />
     <Compile Include="CorrectLightFixtures\CorrectLightFixtures.cs" />
     <Compile Include="CreateFeederInfo\CreateFeederInformation.cs" />
-    <Compile Include="CreatePanelSchedules\PhaseInformation.cs" />
     <Compile Include="CreatePanelSchedules\CreatePanelSchedules.cs" />
     <Compile Include="CreatePanelSchedules\PanelSchedCreatedForm.cs">
       <SubType>Form</SubType>

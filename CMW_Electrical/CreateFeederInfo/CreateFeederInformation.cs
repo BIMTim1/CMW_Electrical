@@ -50,40 +50,22 @@ namespace CreateFeederInfo
             }
             #endregion //User Selection
 
-            //check if selected element has an Electrical Circuit
+            #region Check Selected Equipment Circuit
+            //collect Equipment information
             FamilyInstance selEquip = doc.GetElement(selRef) as FamilyInstance;
 
             //check for created electrical circuit
-            string noCircuitText = "Selected Electrical Equipment does not contain an Electrical Circuit. The tool will now cancel.";
+            string equipName = selEquip.get_Parameter(BuiltInParameter.RBS_ELEC_PANEL_NAME).AsString();
             ISet<ElectricalSystem> equipCircuits = selEquip.MEPModel.GetElectricalSystems();
 
-            if (!equipCircuits.Any())
-            {
-                errorReport = noCircuitText;
-
-                return Result.Cancelled;
-            }
-
-            ElectricalSystem equipCircuit = null;
-            string equipName = selEquip.get_Parameter(BuiltInParameter.RBS_ELEC_PANEL_NAME).AsString();
-
-            //iterate through ISet of ElectricalSystems
-            foreach (ElectricalSystem elecSys in equipCircuits)
-            {
-                string baseEquipName = elecSys.BaseEquipment.Name;
-
-                if (baseEquipName != equipName)
-                {
-                    equipCircuit = elecSys;
-                }
-            }
+            ElectricalSystem equipCircuit = GetEquipmentCircuit(equipCircuits, equipName);
 
             if (equipCircuit == null)
             {
-                errorReport = noCircuitText;
-
+                errorReport = "Selected Electrical Equipment does not contain an Electrical Circuit. The tool will now cancel.";
                 return Result.Cancelled;
-            }
+            } 
+            #endregion //Check Selected Equipment Circuit
 
             //update Equipment ElectricalSystem information
             using (Transaction trac = new Transaction(doc))
@@ -106,5 +88,28 @@ namespace CreateFeederInfo
 
             return Result.Succeeded;
         }
+
+        #region GetEquipmentCircuit method
+        public ElectricalSystem GetEquipmentCircuit(ISet<ElectricalSystem> electricalSystems, string equipmentName)
+        {
+            ElectricalSystem equipmentSystem = null;
+
+            if (electricalSystems.Any())
+            {
+                foreach (ElectricalSystem electricalSystem in electricalSystems)
+                {
+                    //string baseEquipmentName = electricalSystem.BaseEquipment.Name;
+                    FamilyInstance baseEquipment = electricalSystem.BaseEquipment;
+
+                    if (baseEquipment == null || baseEquipment.Name == equipmentName)
+                    {
+                        equipmentSystem = electricalSystem;
+                    }
+                }
+            }
+
+            return equipmentSystem;
+        }
+        #endregion //GetEquipmentCircuit method
     }
 }

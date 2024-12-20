@@ -533,7 +533,6 @@ namespace CMW_Electrical
             //oneLineHalftoneExistingBtn.SetContextualHelp(contextHelp);
 
 
-
             ////create pushbuttons for AlignTagTools
             //PushButtonData tagAlignTopData = 
             //    new PushButtonData(
@@ -752,7 +751,7 @@ namespace CMW_Electrical
 
             PushButtonData createFeederInfoData = new PushButtonData(
                 "createFeederInfo",
-                "Add to" + System.Environment.NewLine + " Feeder ",
+                "Add" + System.Environment.NewLine + " Feeder ",
                 thisAssemblyPath,
                 "CreateFeederInfo.CreateFeederInformation")
             {
