@@ -16,8 +16,8 @@ namespace CMW_Electrical
 {
     public class CMW_Electrical_Ribbon : IExternalApplication
     {
-        public const string versionNumber = "1.0.0";
-        public const string releaseDate = "November 2024";
+        public const string versionNumber = "1.1.0";
+        public const string releaseDate = "January 2025";
         public const string bimProjectUrl = "https://wearelegence.sharepoint.com/:l:/r/sites/CMTAMidwestBIM/Lists/CMW%20Electrical%20Tools?e=e8U3xA";
 
         static void AddRibbonPanel(UIControlledApplication application)
@@ -510,38 +510,10 @@ namespace CMW_Electrical
                 "then this tool can clear the existing value to prepare the family for a different connection."
                 };
 
-            PushButton oneLineAssociateBtn = oneLinePanel.AddItem(oneLineAssociateData) as PushButton;
-            //oneLineAssociateBtn.SetContextualHelp(contextHelp);
-
-            PushButton oneLinePlaceEquipBtn = oneLinePanel.AddItem(oneLinePlaceEquipData) as PushButton;
-            //oneLinePlaceEquipBtn.SetContextualHelp(contextHelp);
-
-            //PushButton oneLineConnectAndPlaceBtn = oneLinePanel.AddItem(oneLineConnectAndPlaceData) as PushButton;
-            PushButton oneLineConnectBtn = oneLinePanel.AddItem(oneLineConnectData) as PushButton;
-            //oneLineConnectBtn.SetContextualHelp(contextHelp);
-
-            oneLinePanel.AddSeparator();
-
-            PushButton oneLineUpdateDesignationsBtn = oneLinePanel.AddItem(oneLineUpdateDesignationsData) as PushButton;
-            //oneLineUpdateDesignationsBtn.SetContextualHelp(contextHelp);
-
-            PushButton oneLineRemoveBtn = oneLinePanel.AddItem(oneLineRemoveData) as PushButton;
-            //oneLineRemoveBtn.SetContextualHelp(contextHelp);
-
-            PushButton oneLineClearBtn = oneLinePanel.AddItem(oneLineClearData) as PushButton;
-            //oneLineClearBtn.SetContextualHelp(contextHelp);
-
-            oneLinePanel.AddSeparator();
-
-            PushButton oneLineCopyBtn = oneLinePanel.AddItem(oneLineCopy) as PushButton;
-            //oneLineCopyBtn.SetContextualHelp(contextHelp);
-
-            PushButton oneLineDrawBtn = oneLinePanel.AddItem(oneLineDrawData) as PushButton;
-            //oneLineDrawBtn.SetContextualHelp(contextHelp);
-
-            PushButton oneLineSelectBtn = oneLinePanel.AddItem(oneLineSelectData) as PushButton;
-            //oneLineSelectBtn.SetContextualHelp(contextHelp);
-            //PushButton oneLineFindBtn = oneLinePanel.AddItem(oneLineFindData) as PushButton;
+            List<RibbonItem> oneLineStackedItems = new List<RibbonItem>();
+            oneLineStackedItems.AddRange(oneLinePanel.AddStackedItems(oneLineAssociateData, oneLinePlaceEquipData, oneLineConnectData));
+            oneLineStackedItems.AddRange(oneLinePanel.AddStackedItems(oneLineUpdateDesignationsData, oneLineRemoveData, oneLineClearData));
+            oneLineStackedItems.AddRange(oneLinePanel.AddStackedItems(oneLineCopy, oneLineDrawData, oneLineSelectData));
 
             PulldownButtonData oneLineFindButtonData = new PulldownButtonData("findSplitButton", "Find")
             {
