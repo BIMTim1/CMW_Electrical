@@ -101,7 +101,8 @@ namespace OneLinePlaceEquip
                     "Utility Transformer",
                     "Automatic Transfer Switch",
                     "Distribution Panelboard",
-                    "Switchboard"
+                    "Switchboard",
+                    "CT Cabinet"
                 };
 
                 foreach (string item in detailItemTypes)
