@@ -26,6 +26,20 @@ namespace CreateFeederInfo
             UIDocument uidoc = uiapp.ActiveUIDocument;
             #endregion //Autodesk Info
 
+            View activeView = doc.ActiveView;
+
+            #region ViewType check
+            //check active view type
+            if (activeView.ViewType != ViewType.FloorPlan || activeView.ViewType != ViewType.ThreeD || activeView.ViewType != ViewType.Section)
+            {
+                elementSet.Insert(activeView);
+
+                errorReport = "Incorrect View Type. Change the active view to a FloorPlan, 3D, or Section view and rerun the tool.";
+
+                return Result.Cancelled;
+            }
+            #endregion //ViewType check
+
             Reference selRef;
             ISelectionFilter selFilter = new CMWElecSelectionFilter.EquipmentSelectionFilter();
             string feederValue = "PANEL FEEDER";
