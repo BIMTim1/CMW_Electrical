@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Controls;
 
 namespace OneLineTools
 {
@@ -33,6 +34,13 @@ namespace OneLineTools
 
             double placedYOffset = newDetailItem.Symbol.get_BoundingBox(activeView).Max[1];
 
+            FamilySymbol cbSymbol = new FilteredElementCollector(document)
+                .OfCategory(BuiltInCategory.OST_DetailComponents)
+                .OfClass(typeof(FamilySymbol))
+                .Where(x => x.Name.Contains("Circuit"))
+                .Cast<FamilySymbol>()
+                .First();
+
             if (selectedDetailItem.Name.Contains("Bus"))
             {
                 XYZ busPoint = (selectedDetailItem.Location as LocationPoint).Point;
@@ -40,13 +48,12 @@ namespace OneLineTools
                 double selBBCenterX = selBB.Max.X - ((selBB.Max.X - selBB.Min.X) / 2);
                 selCenterX = busPoint.X + selBBCenterX;
 
-                FamilySymbol cbSymbol = new FilteredElementCollector(document)
-                    .OfCategory(BuiltInCategory.OST_DetailComponents)
-                    .OfClass(typeof(FamilySymbol))
-                    .Where(x => x.Name.Contains("Circuit"))
-                    .Cast<FamilySymbol>()
-                    .First();
-
+                //FamilySymbol cbSymbol = new FilteredElementCollector(document)
+                //    .OfCategory(BuiltInCategory.OST_DetailComponents)
+                //    .OfClass(typeof(FamilySymbol))
+                //    .Where(x => x.Name.Contains("Circuit"))
+                //    .Cast<FamilySymbol>()
+                //    .First();
 
                 XYZ cbPlacePoint = new XYZ(selCenterX, busPoint.Y, busPoint.Z);
 
@@ -65,6 +72,12 @@ namespace OneLineTools
                 startPoint = new XYZ(cbInstLoc.X, cbInstBB.Min.Y, cbInstLoc.Z);
                 selYOffset = 0;
             }
+            //else if (selectedDetailItem.Name.Contains("CT"))
+            //{
+            //    XYZ ctPoint = (selectedDetailItem.Location as LocationPoint).Point;
+
+
+            //}
             else
             {
                 startPoint = (selectedDetailItem.Location as LocationPoint).Point;
