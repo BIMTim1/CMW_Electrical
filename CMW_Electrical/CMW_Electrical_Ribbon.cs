@@ -764,6 +764,23 @@ namespace CMW_Electrical
             //set Contextual Help for PushButton
             //ContextualHelp createFeederInfoContextHelp = new ContextualHelp(ContextualHelpType.Url, "");
             //createFeederInfoBtn.SetContextualHelp(createFeederInfoContextHelp);
+
+
+            PushButtonData conduitFromEquipmentData = new PushButtonData(
+                "createConduitFromEquipment", 
+                "Conduit from" + System.Environment.NewLine + " Equipment", 
+                thisAssemblyPath, 
+                "ConduitFromEquipmentCircuit.ConduitFromEquipmentCircuit")
+            {
+                LargeImage = new BitmapImage(new Uri($"{uriPath}ConduitFromEquipment32x32.png")),
+                Image = new BitmapImage(new Uri($"{uriPath}ConduitFromEquipment16x16.png")),
+                ToolTip = "Create a Conduit run from a selected Electrical Equipment instance to its connected source distribution Electrical Equipment."
+            };
+
+            PushButton conduitFromEquipmentBtn = equipPanel.AddItem(conduitFromEquipmentData) as PushButton;
+            //set Contextual Help for PushButton
+            //ContextualHelp conduitFromEquipmentContextHelp = new ContextualHelp(ContextualHelpType.Url, "";
+            //conduitFromEquipmentBtn.SetContextualHelp(conduitFromEquipmentContextHelp);
         }
 
         public Result OnShutdown(UIControlledApplication application)
