@@ -79,6 +79,11 @@
     <Compile Include="AlignTagTools\TagAlign.cs" />
     <Compile Include="AlignTagTools\TagAlignTop.cs" />
     <Compile Include="AnnotateByReference\TagByReference.cs" />
+    <Compile Include="ArrayCopy\ArrayCopy.cs" />
+    <Compile Include="ArrayCopy\ArrayInfoWindow.xaml.cs">
+      <DependentUpon>ArrayInfoWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ArrayCopy\ArrayData.cs" />
     <Compile Include="ChangePanelToSinglePhase\DistributionSelectionForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -346,6 +351,8 @@
     <Resource Include="Resources\CreateFeederInfo32x32.png" />
     <Resource Include="Resources\ConduitFromEquipment16x16.png" />
     <Resource Include="Resources\ConduitFromEquipment32x32.png" />
+    <Resource Include="Resources\ArrayCopy16x16.png" />
+    <Resource Include="Resources\ArrayCopy32x32.png" />
     <Content Include="_Addin\CMW_Electrical.addin">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -415,6 +422,10 @@
   </ItemGroup>
   <ItemGroup>
     <Page Include="AddinInformation\AddinInfoWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ArrayCopy\ArrayInfoWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
