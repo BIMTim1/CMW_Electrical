@@ -781,6 +781,23 @@ namespace CMW_Electrical
             //set Contextual Help for PushButton
             //ContextualHelp conduitFromEquipmentContextHelp = new ContextualHelp(ContextualHelpType.Url, "";
             //conduitFromEquipmentBtn.SetContextualHelp(conduitFromEquipmentContextHelp);
+
+
+            PushButtonData arrayCopyData = new PushButtonData(
+                "copyArray", 
+                "Array" + System.Environment.NewLine + " Lighting ", 
+                thisAssemblyPath, 
+                "ArrayCopy.ArrayCopy")
+            {
+                LargeImage = new BitmapImage(new Uri($"{uriPath}ArrayCopy32x32.png")),
+                Image = new BitmapImage(new Uri($"{uriPath}ArrayCopy16x16.png")),
+                ToolTip = "Copy selected Lighting Fixture in an X,Y array."
+            };
+
+            PushButton arrayCopyBtn = devicePanel.AddItem(arrayCopyData) as PushButton;
+            //set Contextual Help for PushButton
+            //ContextualHelp arrayCopyContextHelp = new ContextualHelp(ContextualHelpType.Url, "");
+            //arrayCopyBtn.SetContextualHelp(arrayCopyContextHelp);
         }
 
         public Result OnShutdown(UIControlledApplication application)
