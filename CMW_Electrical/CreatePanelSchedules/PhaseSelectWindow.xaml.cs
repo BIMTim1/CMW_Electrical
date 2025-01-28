@@ -20,14 +20,11 @@ namespace CMW_Electrical.CreatePanelSchedules
 {
     public partial class PhaseSelectWindow : Window
     {
-        private ObservableCollection<PhaseInformation> _formInput;
-        public PhaseSelectWindow(List<PhaseInformation> phaseInformation)
+        public PhaseSelectWindow(List<Phase> phase_list)//List<PhaseInformation> phaseInformation)
         {
             InitializeComponent();
 
-            _formInput = new ObservableCollection<PhaseInformation>(phaseInformation);
-
-            cboxPhaseSelect.ItemsSource = _formInput.OrderBy(x => x.GetPhaseName);
+            cboxPhaseSelect.ItemsSource = phase_list.OrderBy(x => x.Name);
         }
 
         public void Button_Click(object sender, RoutedEventArgs routedEventArgs)

@@ -92,6 +92,11 @@ namespace CMW_Electrical.OneLineTools.OneLine_PlaceEquip
                     cboxFamilyTypeSelection.SelectedIndex = 1;
                     cboxFamilyTypeSelection.Enabled = true;
                 }
+                else if (compStr.Contains("CT"))
+                {
+                    cboxFamilyTypeSelection.SelectedIndex = 6;
+                    cboxFamilyTypeSelection.Enabled = false;
+                }
                 else
                 {
                     cboxFamilyTypeSelection.SelectedIndex = 3;

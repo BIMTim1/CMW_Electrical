@@ -221,6 +221,7 @@ namespace CMW_Electrical
                     "Electrical Fixtures",
                     "Fire Alarm Devices",
                     "Lighting Devices",
+                    "Lighting Fixtures",
                     "Nurse Call Devices",
                     "Telephone Devices",
                     "Security Devices"

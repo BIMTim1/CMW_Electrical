@@ -46,16 +46,16 @@ namespace CreatePanelSchedules
 
             //get Phases of ActiveDocument
             PhaseArray phaseArray = doc.Phases;
-            List<PhaseInformation> phaseInfo = new List<PhaseInformation>();
 
+            List<Phase> phase_list = new List<Phase>();
             foreach (Phase ph in phaseArray)
             {
-                phaseInfo.Add(new PhaseInformation(ph));
+                phase_list.Add(ph);
             }
 
             #region User Phase Select
             //start Window PhaseSelection
-            PhaseSelectWindow phaseSelectWindow = new PhaseSelectWindow(phaseInfo);
+            PhaseSelectWindow phaseSelectWindow = new PhaseSelectWindow(phase_list);
             phaseSelectWindow.ShowDialog();
 
             //check if Window canceled

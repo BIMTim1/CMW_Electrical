@@ -12,6 +12,7 @@ using Autodesk.Revit.DB.Electrical;
 using Autodesk.Revit.UI;
 using Autodesk.Revit.UI.Selection;
 using CMW_Electrical;
+using System.Windows.Media.Converters;
 
 namespace FlipFacingOrientation
 {
@@ -22,13 +23,16 @@ namespace FlipFacingOrientation
     {
         public Result Execute(ExternalCommandData commandData, ref string errorReport, ElementSet elementSet)
         {
+            #region Autodesk Info
             //define background Revit information to reference
             UIApplication uiapp = commandData.Application;
             Document doc = uiapp.ActiveUIDocument.Document;
             UIDocument uidoc = uiapp.ActiveUIDocument;
 
             View activeView = doc.ActiveView;
+            #endregion //Autodesk Info
 
+            #region ActiveView check
             //check for correct activeView
             if (activeView.ViewType != ViewType.FloorPlan && activeView.ViewType != ViewType.CeilingPlan && activeView.ViewType != ViewType.Section)
             {
@@ -36,57 +40,102 @@ namespace FlipFacingOrientation
 
                 return Result.Cancelled;
             }
+            #endregion //ActiveView check
 
-            List<Element> user_selection;
+            #region Pre-Selection Check
+            bool userSelect = false;
+            List<FamilyInstance> user_selection = new List<FamilyInstance>();
 
-            try
+            //ICollection<ElementId> selectedElementIds = uidoc.Selection.GetElementIds();
+            List<FamilyInstance> selectedElementIds = (from e 
+                                                       in uidoc.Selection.GetElementIds() 
+                                                       select doc.GetElement(e))
+                                                       .Cast<FamilyInstance>()
+                                                       .ToList();
+
+            if (!selectedElementIds.Any())
             {
-                ISelectionFilter selection_filter = new CMWElecSelectionFilter.LightingSelectionFilter();
-
-                string selection_prompt = "Select Elements by Rectangle to Flip Host";
-
-                user_selection = uidoc.Selection.PickElementsByRectangle(selection_filter, selection_prompt).ToList();
+                userSelect = true;
             }
-
-            catch (OperationCanceledException ex)
+            else
             {
-                TaskDialog.Show("User Canceled Operation", "The tool has been canceled. Rerun the tool to start the process again.");
+                List<FamilyInstance> filtered_selected =
+                CheckRotatedHostPlane(
+                    selectedElementIds,
+                    doc);
 
-                return Result.Cancelled;
+                if (!filtered_selected.Any())
+                {
+                    userSelect = true;
+                }
+                else
+                {
+                    user_selection = filtered_selected;
+                }
             }
-            catch (Exception ex)
+            #endregion //Pre-Selection Check
+
+            #region User Selection
+            if (userSelect)
             {
-                errorReport = ex.Message;
-                elementSet.Insert(doc.ActiveView);
+                try
+                {
+                    ISelectionFilter selection_filter = new CMWElecSelectionFilter.ElectricalCategoryFilter();
 
-                return Result.Failed;
+                    string selection_prompt = "Select Elements by Rectangle to Flip Host";
+
+                    List<FamilyInstance> selection = uidoc.Selection.PickElementsByRectangle(
+                        selection_filter, 
+                        selection_prompt)
+                        .Cast<FamilyInstance>()
+                        .ToList();
+
+                    user_selection = CheckRotatedHostPlane(selection, doc);
+
+                    if (!user_selection.Any())
+                    {
+                        throw new OperationCanceledException();
+                    }
+                }
+
+                catch (Autodesk.Revit.Exceptions.OperationCanceledException ex)
+                {
+                    TaskDialog.Show("User Canceled Operation", "The tool has been canceled. Rerun the tool to start the process again.");
+
+                    return Result.Cancelled;
+                }
+                catch (Exception ex)
+                {
+                    errorReport = ex.Message;
+                    elementSet.Insert(doc.ActiveView);
+
+                    return Result.Failed;
+                }
             }
+            #endregion //User Selection
+
             using (Transaction trac = new Transaction(doc))
             {
                 try
                 {
-                    trac.Start("CMWElec-Flip Work Plane of Selected Lighting Fixtures");
+                    trac.Start("CMWElec-Flip Work Plane of Selected Electrical Elements");
 
                     int count = 0;
 
-                    foreach (FamilyInstance lighting_fixture in user_selection)
+                    foreach(FamilyInstance famInst in user_selection)
                     {
-                        if (lighting_fixture.CanFlipWorkPlane & lighting_fixture.IsWorkPlaneFlipped)
-                        {
-                            lighting_fixture.IsWorkPlaneFlipped = false;
-                            count++;
-                        }
+                        famInst.IsWorkPlaneFlipped = false;
+                        count++;
                     }
 
                     trac.Commit();
 
-                    //TaskDialog.Show("Lighting Fixtures Modification Complete", $"{count} Lighting Fixtures have had their Host Orientation Flipped.");
                     TaskDialog results = new TaskDialog("CMW-Elec - Results")
                     {
                         TitleAutoPrefix = false,
                         CommonButtons = TaskDialogCommonButtons.Ok,
                         MainInstruction = "Results:",
-                        MainContent = $"{count} Lighting Fixtures have had their Host Orientation Flipped."
+                        MainContent = $"{count} family instances have had their Host Orientation Flipped."
                     };
 
                     results.Show();
@@ -106,5 +155,22 @@ namespace FlipFacingOrientation
                 }
             }
         }
+
+        #region CheckRotatedHostPlane method
+        public List<FamilyInstance> CheckRotatedHostPlane(List<FamilyInstance> selectedObjects, Document document)
+        {
+            List<FamilyInstance> outputList = new List<FamilyInstance>();
+
+            foreach (FamilyInstance familyInstance in selectedObjects)
+            {
+                if (familyInstance.CanFlipWorkPlane & familyInstance.IsWorkPlaneFlipped)
+                {
+                    outputList.Add(familyInstance);
+                }
+            }
+
+            return outputList;
+        }
+        #endregion //CheckRotatedHostPlane method
     }
 }

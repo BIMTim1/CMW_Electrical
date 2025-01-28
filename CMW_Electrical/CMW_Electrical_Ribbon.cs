@@ -16,10 +16,10 @@ namespace CMW_Electrical
 {
     public class CMW_Electrical_Ribbon : IExternalApplication
     {
-        public const string versionNumber = "1.0.0";
-        public const string releaseDate = "September 2024";
+        public const string versionNumber = "1.1.0";
+        public const string releaseDate = "January 2025";
         public const string bimProjectUrl = "https://wearelegence.sharepoint.com/:l:/r/sites/CMTAMidwestBIM/Lists/CMW%20Electrical%20Tools?e=e8U3xA";
-
+        public const string elecVideosFolder = "https://wearelegence.sharepoint.com/:f:/r/sites/CMTAMidwestBIM/Shared%20Documents/Video/CMW%20Electrical%20Add-in";
         static void AddRibbonPanel(UIControlledApplication application)
         {
             //Create a custom ribbon tab
@@ -239,7 +239,7 @@ namespace CMW_Electrical
             PushButtonData flipFacingOrientData =
                 new PushButtonData(
                     "cmdFlipFacingOrientation",
-                "Flip Lighting" + System.Environment.NewLine + " Host Plane ",
+                "Flip Host" + System.Environment.NewLine + " Plane ",
                 thisAssemblyPath,
                 "FlipFacingOrientation.FlipFacingOrientationBySelection")
                 {
@@ -247,7 +247,7 @@ namespace CMW_Electrical
                         $"{uriPath}FlipFacingOrientation32x32.png")),
                     Image = new BitmapImage(new Uri(
                         $"{uriPath}FlipFacingOrientation16x16.png")),
-                    ToolTip = "Using a Selection Window, select multiple Lighting Fixtures to Flip the Facing Orientation."
+                    ToolTip = "Using a Selection Window, select multiple electrical Devices or Fixtures to Flip the Facing Orientation."
                 };
             PushButton flipFacingOrientBtn = devicePanel.AddItem(flipFacingOrientData) as PushButton;
             //set ContextualHelp for PushButton
@@ -510,38 +510,10 @@ namespace CMW_Electrical
                 "then this tool can clear the existing value to prepare the family for a different connection."
                 };
 
-            PushButton oneLineAssociateBtn = oneLinePanel.AddItem(oneLineAssociateData) as PushButton;
-            //oneLineAssociateBtn.SetContextualHelp(contextHelp);
-
-            PushButton oneLinePlaceEquipBtn = oneLinePanel.AddItem(oneLinePlaceEquipData) as PushButton;
-            //oneLinePlaceEquipBtn.SetContextualHelp(contextHelp);
-
-            //PushButton oneLineConnectAndPlaceBtn = oneLinePanel.AddItem(oneLineConnectAndPlaceData) as PushButton;
-            PushButton oneLineConnectBtn = oneLinePanel.AddItem(oneLineConnectData) as PushButton;
-            //oneLineConnectBtn.SetContextualHelp(contextHelp);
-
-            oneLinePanel.AddSeparator();
-
-            PushButton oneLineUpdateDesignationsBtn = oneLinePanel.AddItem(oneLineUpdateDesignationsData) as PushButton;
-            //oneLineUpdateDesignationsBtn.SetContextualHelp(contextHelp);
-
-            PushButton oneLineRemoveBtn = oneLinePanel.AddItem(oneLineRemoveData) as PushButton;
-            //oneLineRemoveBtn.SetContextualHelp(contextHelp);
-
-            PushButton oneLineClearBtn = oneLinePanel.AddItem(oneLineClearData) as PushButton;
-            //oneLineClearBtn.SetContextualHelp(contextHelp);
-
-            oneLinePanel.AddSeparator();
-
-            PushButton oneLineCopyBtn = oneLinePanel.AddItem(oneLineCopy) as PushButton;
-            //oneLineCopyBtn.SetContextualHelp(contextHelp);
-
-            PushButton oneLineDrawBtn = oneLinePanel.AddItem(oneLineDrawData) as PushButton;
-            //oneLineDrawBtn.SetContextualHelp(contextHelp);
-
-            PushButton oneLineSelectBtn = oneLinePanel.AddItem(oneLineSelectData) as PushButton;
-            //oneLineSelectBtn.SetContextualHelp(contextHelp);
-            //PushButton oneLineFindBtn = oneLinePanel.AddItem(oneLineFindData) as PushButton;
+            List<RibbonItem> oneLineStackedItems = new List<RibbonItem>();
+            oneLineStackedItems.AddRange(oneLinePanel.AddStackedItems(oneLineAssociateData, oneLinePlaceEquipData, oneLineConnectData));
+            oneLineStackedItems.AddRange(oneLinePanel.AddStackedItems(oneLineUpdateDesignationsData, oneLineRemoveData, oneLineClearData));
+            oneLineStackedItems.AddRange(oneLinePanel.AddStackedItems(oneLineCopy, oneLineDrawData, oneLineSelectData));
 
             PulldownButtonData oneLineFindButtonData = new PulldownButtonData("findSplitButton", "Find")
             {
@@ -559,7 +531,6 @@ namespace CMW_Electrical
 
             PushButton oneLineHalftoneExistingBtn = oneLinePanel.AddItem(oneLineHalftoneExistingData) as PushButton;
             //oneLineHalftoneExistingBtn.SetContextualHelp(contextHelp);
-
 
 
             ////create pushbuttons for AlignTagTools
@@ -776,6 +747,63 @@ namespace CMW_Electrical
             ContextualHelp changeWorksetFromSelectionContextHelp = new ContextualHelp(ContextualHelpType.Url, 
                 "https://wearelegence.sharepoint.com/:v:/r/sites/CMTAMidwestBIM/Shared%20Documents/Video/CMW%20Electrical%20Add-in/Make%20Workset%20Current.mov?csf=1&web=1&e=xeNzYE");
             changeWorksetFromSelectionBtn.SetContextualHelp(changeWorksetFromSelectionContextHelp);
+
+
+            PushButtonData createFeederInfoData = new PushButtonData(
+                "createFeederInfo",
+                "Add" + System.Environment.NewLine + " Feeder ",
+                thisAssemblyPath,
+                "CreateFeederInfo.CreateFeederInformation")
+            {
+                LargeImage = new BitmapImage(new Uri($"{uriPath}CreateFeederInfo32x32.png")),
+                Image = new BitmapImage(new Uri($"{uriPath}CreateFeederInfo16x16.png")),
+                ToolTip = "Add an Electrical Equipment Electrical Circuit to the CMTA Midwest feeder schedule."
+            };
+
+            PushButton createFeederInfoBtn = circuitPanel.AddItem(createFeederInfoData) as PushButton;
+            //set Contextual Help for PushButton
+            ContextualHelp createFeederInfoContextHelp = new ContextualHelp(ContextualHelpType.Url,
+                $"{elecVideosFolder}/Add%20Feeder.mov?csf=1&web=1&e=VChasb");
+            createFeederInfoBtn.SetContextualHelp(createFeederInfoContextHelp);
+
+
+            PushButtonData conduitFromEquipmentData = new PushButtonData(
+                "createConduitFromEquipment", 
+                "Conduit from" + System.Environment.NewLine + " Equipment", 
+                thisAssemblyPath, 
+                "ConduitFromEquipmentCircuit.ConduitFromEquipmentCircuit")
+            {
+                LargeImage = new BitmapImage(new Uri($"{uriPath}ConduitFromEquipment32x32.png")),
+                Image = new BitmapImage(new Uri($"{uriPath}ConduitFromEquipment16x16.png")),
+                ToolTip = "Create a Conduit run from a selected Electrical Equipment instance to its connected source distribution Electrical Equipment.",
+                LongDescription = "Conduit and associated Conduit Fittings will be created based on the Circuit Path of the selected " +
+                "Electrical Equipment instance. Conduit and Conduit Fittings will be sized based on the Mains value of the selected " +
+                "Electrical Equipment instance."
+            };
+
+            PushButton conduitFromEquipmentBtn = equipPanel.AddItem(conduitFromEquipmentData) as PushButton;
+            //set Contextual Help for PushButton
+            ContextualHelp conduitFromEquipmentContextHelp = new ContextualHelp(ContextualHelpType.Url, 
+                $"{elecVideosFolder}/Conduit%20from%20Equipment.mov?csf=1&web=1&e=vCDJVw");
+            conduitFromEquipmentBtn.SetContextualHelp(conduitFromEquipmentContextHelp);
+
+
+            PushButtonData arrayCopyData = new PushButtonData(
+                "copyArray", 
+                "Array" + System.Environment.NewLine + " Lighting ", 
+                thisAssemblyPath, 
+                "ArrayCopy.ArrayCopy")
+            {
+                LargeImage = new BitmapImage(new Uri($"{uriPath}ArrayCopy32x32.png")),
+                Image = new BitmapImage(new Uri($"{uriPath}ArrayCopy16x16.png")),
+                ToolTip = "Copy selected Lighting Fixture in an X,Y array."
+            };
+
+            PushButton arrayCopyBtn = devicePanel.AddItem(arrayCopyData) as PushButton;
+            //set Contextual Help for PushButton
+            ContextualHelp arrayCopyContextHelp = new ContextualHelp(ContextualHelpType.Url, 
+                $"{elecVideosFolder}/Array%20Lighting.mov?csf=1&web=1&e=OAHCPK");
+            arrayCopyBtn.SetContextualHelp(arrayCopyContextHelp);
         }
 
         public Result OnShutdown(UIControlledApplication application)
