@@ -19,7 +19,7 @@ namespace CMW_Electrical
         public const string versionNumber = "1.1.0";
         public const string releaseDate = "January 2025";
         public const string bimProjectUrl = "https://wearelegence.sharepoint.com/:l:/r/sites/CMTAMidwestBIM/Lists/CMW%20Electrical%20Tools?e=e8U3xA";
-
+        public const string elecVideosFolder = "https://wearelegence.sharepoint.com/:f:/r/sites/CMTAMidwestBIM/Shared%20Documents/Video/CMW%20Electrical%20Add-in";
         static void AddRibbonPanel(UIControlledApplication application)
         {
             //Create a custom ribbon tab
@@ -762,8 +762,9 @@ namespace CMW_Electrical
 
             PushButton createFeederInfoBtn = circuitPanel.AddItem(createFeederInfoData) as PushButton;
             //set Contextual Help for PushButton
-            //ContextualHelp createFeederInfoContextHelp = new ContextualHelp(ContextualHelpType.Url, "");
-            //createFeederInfoBtn.SetContextualHelp(createFeederInfoContextHelp);
+            ContextualHelp createFeederInfoContextHelp = new ContextualHelp(ContextualHelpType.Url,
+                $"{elecVideosFolder}/Add%20Feeder.mov?csf=1&web=1&e=VChasb");
+            createFeederInfoBtn.SetContextualHelp(createFeederInfoContextHelp);
 
 
             PushButtonData conduitFromEquipmentData = new PushButtonData(
@@ -774,13 +775,17 @@ namespace CMW_Electrical
             {
                 LargeImage = new BitmapImage(new Uri($"{uriPath}ConduitFromEquipment32x32.png")),
                 Image = new BitmapImage(new Uri($"{uriPath}ConduitFromEquipment16x16.png")),
-                ToolTip = "Create a Conduit run from a selected Electrical Equipment instance to its connected source distribution Electrical Equipment."
+                ToolTip = "Create a Conduit run from a selected Electrical Equipment instance to its connected source distribution Electrical Equipment.",
+                LongDescription = "Conduit and associated Conduit Fittings will be created based on the Circuit Path of the selected " +
+                "Electrical Equipment instance. Conduit and Conduit Fittings will be sized based on the Mains value of the selected " +
+                "Electrical Equipment instance."
             };
 
             PushButton conduitFromEquipmentBtn = equipPanel.AddItem(conduitFromEquipmentData) as PushButton;
             //set Contextual Help for PushButton
-            //ContextualHelp conduitFromEquipmentContextHelp = new ContextualHelp(ContextualHelpType.Url, "";
-            //conduitFromEquipmentBtn.SetContextualHelp(conduitFromEquipmentContextHelp);
+            ContextualHelp conduitFromEquipmentContextHelp = new ContextualHelp(ContextualHelpType.Url, 
+                $"{elecVideosFolder}/Conduit%20from%20Equipment.mov?csf=1&web=1&e=vCDJVw");
+            conduitFromEquipmentBtn.SetContextualHelp(conduitFromEquipmentContextHelp);
 
 
             PushButtonData arrayCopyData = new PushButtonData(
@@ -796,8 +801,9 @@ namespace CMW_Electrical
 
             PushButton arrayCopyBtn = devicePanel.AddItem(arrayCopyData) as PushButton;
             //set Contextual Help for PushButton
-            //ContextualHelp arrayCopyContextHelp = new ContextualHelp(ContextualHelpType.Url, "");
-            //arrayCopyBtn.SetContextualHelp(arrayCopyContextHelp);
+            ContextualHelp arrayCopyContextHelp = new ContextualHelp(ContextualHelpType.Url, 
+                $"{elecVideosFolder}/Array%20Lighting.mov?csf=1&web=1&e=OAHCPK");
+            arrayCopyBtn.SetContextualHelp(arrayCopyContextHelp);
         }
 
         public Result OnShutdown(UIControlledApplication application)

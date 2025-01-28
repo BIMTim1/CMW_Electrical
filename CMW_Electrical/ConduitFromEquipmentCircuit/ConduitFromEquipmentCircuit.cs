@@ -74,11 +74,16 @@ namespace ConduitFromEquipmentCircuit
             {
                 foreach (ElectricalSystem e in collSystems)
                 {
-                    string baseName = e.BaseEquipment.Name;
+                    FamilyInstance baseEquip = e.BaseEquipment;
 
-                    if (baseName != (selElem as FamilyInstance).get_Parameter(BuiltInParameter.RBS_ELEC_PANEL_NAME).AsString())
+                    if (baseEquip != null)
                     {
-                        elecSys = e;
+                        string baseName = baseEquip.Name;
+
+                        if (baseName != (selElem as FamilyInstance).get_Parameter(BuiltInParameter.RBS_ELEC_PANEL_NAME).AsString())
+                        {
+                            elecSys = e;
+                        }
                     }
                 }
             }
@@ -96,6 +101,9 @@ namespace ConduitFromEquipmentCircuit
                 try
                 {
                     trac.Start("CMW-Elec - Create Conduit from Selected Equipment Circuit");
+
+                    //collect double to size conduit
+                    double conduit_size = CalculateConduitSize(selElem as FamilyInstance);
 
                     #region Create Conduits
                     List<ElementId> conduitTypes = new FilteredElementCollector(doc).OfClass(typeof(ConduitType)).ToElementIds().ToList();
@@ -123,6 +131,12 @@ namespace ConduitFromEquipmentCircuit
                     #endregion //Create Conduits
 
                     doc.Regenerate();
+
+                    //update conduit diameter based on Equipment instance Mains
+                    foreach (Conduit cnd in conduitList)
+                    {
+                        cnd.get_Parameter(BuiltInParameter.RBS_CONDUIT_DIAMETER_PARAM).Set(conduit_size);
+                    }
 
                     #region Create Conduit Elbow Fittings
                     int cCount = conduitList.Count();
@@ -187,6 +201,72 @@ namespace ConduitFromEquipmentCircuit
             return val;
         }
         #endregion //double value adjustments
+
+        /// <summary>
+        /// Calculate the double (in feet) to size Conduit Diameter(Trade Size) based on Electrical Equipment FamilyInstance.
+        /// </summary>
+        /// <param name="familyInstance"></param>
+        /// <returns></returns>
+        public double CalculateConduitSize(FamilyInstance familyInstance)
+        {
+            double conduitSize = 0.0;
+            double panel_mains = familyInstance.get_Parameter(BuiltInParameter.RBS_ELEC_MAINS).AsDouble();
+
+            //resolve what to do for multiple conduit runs (starting at 450 A)
+            Dictionary<double, double> conduit_dictionary = new Dictionary<double, double>()
+            {
+                {15, 0.5 },
+                {20, 0.5 },
+                {25, 0.75 },
+                {30, 0.75 },
+                {35, 1.0 },
+                {40, 1.0 },
+                {45, 1.25 },
+                {50, 1.25 },
+                {60, 1.25 },
+                {70, 1.25 },
+                {80, 1.5 },
+                {90, 1.5 },
+                {100, 1.5 },
+                {110, 2.0 },
+                {125, 2.0 },
+                {150, 2.0 },
+                {175, 2.0 },
+                {200, 2.5 },
+                {225, 3.0 },
+                {250, 3.0 },
+                {300, 3.5 },
+                {350, 3.5 },
+                {400, 4.0 },
+                {450, 3.0 },
+                {500, 3.0 },
+                {600, 3.5 },
+                {700, 4.0 },
+                {800, 3.0 },
+                {1000, 3.5 },
+                {1200, 3.5 },
+                {1600, 3.5 },
+                {2000, 4.0 },
+                {2500, 4.0 },
+                {3000, 4.0 },
+                {4000, 4.0 },
+                {5000, 4.0 },
+                {6000, 4.0 }
+            };
+
+            if (conduit_dictionary.ContainsKey(panel_mains))
+            {
+                double sel_size = conduit_dictionary[panel_mains];
+
+                conduitSize = Math.Round(sel_size / 12, 9);
+            }
+            else
+            {
+                conduitSize = Math.Round(1.0 / 12, 9);
+            }
+
+            return conduitSize;
+        }
 
         public List<XYZ> Coordinate_Offsets(int currentValue, int totalValue, IList<XYZ> pathPointList)
         {

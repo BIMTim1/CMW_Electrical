@@ -26,14 +26,18 @@ namespace CreateFeederInfo
             UIDocument uidoc = uiapp.ActiveUIDocument;
             #endregion //Autodesk Info
 
-            View activeView = doc.ActiveView;
-
             #region ViewType check
             //check active view type
-            if (activeView.ViewType != ViewType.FloorPlan || activeView.ViewType != ViewType.ThreeD || activeView.ViewType != ViewType.Section)
+            View activeView = doc.ActiveView;
+
+            List<ViewType> allowedViewTypes = new List<ViewType>()
+            {
+                ViewType.FloorPlan, ViewType.ThreeD, ViewType.Section
+            };
+
+            if (!allowedViewTypes.Contains(activeView.ViewType))
             {
                 elementSet.Insert(activeView);
-
                 errorReport = "Incorrect View Type. Change the active view to a FloorPlan, 3D, or Section view and rerun the tool.";
 
                 return Result.Cancelled;
@@ -115,7 +119,7 @@ namespace CreateFeederInfo
                     //string baseEquipmentName = electricalSystem.BaseEquipment.Name;
                     FamilyInstance baseEquipment = electricalSystem.BaseEquipment;
 
-                    if (baseEquipment == null || baseEquipment.Name == equipmentName)
+                    if (baseEquipment != null && baseEquipment.Name != equipmentName)
                     {
                         equipmentSystem = electricalSystem;
                     }
