@@ -16,8 +16,8 @@ namespace CMW_Electrical
 {
     public class CMW_Electrical_Ribbon : IExternalApplication
     {
-        public const string versionNumber = "1.1.0";
-        public const string releaseDate = "January 2025";
+        public const string versionNumber = "1.1.1";
+        public const string releaseDate = "February 2025";
         public const string bimProjectUrl = "https://wearelegence.sharepoint.com/:l:/r/sites/CMTAMidwestBIM/Lists/CMW%20Electrical%20Tools?e=e8U3xA";
         public const string elecVideosFolder = "https://wearelegence.sharepoint.com/:f:/r/sites/CMTAMidwestBIM/Shared%20Documents/Video/CMW%20Electrical%20Add-in";
         static void AddRibbonPanel(UIControlledApplication application)
@@ -731,22 +731,22 @@ namespace CMW_Electrical
             nestedFamilyFontUpdateBtn.SetContextualHelp(nestedFamFontContextHelp);
 
 
-            PushButtonData changeWorksetFromSelectionData = new PushButtonData(
-                "changeWorksetFromSelectionButton", 
-                "Make Workset" + System.Environment.NewLine + " Current ", 
-                thisAssemblyPath, 
-                "ChangeWorksetFromSelection.ChangeWorksetFromSelection")
-            {
-                LargeImage = new BitmapImage(new Uri($"{uriPath}WorksetChange32x32.png")),
-                Image = new BitmapImage(new Uri($"{uriPath}WorksetChange16x16.png")),
-                ToolTip = "Change active Workset to the Workset of a Selected Element."
-            };
+            //PushButtonData changeWorksetFromSelectionData = new PushButtonData(
+            //    "changeWorksetFromSelectionButton", 
+            //    "Make Workset" + System.Environment.NewLine + " Current ", 
+            //    thisAssemblyPath, 
+            //    "ChangeWorksetFromSelection.ChangeWorksetFromSelection")
+            //{
+            //    LargeImage = new BitmapImage(new Uri($"{uriPath}WorksetChange32x32.png")),
+            //    Image = new BitmapImage(new Uri($"{uriPath}WorksetChange16x16.png")),
+            //    ToolTip = "Change active Workset to the Workset of a Selected Element."
+            //};
 
-            PushButton changeWorksetFromSelectionBtn = devicePanel.AddItem(changeWorksetFromSelectionData) as PushButton;
-            //set ContextualHelp for PushButton
-            ContextualHelp changeWorksetFromSelectionContextHelp = new ContextualHelp(ContextualHelpType.Url, 
-                "https://wearelegence.sharepoint.com/:v:/r/sites/CMTAMidwestBIM/Shared%20Documents/Video/CMW%20Electrical%20Add-in/Make%20Workset%20Current.mov?csf=1&web=1&e=xeNzYE");
-            changeWorksetFromSelectionBtn.SetContextualHelp(changeWorksetFromSelectionContextHelp);
+            //PushButton changeWorksetFromSelectionBtn = devicePanel.AddItem(changeWorksetFromSelectionData) as PushButton;
+            ////set ContextualHelp for PushButton
+            //ContextualHelp changeWorksetFromSelectionContextHelp = new ContextualHelp(ContextualHelpType.Url, 
+            //    "https://wearelegence.sharepoint.com/:v:/r/sites/CMTAMidwestBIM/Shared%20Documents/Video/CMW%20Electrical%20Add-in/Make%20Workset%20Current.mov?csf=1&web=1&e=xeNzYE");
+            //changeWorksetFromSelectionBtn.SetContextualHelp(changeWorksetFromSelectionContextHelp);
 
 
             PushButtonData createFeederInfoData = new PushButtonData(

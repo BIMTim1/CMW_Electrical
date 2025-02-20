@@ -440,6 +440,6 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>call C:\Scripts\PSScripts\ForC\CMW_Elec_PostRun.bat</PostBuildEvent>
+    <PostBuildEvent>call C:\Scripts\CMWElec\BuildEvents\CMWElec_PostRun.bat</PostBuildEvent>
   </PropertyGroup>
 </Project>
