@@ -138,6 +138,7 @@
       <DependentUpon>EnterSpaceNameForm.cs</DependentUpon>
     </Compile>
     <Compile Include="GetCircuitsAndPlaceText\GetCircuitsAndPlaceText.cs" />
+    <Compile Include="PanelPolesUpdateFromSchedule\PanelPolesUpdate.cs" />
     <Compile Include="MotorMOCPUpdate\MotorInfoData.cs" />
     <Compile Include="MotorMOCPUpdate\UpdateMotorMOCP.cs" />
     <Compile Include="MotorMOCPUpdate\MotorResultsWindow.xaml.cs">
@@ -353,6 +354,8 @@
     <Resource Include="Resources\ConduitFromEquipment32x32.png" />
     <Resource Include="Resources\ArrayCopy16x16.png" />
     <Resource Include="Resources\ArrayCopy32x32.png" />
+    <Resource Include="Resources\PanelPolesUpdate16x16.png" />
+    <Resource Include="Resources\PanelPolesUpdate32x32.png" />
     <Content Include="_Addin\CMW_Electrical.addin">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -440,6 +443,6 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>call C:\Scripts\PSScripts\ForC\CMW_Elec_PostRun.bat</PostBuildEvent>
+    <PostBuildEvent>call C:\Scripts\CMWElec\BuildEvents\CMWElec_PostRun.bat</PostBuildEvent>
   </PropertyGroup>
 </Project>

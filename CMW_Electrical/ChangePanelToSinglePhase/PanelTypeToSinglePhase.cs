@@ -66,6 +66,7 @@ namespace ChangePanelTypeToSinglePhase
             FamilyInstance selElem;
             ICollection<ElementId> selectedElementIds = uidoc.Selection.GetElementIds();
 
+            #region User Selection
             if (selectedElementIds.Any())
             {
                 //filter preselected list
@@ -115,6 +116,7 @@ namespace ChangePanelTypeToSinglePhase
 
                 selElem = doc.GetElement(selItem) as FamilyInstance;
             }
+            #endregion //User Selection
 
             //get Panel DIName to collect Electrical Equipment again
             string pnlName = selElem.get_Parameter(bipPanelName).AsString();

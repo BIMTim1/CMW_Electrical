@@ -47,7 +47,7 @@ namespace ChangeWorksetFromSelection
                 {
                     selElem = doc.GetElement(uidoc.Selection.PickObject(Autodesk.Revit.UI.Selection.ObjectType.Element, "Select an Element to change the active Workset."));
                 }
-                catch (OperationCanceledException ex)
+                catch (Autodesk.Revit.Exceptions.OperationCanceledException ex)
                 {
                     //errorReport = "User canceled operation.";
                     return Result.Cancelled;
