@@ -804,6 +804,20 @@ namespace CMW_Electrical
             ContextualHelp arrayCopyContextHelp = new ContextualHelp(ContextualHelpType.Url, 
                 $"{elecVideosFolder}/Array%20Lighting.mov?csf=1&web=1&e=OAHCPK");
             arrayCopyBtn.SetContextualHelp(arrayCopyContextHelp);
+
+
+            PushButtonData panelPolesData = new PushButtonData(
+                "panelPolesUpdate",
+                "Update" + System.Environment.NewLine + "Circuit #",
+                thisAssemblyPath,
+                "ManagePanelSchedules.PanelPolesUpdate")
+            {
+                LargeImage = new BitmapImage(new Uri($"{uriPath}PanelPolesUpdate32x32.png")),
+                Image = new BitmapImage(new Uri($"{uriPath}PanelPolesUpdate16x16.png")),
+                ToolTip = "From a Panel Schedule view, update the associated Electrical Equipment Max Number of Single Pole Breakers or Number of Circuits parameter."
+            };
+
+            PushButton panelPolesBtn = equipPanel.AddItem(panelPolesData) as PushButton;
         }
 
         public Result OnShutdown(UIControlledApplication application)
