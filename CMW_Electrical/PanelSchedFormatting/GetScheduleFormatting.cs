@@ -25,19 +25,20 @@ namespace PanelSchedFormatting
             else if (panSchedType == PanelScheduleType.Branch)
             {
                 columns.Add(2);
-                columns.Add(13);
-                //string templateName = document.GetElement(panSchedView.GetTemplate()).Name.ToString();
 
-                //if (templateName.Contains("Single"))
-                //{
-                //    columns.Add(2);
-                //    columns.Add(11);
-                //}
-                //else
-                //{
-                //    columns.Add(2);
-                //    columns.Add(13);
-                //}
+                //collect table data to calculate which column to use (old vs new PanelScheduleTemplates)
+                TableData tableData = panSchedView.GetTableData();
+                TableSectionData sectionData = tableData.GetSectionData(SectionType.Body);
+                int lastColNum = sectionData.LastColumnNumber;
+
+                if (lastColNum > 17)
+                {
+                    columns.Add(13);
+                }
+                else
+                {
+                    columns.Add(17);
+                }
             }
 
             return columns;

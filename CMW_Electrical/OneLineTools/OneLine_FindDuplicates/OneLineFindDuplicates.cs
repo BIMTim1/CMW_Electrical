@@ -28,6 +28,8 @@ namespace OneLine_FindDuplicates
 
             Autodesk.Revit.DB.View activeView = doc.ActiveView;
 
+            BuiltInParameter famParam = BuiltInParameter.ELEM_FAMILY_PARAM;
+
             //check for EqConId Current Value parameter
             EqConIdCheck eqConIdCheck = new EqConIdCheck();
             bool eqConIdExists = eqConIdCheck.EqConIdCurrentValueExists(doc);
@@ -50,12 +52,12 @@ namespace OneLine_FindDuplicates
             {
                 selBic = BuiltInCategory.OST_DetailComponents;
 
-                all_elements = new FilteredElementCollector(doc, activeView.Id)
-                    .OfCategory(selBic)
+                all_elements = new FilteredElementCollector(doc).OfCategory(selBic)
+                    .WhereElementIsNotElementType()
                     .ToElements()
-                    .Where(x => !x.LookupParameter("Family").AsValueString().Contains("Circuit"))
-                    .Where(x => !x.LookupParameter("Family").AsValueString().Contains("Feeder"))
-                    .Where(x => x.LookupParameter("EqConId").AsString() != null || x.LookupParameter("EqConId").AsString() != "")
+                    .Where(x => !x.get_Parameter(famParam).AsValueString().Contains("Circuit") && 
+                    !x.get_Parameter(famParam).AsValueString().Contains("Feeder") && 
+                    !string.IsNullOrEmpty(x.LookupParameter("EqConId").AsString()))
                     .ToList();
             }
             else if (activeView.ViewType == ViewType.FloorPlan || activeView.ViewType == ViewType.ThreeD)
@@ -64,8 +66,9 @@ namespace OneLine_FindDuplicates
 
                 all_elements = new FilteredElementCollector(doc)
                     .OfCategory(selBic)
+                    .WhereElementIsNotElementType()
                     .ToElements()
-                    .Where(x => x.LookupParameter("EqConId") != null && x.LookupParameter("EqConId").AsString() != null && x.LookupParameter("EqConId").AsString() != "")
+                    .Where(x => !string.IsNullOrEmpty(x.LookupParameter("EqConId").AsString()))
                     .ToList();
             }
             else //cancel if not FloorPlan or DraftingView
@@ -85,31 +88,19 @@ namespace OneLine_FindDuplicates
                 return Result.Cancelled;
             }
 
-            //iterate through list of potential objects for duplicates
-            int currentEqConIds = eqConIdCheck.GetEqConIdCurrentValue(doc).AsInteger();
-            int i = 1;
-
             List<string> dupElemIds = new List<string>();
 
-            while (i < currentEqConIds)
+            //iterate through list of potential objects for duplicates
+            foreach (FamilyInstance f in all_elements)
             {
-                int tempCount = 0;
-                string compVal = $"EqId{i}";
+                string compVal = f.LookupParameter("EqConId").AsString();
 
-                foreach (Element e in all_elements)
-                {
-                    if (e.LookupParameter("EqConId").AsString() == compVal)
-                    {
-                        tempCount++;
-                    }
-                }
+                List<string> values = (from x in all_elements where x.Id != f.Id select x.LookupParameter("EqConId").AsString()).ToList();
 
-                if (tempCount > 1)
+                if (values.Contains(compVal))
                 {
                     dupElemIds.Add(compVal);
                 }
-
-                i++;
             }
 
             //check for duplicates

@@ -113,8 +113,6 @@ namespace EquipCircuitUpdate
         /// <returns>bool hasCircuit</returns>
         internal bool HasCircuit(FamilyInstance equip)
         {
-            bool hasCircuit = false;
-
             ISet<ElectricalSystem> circuits = equip.MEPModel.GetElectricalSystems();
 
             foreach (ElectricalSystem cct in circuits)
@@ -123,12 +121,11 @@ namespace EquipCircuitUpdate
                 {
                     if (cct.BaseEquipment.Name != equip.get_Parameter(BuiltInParameter.RBS_ELEC_PANEL_NAME).AsString())
                     {
-                        hasCircuit = true;
+                        return true;
                     }
                 }
             }
-
-            return hasCircuit;
+            return false;
         }
         #endregion //HasCircuit
     }
