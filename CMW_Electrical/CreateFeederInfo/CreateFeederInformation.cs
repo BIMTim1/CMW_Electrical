@@ -46,7 +46,7 @@ namespace CreateFeederInfo
 
             Reference selRef;
             ISelectionFilter selFilter = new CMWElecSelectionFilter.EquipmentSelectionFilter();
-            string feederValue = "PANEL FEEDER";
+            //string feederValue = "PANEL FEEDER";
 
             #region User Selection
             try
@@ -76,14 +76,18 @@ namespace CreateFeederInfo
             string equipName = selEquip.get_Parameter(BuiltInParameter.RBS_ELEC_PANEL_NAME).AsString();
             ISet<ElectricalSystem> equipCircuits = selEquip.MEPModel.GetElectricalSystems();
 
-            ElectricalSystem equipCircuit = GetEquipmentCircuit(equipCircuits, equipName);
+            //collect ElectricalSystem of selected equipment
+            ElectricalSystem equipCircuit = GetEquipmentCircuit(equipCircuits, equipName);            
 
             if (equipCircuit == null)
             {
                 errorReport = "Selected Electrical Equipment does not contain an Electrical Circuit. The tool will now cancel.";
                 return Result.Cancelled;
-            } 
+            }
             #endregion //Check Selected Equipment Circuit
+
+            //collect feeder value based on selected Family Name
+            string feederValue = FeederType(selEquip);
 
             //update Equipment ElectricalSystem information
             using (Transaction trac = new Transaction(doc))
@@ -119,9 +123,16 @@ namespace CreateFeederInfo
                     //string baseEquipmentName = electricalSystem.BaseEquipment.Name;
                     FamilyInstance baseEquipment = electricalSystem.BaseEquipment;
 
-                    if (baseEquipment != null && baseEquipment.Name != equipmentName)
+                    if (baseEquipment == null)
                     {
                         equipmentSystem = electricalSystem;
+                    }
+                    else
+                    {
+                        if (baseEquipment.Name != equipmentName)
+                        {
+                            equipmentSystem = electricalSystem;
+                        }
                     }
                 }
             }
@@ -129,5 +140,28 @@ namespace CreateFeederInfo
             return equipmentSystem;
         }
         #endregion //GetEquipmentCircuit method
+
+        #region FeederType method
+        public string FeederType(FamilyInstance familyInstance)
+        {
+            string feederType = "";
+            string familyName = familyInstance.Symbol.get_Parameter(BuiltInParameter.SYMBOL_FAMILY_NAME_PARAM).AsString();
+
+            if (familyName.Contains("Transformer"))
+            {
+                feederType = "XFMR FEEDER";
+            }
+            else if (familyName.Contains("Automatic"))
+            {
+                feederType = "ATS FEEDER";
+            }
+            else
+            {
+                feederType = "PANEL FEEDER";
+            }
+
+            return feederType;
+        }
+        #endregion //FeederType method
     }
 }

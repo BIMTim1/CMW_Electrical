@@ -42,11 +42,15 @@ namespace CMW_Electrical.AddinInformation
 
             if (btn.Name == btnReport.Name)
             {
-                Process.Start(_reportBugURL);
+                var psi = new ProcessStartInfo(_reportBugURL) { UseShellExecute = true};
+                Process.Start(psi);
+                //Process.Start(_reportBugURL);
             }
             else if (btn.Name == btnSharePoint.Name)
             {
-                Process.Start(_sharePointURL);
+                var psi = new ProcessStartInfo(_sharePointURL) { UseShellExecute = true };
+                Process.Start(psi);
+                //Process.Start(_sharePointURL);
             }
         }
     }
