@@ -223,15 +223,7 @@ namespace ChangePanelTypeToSinglePhase
                             doc.Delete(previousSchedId);
                         }
 
-                        //check for existing branch circuits and disconnect if different distribution
-                        //if (col_circuits.Any() && selFamSym.LookupParameter("Voltage Nominal").AsDouble() != selElem.Symbol.LookupParameter("Voltage Nominal").AsDouble())
-                        //{
-                        //    foreach (ElectricalSystem cct in col_circuits)
-                        //    {
-                        //        cct.DisconnectPanel();
-                        //    }
-                        //}
-                        //disconnect branch circuits from source while equipment type
+                        //disconnect branch circuits
                         foreach (ElectricalSystem cct in col_circuits)
                         {
                             cct.DisconnectPanel();
