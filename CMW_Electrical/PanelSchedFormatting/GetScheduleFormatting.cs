@@ -16,15 +16,19 @@ namespace PanelSchedFormatting
         public List<Int32> GetPanelScheduleColumns(PanelScheduleType panSchedType, PanelScheduleView panSchedView, Document document)
         {
             //create initial list
-            List<Int32> columns = new List<Int32>();
+            List<Int32> columns = new List<Int32>()
+            {
+                2
+            };
+            //columns.Add(2);
 
-            if (panSchedType == PanelScheduleType.Switchboard)
+            //if (panSchedType == PanelScheduleType.Switchboard)
+            //{
+            //    columns.Add(2);
+            //}
+            if (panSchedType == PanelScheduleType.Branch)
             {
-                columns.Add(2);
-            }
-            else if (panSchedType == PanelScheduleType.Branch)
-            {
-                columns.Add(2);
+                //columns.Add(2);
 
                 //collect table data to calculate which column to use (old vs new PanelScheduleTemplates)
                 TableData tableData = panSchedView.GetTableData();
@@ -33,11 +37,11 @@ namespace PanelSchedFormatting
 
                 if (lastColNum > 17)
                 {
-                    columns.Add(13);
+                    columns.Add(17);
                 }
                 else
                 {
-                    columns.Add(17);
+                    columns.Add(13);
                 }
             }
 
